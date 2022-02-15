@@ -1,11 +1,11 @@
-# Spring Boot Template
+# LinkApp
 
 Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Additional details: [HELP.md](HELP.md)
 
-[![Open Issues](https://img.shields.io/github/issues-raw/UdL-EPS-SoftArch/spring-template?logo=github)](https://github.com/orgs/UdL-EPS-SoftArch/projects/12)
-[![CI/CD](https://github.com/UdL-EPS-SoftArch/spring-template/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/UdL-EPS-SoftArch/spring-template/actions)
+[![Open Issues](https://img.shields.io/github/issues-raw/UdL-EPS-SoftArch/LinkApp-API?logo=github)](https://github.com/orgs/UdL-EPS-SoftArch/projects/14)
+[![CI/CD](https://github.com/UdL-EPS-SoftArch/LinkApp-API/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/UdL-EPS-SoftArch/LinkApp-API/actions)
 [![CucumberReports: UdL-EPS-SoftArch](https://messages.cucumber.io/api/report-collections/faed8ca5-e474-4a1a-a72a-b8e2a2cd69f0/badge)](https://reports.cucumber.io/report-collections/faed8ca5-e474-4a1a-a72a-b8e2a2cd69f0)
-[![Heroku App Status](https://heroku-shields.herokuapp.com/springtemplate)](https://springtemplate.herokuapp.com)
+[![Heroku App Status](https://heroku-shields.herokuapp.com/linkapp-api)](https://linkapp-api.herokuapp.com)
 
 ## Vision
 
