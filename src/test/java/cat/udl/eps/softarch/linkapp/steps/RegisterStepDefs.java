@@ -1,4 +1,4 @@
-package cat.udl.eps.softarch.demo.steps;
+package cat.udl.eps.softarch.linkapp.steps;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import cat.udl.eps.softarch.demo.domain.User;
-import cat.udl.eps.softarch.demo.repository.UserRepository;
+import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
