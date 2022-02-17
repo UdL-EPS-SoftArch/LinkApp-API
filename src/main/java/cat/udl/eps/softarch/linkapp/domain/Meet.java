@@ -24,6 +24,7 @@ public class Meet extends UriEntity<String> {
 	@GeneratedValue
 	private Long id;
 
+	@NotNull
 	@NotBlank
 	private String title;
 
@@ -31,9 +32,29 @@ public class Meet extends UriEntity<String> {
 	@NotBlank
 	private Boolean status;
 
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@Transient
-	private boolean passwordReset;
+	@NotNull
+	@NotBlank
+	private String description;
+
+	@NotNull
+	@NotBlank
+	private Date creationDate;
+
+	@NotNull
+	@NotBlank
+	private Date lastUpdate;
+
+	@NotNull
+	@NotBlank
+	private Date meetDate;
+
+	@NotNull
+	@NotBlank
+	private Long maxUsers;
+
+	@NotNull
+	@NotBlank
+	private String location;
 
 	@Override
 	public String getId() { return id.toString(); }
