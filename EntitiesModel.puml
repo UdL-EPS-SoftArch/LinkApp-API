@@ -1,6 +1,6 @@
 @startuml
 
-class User extends UriEntity implements UserDetails {
+class User extends UriEntity {
   username : String
   password : String
   email : String
@@ -43,12 +43,18 @@ class Meet {
 
 }
 
-User "1" --right-- "*" Resource : owner <
+User "1" --right-- "*" Chatroom
+Meet "1" --right-- "*" Chatroom
 User "*" --right-- "*" Topic
 Group "*" --right-- "*" Topic
 Group "1" --right-- "*" Role
 User "1" --right-- "*" Role
 User "1" --right-- "1" OAuth
-
+Post "0..1" --right-- "*" Post : comment <
+User "*" --right-- "*" Topic : interests >
+User "1" --right-- "*" Post
+Group "1" --right-- "*" Post
+Group "1" --right-- "*" Meet
+User "*" --right-- "*" Meet : attendance >
 
 @enduml
