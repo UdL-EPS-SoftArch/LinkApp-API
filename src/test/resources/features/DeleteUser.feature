@@ -11,6 +11,14 @@ Feature: Delete User
     And It has been deleted a user with username "user" and email "user@sample.app"
     And I cannot login with username "user" and password "password"
 
+  Scenario: Delete an unexisting user
+    Given There is no registered user with username "user"
+    And I can login with username "user" and password "password"
+    When I delete the user with username "user", email "user@sample.app" and password "password"
+    Then The response code is 204
+    And It has been deleted a user with username "user" and email "user@sample.app"
+    And I cannot login with username "user" and password "password"
+
   Scenario: Register new user
     Given There is no registered user with username "user"
     And I'm not logged in
