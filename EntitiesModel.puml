@@ -4,12 +4,51 @@ class User extends UriEntity implements UserDetails {
   username : String
   password : String
   email : String
+  age: int
+
+}
+class OAuth{
+}
+class Group {
+    title : String
+    description : String
+    visibility : String
+}
+
+class Topic {
+     topic : String
+}
+
+class Role {
+     role : String
+}
+
+class Post {
+     text : String
+}
+
+class Chatroom {
+     text : String
 }
 
 class UriEntity {
   uri : String
 }
 
+class Meet {
+    title : String
+    description : String
+    date : String
+    location : String
+
+}
+
 User "1" --right-- "*" Resource : owner <
+User "*" --right-- "*" Topic
+Group "*" --right-- "*" Topic
+Group "1" --right-- "*" Role
+User "1" --right-- "*" Role
+User "1" --right-- "1" OAuth
+
 
 @enduml
