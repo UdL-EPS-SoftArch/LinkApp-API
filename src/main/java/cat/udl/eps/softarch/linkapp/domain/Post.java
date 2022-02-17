@@ -22,7 +22,7 @@ import java.util.Collection;
 public class Post extends UriEntity<String>{
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@NotBlank
