@@ -9,7 +9,7 @@ Feature: Delete User
     When I delete the user with username "user", email "user@sample.app" and password "password"
     Then The response code is 204
     And It has been deleted a user with username "user" and email "user@sample.app"
-    #And I can't login with username "user" and password "password"
+    And I cannot login with username "user" and password "password"
 
   Scenario: Register new user
     Given There is no registered user with username "user"
