@@ -40,21 +40,21 @@ class Meet {
     description : String
     date : String
     location : String
+    maxcapacity : int
 
 }
 
 User "1" --right-- "*" Chatroom
-Meet "1" --right-- "*" Chatroom
-User "*" --right-- "*" Topic
+Meet "1" -- "*" Chatroom
 Group "*" --right-- "*" Topic
-Group "1" --right-- "*" Role
+Group "1" --left-- "*" Role
 User "1" --right-- "*" Role
-User "1" --right-- "1" OAuth
+User "1" --left-- "1" OAuth
 Post "0..1" --right-- "*" Post : comment <
-User "*" --right-- "*" Topic : interests >
+User "*" -- "*" Topic : interests >
 User "1" --right-- "*" Post
-Group "1" --right-- "*" Post
-Group "1" --right-- "*" Meet
+Group "1" -- "*" Post
+Group "1" -- "*" Meet
 User "*" --right-- "*" Meet : attendance >
 
 @enduml
