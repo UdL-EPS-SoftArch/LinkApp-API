@@ -22,7 +22,7 @@ import java.util.Date;
 public class Meet extends UriEntity<String> {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@NotNull
