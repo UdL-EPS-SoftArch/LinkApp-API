@@ -13,8 +13,8 @@ import java.util.Date;
 public class Message extends UriEntity<String>  {
 
     @Id
-    @GeneratedValue
-    Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Temporal(TemporalType.DATE)
     Date publicationDate;
@@ -26,15 +26,12 @@ public class Message extends UriEntity<String>  {
     Date creationDateTime;
 
     @NotBlank
-    @Column(unique = true)
     private String text;
 
     @NotBlank
-    @Column(unique = true)
     private String author;
 
     @NotBlank
-    @Column(unique = true)
     private String meet;
 
 }
