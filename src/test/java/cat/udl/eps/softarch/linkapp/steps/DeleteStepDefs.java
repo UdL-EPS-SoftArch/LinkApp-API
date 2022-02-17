@@ -26,8 +26,8 @@ public class DeleteStepDefs {
   @Autowired
   private UserRepository userRepository;
 
-  @When("^I delete the user with username \"([^\"]*)\", email \"([^\"]*)\" and password \"([^\"]*)\"$")
-  public void iDeleteUserWithUsernameEmailAndPassword(String username, String email, String password) throws Throwable {
+  @When("^I delete the user with username \"([^\"]*)\"")
+  public void iDeleteUserWithUsername(String username) throws Throwable {
 
     stepDefs.result = stepDefs.mockMvc.perform(
                     delete("/users/{username}", username).with(AuthenticationStepDefs.authenticate()));

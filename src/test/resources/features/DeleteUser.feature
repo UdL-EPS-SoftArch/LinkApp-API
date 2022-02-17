@@ -1,23 +1,21 @@
 Feature: Delete User
-  In order to stop using the app
+  In order to stop someone from using the app
   As a user
-  I want to delete my account
+  I want to delete an account
 
-  Scenario: Delete an existing user
+  Scenario: Delete an own account
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I can login with username "user" and password "password"
-    When I delete the user with username "user", email "user@sample.app" and password "password"
+    When I delete the user with username "user"
     Then The response code is 204
     And It has been deleted a user with username "user" and email "user@sample.app"
     And I cannot login with username "user" and password "password"
 
-  Scenario: Delete an unexisting user
-    Given There is no registered user with username "user"
-    And I can login with username "user" and password "password"
-    When I delete the user with username "user", email "user@sample.app" and password "password"
-    Then The response code is 204
-    And It has been deleted a user with username "user" and email "user@sample.app"
-    And I cannot login with username "user" and password "password"
+  #Scenario: Delete a unexisting user
+   # Given There is no registered user with username "user"
+    #And I cannot login with username "user" and password "password"
+    #When I delete the user with username "user"
+    #Then The response code is 204
 
   Scenario: Register new user
     Given There is no registered user with username "user"
