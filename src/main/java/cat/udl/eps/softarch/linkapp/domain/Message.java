@@ -15,7 +15,7 @@ public class Message extends UriEntity<String>  {
 
     @Id
     @GeneratedValue
-    Integer id;
+    Long id;
 
     @Temporal(TemporalType.DATE)
     Date publicationDate;
