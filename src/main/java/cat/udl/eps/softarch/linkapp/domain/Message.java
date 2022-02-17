@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
-@Table(name = "Message")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Message extends UriEntity<String>  {
@@ -38,8 +37,4 @@ public class Message extends UriEntity<String>  {
     @Column(unique = true)
     private String meet;
 
-
-    public String getText() { return text; }
-    public String getAuthor() { return author; }
-    public String getMeet() { return meet; }
 }
