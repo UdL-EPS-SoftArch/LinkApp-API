@@ -34,4 +34,7 @@ public class Message extends UriEntity<String>  {
     @NotBlank
     private String meet;
 
+    @Override
+    public String getId() { return id.toString(); }
+
 }
