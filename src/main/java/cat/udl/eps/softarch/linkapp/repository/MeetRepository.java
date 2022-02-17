@@ -5,7 +5,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
-public interface MeetRepository extends PagingAndSortingRepository<Meet, String> {
+public interface MeetRepository extends PagingAndSortingRepository<Meet, Long> {
 
   /* Interface provides automatically, as defined in https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
    * count, delete, deleteAll, deleteById, existsById, findAll, findAllById, findById, save, saveAll
