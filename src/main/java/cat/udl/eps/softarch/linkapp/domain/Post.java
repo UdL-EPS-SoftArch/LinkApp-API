@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
@@ -28,6 +29,9 @@ public class Post extends UriEntity<String>{
 	@NotBlank
 	private String text;
 
+	@ManyToOne
+	@JsonIdentityReference(alwaysAsId = true)
+	private User author;
 
 	@Override
 	public String getId() { return id.toString(); }
