@@ -30,31 +30,27 @@ public class Meet extends UriEntity<String> {
 	private String title;
 
 	@NotNull
-	@NotBlank
 	private Boolean status;
 
 	@NotNull
 	@NotBlank
 	private String description;
 
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
-	@NotBlank
 	private Date creationDate;
 
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
-	@NotBlank
 	private Date lastUpdate;
 
 	@NotNull
-	@NotBlank
 	private Date meetDate;
 
-	@NotNull
-	@NotBlank
+	//may be null to indicate that this is not set
 	private Long maxUsers;
 
-	@NotNull
-	@NotBlank
+	//may be null to inidcate that location is not set
 	private String location;
 
 	@Override
