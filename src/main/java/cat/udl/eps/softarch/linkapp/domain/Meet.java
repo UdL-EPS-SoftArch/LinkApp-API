@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -12,41 +13,43 @@ import java.util.Date;
 @Table
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Meet extends UriEntity<String> {
+public class Meet extends UriEntity<Long> {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	@NotNull
-	@NotBlank
-	private String title;
+    @NotNull
+    @NotBlank
+    private String title;
 
-	@NotNull
-	private Boolean status;
+    @NotNull
+    private Boolean status;
 
-	@NotNull
-	@NotBlank
-	private String description;
+    @NotNull
+    @NotBlank
+    private String description;
 
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@NotNull
-	private Date creationDate;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @NotNull
+    private Date creationDate;
 
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@NotNull
-	private Date lastUpdate;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @NotNull
+    private Date lastUpdate;
 
-	@NotNull
-	private Date meetDate;
+    @NotNull
+    private Date meetDate;
 
-	//may be null to indicate that this is not set
-	private Long maxUsers;
+    //may be null to indicate that this is not set
+    private Long maxUsers;
 
-	//may be null to inidcate that location is not set
-	private String location;
+    //may be null to inidcate that location is not set
+    private String location;
 
-	@Override
-	public String getId() { return id.toString(); }
+    @Override
+    public Long getId() {
+        return id;
+    }
 
 }
