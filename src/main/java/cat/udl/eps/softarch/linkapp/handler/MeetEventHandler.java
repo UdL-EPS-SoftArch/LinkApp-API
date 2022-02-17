@@ -1,14 +1,13 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.Meet;
-import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 @Component
 @RepositoryEventHandler
@@ -24,22 +23,18 @@ public class MeetEventHandler {
 
     @HandleBeforeCreate
     public void handleMeetPreCreate(Meet meet) {
-        meet.setCreationDate(new Date());
-        logger.info("Before creating: {}", meet.toString());
+        meet.setCreationDate(ZonedDateTime.now());
+        meet.setLastUpdate(ZonedDateTime.now());
     }
 
     @HandleBeforeSave
-    public void handleMeetPreSave(Meet meet) {
-        meet.setLastUpdate(new Date());
-        logger.info("Before updating: {}", meet.toString());
+    public void handleMeetBeforeSave(Meet meet) {
+        meet.setLastUpdate(ZonedDateTime.now());
     }
 
     @HandleAfterCreate
     public void handleMeetPostCreate(Meet meet) {
-        logger.info("After creating: {}", meet.toString());
         meetRepository.save(meet);
     }
-
-
 
 }

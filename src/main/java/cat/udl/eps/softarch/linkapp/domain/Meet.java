@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
@@ -32,14 +33,14 @@ public class Meet extends UriEntity<Long> {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @NotNull
-    private Date creationDate;
+    private ZonedDateTime creationDate;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @NotNull
-    private Date lastUpdate;
+    private ZonedDateTime lastUpdate;
 
     @NotNull
-    private Date meetDate;
+    private ZonedDateTime meetDate;
 
     //may be null to indicate that this is not set
     private Long maxUsers;
