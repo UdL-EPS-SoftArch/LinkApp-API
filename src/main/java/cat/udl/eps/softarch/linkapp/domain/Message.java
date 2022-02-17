@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,8 +29,9 @@ public class Message extends UriEntity<String>  {
     @NotBlank
     private String text;
 
-    @NotBlank
-    private String author;
+    @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    private User author;
 
     @NotBlank
     private String meet;

@@ -10,6 +10,6 @@ import java.util.List;
 
 @RepositoryRestResource
 public interface MessageRepository extends PagingAndSortingRepository<Message, Long> {
-  List<Message> findByUser(User user);
+  public List<Message> findByAuthor(@Param("author") User author);
   public Message findByIdContaining(@Param("number") Long number);
 }
