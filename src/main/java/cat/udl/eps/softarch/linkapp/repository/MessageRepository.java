@@ -9,7 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource
-public interface MessageRepository extends PagingAndSortingRepository<Message, Integer> {
+public interface MessageRepository extends PagingAndSortingRepository<Message, Long> {
   List<Message> findByUser(User user);
-  public Message findByIdContaining(@Param("number") Integer number);
+  public Message findByIdContaining(@Param("number") Long number);
 }
