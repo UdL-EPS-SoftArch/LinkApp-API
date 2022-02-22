@@ -16,7 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +37,14 @@ public class Post extends UriEntity<String>{
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
 	private User author;
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@NotNull
+	private Date uploadDate;
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@NotNull
+	private Date lastUpdate;
 
 	@ToString.Exclude
 	@ManyToMany(cascade = CascadeType.ALL)
