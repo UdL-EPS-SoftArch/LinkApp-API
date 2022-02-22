@@ -22,9 +22,10 @@ Feature: Delete User
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I can login with username "user" and password "password"
     When I delete the user with username "user"
+    Then The response code is 204
     And I'm not logged in
     And I register a new user with username "user", email "user@sample.app" and password "password"
-    Then The response code is 201
+    And The response code is 201
 
 
 
