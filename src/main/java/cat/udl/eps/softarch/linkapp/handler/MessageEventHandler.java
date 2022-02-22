@@ -1,7 +1,9 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.Message;
+import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.MessageRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
@@ -23,6 +25,8 @@ public class MessageEventHandler {
 
     @HandleBeforeCreate
     public void handleMessagePreCreate(Message message) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        message.setAuthor(user);
         message.setCreationDate(ZonedDateTime.now());
     }
 
