@@ -1,30 +1,28 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Message extends UriEntity<String>  {
+public class Message extends UriEntity<Long>  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Temporal(TemporalType.DATE)
-    Date publicationDate;
-
-    @Temporal(TemporalType.TIME)
-    Date publicationTime;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    Date creationDateTime;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @NotNull
+    private ZonedDateTime creationDate;
 
     @NotBlank
     private String text;
@@ -37,6 +35,6 @@ public class Message extends UriEntity<String>  {
     private String meet;
 
     @Override
-    public String getId() { return id.toString(); }
+    public Long getId() { return id; }
 
 }
