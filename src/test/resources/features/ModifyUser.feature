@@ -17,4 +17,9 @@ Feature: Modify User
     Then The response code is 200
     And I can login with username "user" and password "modifiedPassword"
 
+  Scenario: Modify email when not logged in
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    When I modify the email of the user "user" by "userModified@sample.app"
+    Then The response code is 401
+
     #modify account settings of non-existing user or not logged?
