@@ -9,9 +9,16 @@ Feature: Delete User
     When I delete the user with username "user"
     Then The response code is 204
     And It has been deleted a user with username "user" and email "user@sample.app"
+
+  Scenario: Delete an own account and try to sign in
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I can login with username "user" and password "password"
+    When I delete the user with username "user"
+    Then The response code is 204
+    And It has been deleted a user with username "user" and email "user@sample.app"
     And I cannot login with username "user" and password "password"
 
-  #Faltaria comprovar que l'usuari té permisos (rol adequat)
+  #Faltaria comprovar que l'usuari té permisos (rol adequat - admin)
   Scenario: Delete a unexisting user
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I login as "user" with password "password"
