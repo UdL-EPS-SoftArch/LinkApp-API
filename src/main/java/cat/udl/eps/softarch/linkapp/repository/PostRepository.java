@@ -9,7 +9,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource
-public interface PostRepository extends PagingAndSortingRepository<Post, String> {
+public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
 
   /* Interface provides automatically, as defined in https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
    * count, delete, deleteAll, deleteById, existsById, findAll, findAllById, findById, save, saveAll
@@ -18,5 +18,5 @@ public interface PostRepository extends PagingAndSortingRepository<Post, String>
    * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
    */
 
-  List<Post> findByUsernameContaining(@Param("text") String text);
+  List<Post> findByUsernameContaining(@Param("username") String username);
 }
