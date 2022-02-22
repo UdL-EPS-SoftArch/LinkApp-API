@@ -2,9 +2,8 @@ package cat.udl.eps.softarch.linkapp.domain;
 
 
 import lombok.Data;
-import lombok.NonNull;
-
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,6 +14,7 @@ import javax.validation.constraints.NotNull;
 public class Group extends UriEntity<String> {
 
     @Id
+    @GeneratedValue
     private long id;
 
     @NotBlank
