@@ -25,7 +25,7 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Post extends UriEntity<String>{
+public class Post extends UriEntity<Long>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,5 +51,5 @@ public class Post extends UriEntity<String>{
 	private Set<Post> comments = new HashSet<>();
 
 	@Override
-	public String getId() { return id.toString(); }
+	public Long getId() { return id; }
 }
