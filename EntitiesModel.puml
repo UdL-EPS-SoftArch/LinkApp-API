@@ -1,15 +1,60 @@
 @startuml
 
-class User extends UriEntity implements UserDetails {
+class User extends UriEntity {
   username : String
   password : String
   email : String
+  age: int
+
+}
+class OAuth{
+}
+class Group {
+    title : String
+    description : String
+    visibility : String
+}
+
+class Topic {
+     topic : String
+}
+
+class Role {
+     role : String
+}
+
+class Post {
+     text : String
+}
+
+class Chatroom {
+     text : String
 }
 
 class UriEntity {
   uri : String
 }
 
-User "1" --right-- "*" Resource : owner <
+class Meet {
+    title : String
+    description : String
+    date : String
+    location : String
+    maxcapacity : int
+
+}
+
+User "1" --right-- "*" Chatroom
+Meet "1" -- "*" Chatroom
+Group "*" --right-- "*" Topic
+Group "1" --left-- "*" Role
+User "1" --right-- "*" Role
+User "1" --left-- "1" OAuth
+Post "0..1" --right-- "*" Post : comment <
+User "*" -- "*" Topic : interests >
+User "1" --right-- "*" Post
+Group "1" -- "*" Post
+Group "1" -- "*" Meet
+User "*" --right-- "*" Meet : attendance >
 
 @enduml
