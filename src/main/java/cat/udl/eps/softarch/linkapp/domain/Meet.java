@@ -11,7 +11,6 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Entity
-@Table
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Meet extends UriEntity<Long> {
@@ -19,6 +18,9 @@ public class Meet extends UriEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ManyToOne(optional = false)
+    private Group group;
 
     @NotNull
     @NotBlank
