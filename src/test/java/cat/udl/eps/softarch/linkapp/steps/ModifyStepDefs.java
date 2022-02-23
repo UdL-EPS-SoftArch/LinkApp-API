@@ -8,7 +8,9 @@ import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -39,7 +41,6 @@ public class ModifyStepDefs {
     @When("^I modify the password of the user \"([^\"]*)\" by \"([^\"]*)\"$")
     public void iModifyPasswordOfUserByModifiedPasword(String username, String modifiedPassword) throws Throwable {
         String encodedPassword = User.passwordEncoder.encode(modifiedPassword);
-
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/users/{username}", username)
