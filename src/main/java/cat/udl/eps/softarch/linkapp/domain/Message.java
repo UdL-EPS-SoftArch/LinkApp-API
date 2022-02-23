@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -21,18 +22,21 @@ public class Message extends UriEntity<Long>  {
     private Long id;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull
     private ZonedDateTime creationDate;
 
     @NotBlank
     private String text;
 
-    @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
+    @ManyToOne
     private User author;
 
-    @NotBlank
-    private String meet;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @ManyToOne
+    @NotNull
+    private Meet meet;
 
     @Override
     public Long getId() { return id; }
