@@ -2,20 +2,23 @@ package cat.udl.eps.softarch.linkapp.domain;
 
 
 import lombok.Data;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import lombok.EqualsAndHashCode;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+
+
 @Entity
 @Data
-
-public class Group extends UriEntity<String> {
+@Table(name = "LinkGroup")
+@EqualsAndHashCode(callSuper = true)
+public class Group extends UriEntity<Long> {
 
     @Id
-    @GeneratedValue
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @NotBlank
     @NotNull
@@ -25,12 +28,11 @@ public class Group extends UriEntity<String> {
     @NotNull
     private String description;
 
-    @NotBlank
     @NotNull
     private boolean visibility;
 
     @Override
-    public String getId() {
-        return String.valueOf(this.id);
+    public Long getId() {
+        return id;
     }
 }
