@@ -22,6 +22,11 @@ Feature: Modify User
     When I modify the email of the user "user" by "userModified@sample.app"
     Then The response code is 401
 
+  Scenario: Modify password when not logged in
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    When I modify the password of the user "user" by "modifiedPassword"
+    Then The response code is 401
+
   Scenario: Modify email of non-existing user
     Given There is no registered user with username "nonExistingUser"
     When I modify the email of the user "nonExistingUser" by "nonExistingUserModified@sample.app"
