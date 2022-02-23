@@ -35,4 +35,9 @@ public class Group extends UriEntity<Long> {
     public Long getId() {
         return id;
     }
+    public Group(String name, String description, boolean visibility){
+        this.title = name;
+        this.description = description;
+        this.visibility = visibility;
+    }
 }
