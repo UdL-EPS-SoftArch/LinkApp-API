@@ -29,14 +29,19 @@ public class Message extends UriEntity<Long>  {
     @NotBlank
     private String text;
 
-    @JsonIdentityReference(alwaysAsId = true)
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     private User author;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
     @NotNull
     private Meet meet;
+
+    @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
+    @NotNull
+    private Group group;
 
     @Override
     public Long getId() { return id; }
