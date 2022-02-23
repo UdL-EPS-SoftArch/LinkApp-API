@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ public class Meet extends UriEntity<Long> {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
     private Group group;
 
     @NotNull
