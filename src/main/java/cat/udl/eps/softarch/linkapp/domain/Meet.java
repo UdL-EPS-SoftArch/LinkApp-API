@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,10 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 @Entity
-@Table
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Meet extends UriEntity<Long> {
@@ -19,6 +18,10 @@ public class Meet extends UriEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ManyToOne(optional = false)
+    @JsonIdentityReference(alwaysAsId = true)
+    private Group group;
 
     @NotNull
     @NotBlank
