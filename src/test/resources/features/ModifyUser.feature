@@ -19,21 +19,34 @@ Feature: Modify User
 
   Scenario: Modify email when not logged in
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I'm not logged in
     When I modify the email of the user "user" by "userModified@sample.app"
     Then The response code is 401
 
   Scenario: Modify password when not logged in
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I'm not logged in
     When I modify the password of the user "user" by "modifiedPassword"
     Then The response code is 401
 
+  #Scenario: Modify email of a user different from yours
+   # Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+   # And There is a registered user with username "user2" and password "password2" and email "user2@sample.app"
+   # And I can login with username "user" and password "password"
+   # When I modify the email of the user "user" by "userModified@sample.app"
+   # Then The response code is 401
+
   Scenario: Modify email of non-existing user
     Given There is no registered user with username "nonExistingUser"
+    And There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I can login with username "user" and password "password"
     When I modify the email of the user "nonExistingUser" by "nonExistingUserModified@sample.app"
     Then The response code is 401
 
   Scenario: Modify password of non-existing user
     Given There is no registered user with username "nonExistingUser"
+    And There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I can login with username "user" and password "password"
     When I modify the password of the user "nonExistingUser" by "nonExistingUserPassword"
     Then The response code is 401
 
