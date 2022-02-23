@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
-public interface GroupRepository extends PagingAndSortingRepository<Group, String> {
+public interface GroupRepository extends PagingAndSortingRepository<Group, Long> {
 
     /* Interface provides automatically, as defined in https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
      * count, delete, deleteAll, deleteById, existsById, findAll, findAllById, findById, save, saveAll
