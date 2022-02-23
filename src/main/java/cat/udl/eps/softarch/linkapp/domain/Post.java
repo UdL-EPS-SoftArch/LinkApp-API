@@ -30,9 +30,11 @@ public class Post extends UriEntity<Long>{
 	@JsonIdentityReference(alwaysAsId = true)
 	private User author;
 
+
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
-	private ZonedDateTime uploadDate;
+	private ZonedDateTime createDate;
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
@@ -44,4 +46,11 @@ public class Post extends UriEntity<Long>{
 
 	@Override
 	public Long getId() { return id; }
+
+	public ZonedDateTime getCreateDate(){
+		return createDate;
+	}
+	public ZonedDateTime getLastUpdate() {
+		return lastUpdate;
+	}
 }
