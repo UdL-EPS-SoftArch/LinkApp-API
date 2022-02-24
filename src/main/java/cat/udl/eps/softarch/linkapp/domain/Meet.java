@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Entity
 @Data
@@ -50,6 +51,10 @@ public class Meet extends UriEntity<Long> {
 
     //may be null to inidcate that location is not set
     private String location;
+
+    @ManyToMany
+    @JsonIdentityReference(alwaysAsId = true)
+    private Set<UserRole> attending;
 
     @Override
     public Long getId() {
