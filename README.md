@@ -9,19 +9,21 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 
 ## Vision
 
-**For** ... **who** want to ...
-**the project** ... **is an** ...
-**that** allows ...
-**Unlike** other ...
+**For** outgoing people **who** want to meet new people and want to spend time hanging out with others
+**the project** LinkApp **is an** iniciative from an University Degree
+**that** allows people to put in contact with each other and arrenge meetings
+**Unlike** other meeting applications, LinkApp is a new vision of the concept of hanging out without paying either advertising.
 
 ## Features per Stakeholder
 
-| USER                | ADMIN                |
-|---------------------|----------------------|
-| Register            |                      |
-| Login               |                      |
-| Logout              |                      |
-|                     |                      |
+| USER           | ADMIN            |
+|----------------|------------------|
+| Register       | Create a meeting |
+| Login          |                  |
+| Logout         |                  |
+| Create a group |                  |
+|                |                  |
+|                |                  |
 
 ## Entities Model
 
