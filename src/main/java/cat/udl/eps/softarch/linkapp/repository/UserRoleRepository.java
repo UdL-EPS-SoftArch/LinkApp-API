@@ -1,9 +1,6 @@
 package cat.udl.eps.softarch.linkapp.repository;
 
-import cat.udl.eps.softarch.linkapp.domain.Group;
-import cat.udl.eps.softarch.linkapp.domain.Meet;
-import cat.udl.eps.softarch.linkapp.domain.User;
-import cat.udl.eps.softarch.linkapp.domain.UserRole;
+import cat.udl.eps.softarch.linkapp.domain.*;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -16,7 +13,8 @@ public interface UserRoleRepository extends PagingAndSortingRepository<UserRole,
      * Additional methods following the syntax defined in
      * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
      */
-    UserRole findByRoleKeyUser(@Param("user") User user);
-    UserRole findByRoleKeyGroup(@Param("group") Group group);
+    List<UserRole> findByRoleKeyUser(@Param("user") User user);
+    List<UserRole> findByRoleKeyGroup(@Param("group") Group group);
     UserRole findByRoleKeyUserAndRoleKeyGroup(@Param("user") User user, @Param("group") Group group);
+    List<UserRole> findByRoleKeyGroupAndRole(@Param("group") Group group, @Param("role") UserRoleEnum role);
 }
