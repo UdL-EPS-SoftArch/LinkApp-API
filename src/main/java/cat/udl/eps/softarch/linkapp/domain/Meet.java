@@ -48,7 +48,7 @@ public class Meet extends UriEntity<Long> {
     //may be null to indicate that this is not set
     private Long maxUsers;
 
-    //may be null to inidcate that location is not set
+    //may be null to indicate that location is not set
     private String location;
 
     @Override
