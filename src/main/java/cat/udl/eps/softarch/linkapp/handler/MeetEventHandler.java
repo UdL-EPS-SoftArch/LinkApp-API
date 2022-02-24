@@ -10,6 +10,7 @@ import org.springframework.data.rest.core.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ValidationException;
 import java.time.ZonedDateTime;
 
 @Component
@@ -28,6 +29,7 @@ public class MeetEventHandler {
     public void handleMeetPreCreate(Meet meet) {
         meet.setCreationDate(ZonedDateTime.now());
         meet.setLastUpdate(ZonedDateTime.now());
+        meet.setStatus(true);
     }
 
     @HandleBeforeLinkSave

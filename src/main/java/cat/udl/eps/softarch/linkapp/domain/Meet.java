@@ -28,7 +28,7 @@ public class Meet extends UriEntity<Long> {
     private String title;
 
     @NotNull
-    private Boolean status;
+    private Boolean status = true;
 
     @NotNull
     @NotBlank

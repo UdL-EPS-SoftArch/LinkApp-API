@@ -1,16 +1,17 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
+
 
 
 @Entity
 @Table(name="GroupRole", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "group_id" }) })
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class GroupRole extends UriEntity<GroupRoleKey>{
 
     @EmbeddedId
