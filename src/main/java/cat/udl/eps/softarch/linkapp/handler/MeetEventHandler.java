@@ -1,10 +1,13 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.Meet;
+import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.repository.GroupRoleRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -25,6 +28,11 @@ public class MeetEventHandler {
     public void handleMeetPreCreate(Meet meet) {
         meet.setCreationDate(ZonedDateTime.now());
         meet.setLastUpdate(ZonedDateTime.now());
+    }
+
+    @HandleBeforeLinkSave
+    public void handleMeetPreLinkSave(Meet meet, Object o) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @HandleBeforeSave

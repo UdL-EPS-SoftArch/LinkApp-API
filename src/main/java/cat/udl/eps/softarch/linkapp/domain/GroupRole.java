@@ -1,28 +1,26 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
 @Entity
+@Table(name="GroupRole", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "group_id" }) })
 @Data
-public class GroupRole extends UriEntity<String>{
+public class GroupRole extends UriEntity<GroupRoleKey>{
 
-    @Id
-    private long id;
-    //private Group group;
-    //private User user;
+    @EmbeddedId
+    private GroupRoleKey roleKey;
 
-    @NotNull
-    @NotBlank
-    private Boolean admin;
+    @Enumerated(EnumType.STRING)
+    private GroupRolesEnum role;
 
     @Override
-    public String getId() {
-        return String.valueOf(this.id);
+    public GroupRoleKey getId() {
+        return this.roleKey;
     }
 }
