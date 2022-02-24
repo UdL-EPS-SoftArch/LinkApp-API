@@ -30,15 +30,12 @@ public class Group extends UriEntity<Long> {
     private String description;
 
     @NotNull
-    private boolean visibility;
+    @Enumerated(EnumType.STRING)
+    private GroupVisibilityEnum visibility;
 
-    @OneToMany (mappedBy = "role")
-    @JsonIdentityReference(alwaysAsId = true)
-    private GroupRole role;
 
-    @OneToMany
-    private Meet meet;
-
+    @Enumerated(EnumType.STRING)
+    private GroupRolesEnum role;
 
     @Override
     public Long getId() {
