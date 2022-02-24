@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,6 +31,14 @@ public class Group extends UriEntity<Long> {
 
     @NotNull
     private boolean visibility;
+
+    @OneToMany (mappedBy = "role")
+    @JsonIdentityReference(alwaysAsId = true)
+    private GroupRole role;
+
+    @OneToMany
+    private Meet meet;
+
 
     @Override
     public Long getId() {
