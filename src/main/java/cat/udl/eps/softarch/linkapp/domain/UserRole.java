@@ -9,19 +9,19 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name="GroupRole", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "group_id" }) })
+@Table(name="UserRole", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "group_id" }) })
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GroupRole extends UriEntity<GroupRoleKey>{
+public class UserRole extends UriEntity<UserRoleKey>{
 
     @EmbeddedId
-    private GroupRoleKey roleKey;
+    private UserRoleKey roleKey;
 
     @Enumerated(EnumType.STRING)
-    private GroupRolesEnum role;
+    private UserRoleEnum role;
 
     @Override
-    public GroupRoleKey getId() {
+    public UserRoleKey getId() {
         return this.roleKey;
     }
 }

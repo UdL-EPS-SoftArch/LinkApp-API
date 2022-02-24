@@ -1,9 +1,9 @@
 package cat.udl.eps.softarch.linkapp.repository;
 
-import cat.udl.eps.softarch.linkapp.domain.GroupRole;
+import cat.udl.eps.softarch.linkapp.domain.UserRole;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface GroupRoleRepository extends PagingAndSortingRepository<GroupRole, Long>{
+public interface UserRoleRepository extends PagingAndSortingRepository<UserRole, Long>{
     /* Interface provides automatically, as defined in https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
      * count, delete, deleteAll, deleteById, existsById, findAll, findAllById, findById, save, saveAll
      *
