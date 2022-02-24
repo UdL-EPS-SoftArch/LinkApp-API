@@ -33,7 +33,7 @@ public class UserEventHandler {
     public void handleUserPreCreate(User player) { logger.info("Before creating: {}", player.toString()); }
 
     @HandleBeforeSave
-    public void handleUserPreSave(User player) {
+    public void handleUserPreSave(User player) throws ForbiddenException{
         logger.info("Before updating: {}", player.toString());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean sameId = user.getId().equals(player.getId());
