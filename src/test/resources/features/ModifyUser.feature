@@ -36,6 +36,13 @@ Feature: Modify User
     When I modify the email of the user "user2" by "user2Modified@sample.app"
     Then The response code is 403
 
+  Scenario: Modify password of a user different from yours
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And There is a registered user with username "user2" and password "password2" and email "user2@sample.app"
+    And I can login with username "user" and password "password"
+    When I modify the password of the user "user2" by "user2ModifiedPassword"
+    Then The response code is 403
+
   #Scenario: Modify email of non-existing user
    # Given There is no registered user with username "nonExistingUser"
    # And There is a registered user with username "user" and password "password" and email "user@sample.app"
