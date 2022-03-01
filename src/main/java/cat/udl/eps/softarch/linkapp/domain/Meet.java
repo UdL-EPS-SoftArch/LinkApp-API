@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -54,7 +55,7 @@ public class Meet extends UriEntity<Long> {
 
     @ManyToMany
     @JsonIdentityReference(alwaysAsId = true)
-    private Set<UserRole> attending;
+    private Set<UserRole> attending = new HashSet<>();
 
     @Override
     public Long getId() {
