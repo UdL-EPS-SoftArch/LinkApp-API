@@ -62,6 +62,11 @@ public class MeetEventHandler
         UserRole userRole = userRoleRepository
                 .findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
         meet.getAttending().add(userRole);
+        if (userRole == null || userRole.getRole() == UserRoleEnum.SUBSCRIBED)
+        {
+            throw new AccessDeniedException("Not enough permissions");
+        }
+
     }
 
     @HandleBeforeLinkSave

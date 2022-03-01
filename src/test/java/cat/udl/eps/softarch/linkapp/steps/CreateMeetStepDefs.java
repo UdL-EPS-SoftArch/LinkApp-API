@@ -14,6 +14,7 @@ import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.ZonedDateTime;
@@ -97,9 +98,12 @@ public class CreateMeetStepDefs
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
-        String content = stepDefs.result.andReturn().getResponse().getContentAsString();
-        String uri = JsonPath.read(content, "uri");
-        featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+        MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
+        if (response.getStatus() == 201){
+            String content = stepDefs.result.andReturn().getResponse().getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+        }
     }
 
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}, meetDate {string}")
@@ -119,13 +123,12 @@ public class CreateMeetStepDefs
                 .andExpect(jsonPath("$.status", is(status)));
     }
 
-
-    @And("I delete the meet with id {long}")
-    public void iDeleteTheMeetWithId(Long meetId) throws Throwable
+    @And("I delete the meet")
+    public void iDeleteTheMeet() throws Throwable
     {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        delete("/meets/" + meetId)
+                        delete("/meets/" + featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
