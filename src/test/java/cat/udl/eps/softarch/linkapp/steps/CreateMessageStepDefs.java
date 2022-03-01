@@ -1,9 +1,7 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
-import cat.udl.eps.softarch.linkapp.domain.Group;
-import cat.udl.eps.softarch.linkapp.domain.Meet;
-import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
-import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
+import cat.udl.eps.softarch.linkapp.domain.*;
+import cat.udl.eps.softarch.linkapp.repository.*;
 import io.cucumber.java.en.And;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,6 +16,12 @@ public class CreateMessageStepDefs {
 
     @Autowired
     private MeetRepository meetRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     private Group group;
 
@@ -44,4 +48,33 @@ public class CreateMessageStepDefs {
         meetRepository.save(meet);
     }
 
+    @And("The user with id {string} belongs to the group with id {long} as {string}")
+    public void theUserBelongsToTheGroup(String username, Long groupId, String role) {
+        if (groupRepository.existsById(groupId)) groupRepository.deleteById(groupId);
+        Group group = new Group();
+        group.setId(groupId);
+        group.setTitle("title");
+        group.setDescription("description");
+        group.setVisibility(true);
+        groupRepository.save(group);
+
+        if (userRepository.existsById(username)) userRepository.deleteById(username);
+        User user = new User();
+        user.setUsername("username");
+        user.setEmail("user@sample.app");
+        user.setPassword("password");
+        user.encodePassword();
+        user.setPasswordReset(true);
+        userRepository.save(user);
+
+        if (userRoleRepository.existsById(groupId)) userRoleRepository.deleteById(groupId);
+        UserRoleKey userRoleKey = new UserRoleKey();
+        userRoleKey.setUser(user);
+        userRoleKey.setGroup(group);
+
+        UserRole userRole = new UserRole();
+        userRole.setRoleKey(userRoleKey);
+        userRole.setRole(UserRoleEnum.valueOf(role));
+        userRoleRepository.save(userRole);
+    }
 }
