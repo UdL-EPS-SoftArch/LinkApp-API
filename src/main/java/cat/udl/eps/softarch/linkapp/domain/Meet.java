@@ -48,10 +48,10 @@ public class Meet extends UriEntity<Long> {
     private ZonedDateTime meetDate;
 
     //may be null to indicate that this is not set
-    private Long maxUsers;
+    private Long maxUsers = null;
 
-    //may be null to inidcate that location is not set
-    private String location;
+    //may be null to indicate that location is not set
+    private String location = null;
 
     @ManyToMany
     @JsonIdentityReference(alwaysAsId = true)
