@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.repository;
 
 import cat.udl.eps.softarch.linkapp.domain.Post;
+import cat.udl.eps.softarch.linkapp.domain.User;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -17,5 +18,5 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
    * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
    */
 
-  List<Post> findByUsernameContaining(@Param("username") String username);
+  List<Post> findByAuthorContaining(@Param("author") User author);
 }

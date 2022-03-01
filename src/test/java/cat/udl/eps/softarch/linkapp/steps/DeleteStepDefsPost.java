@@ -18,6 +18,8 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+import cat.udl.eps.softarch.linkapp.repository.PostRepository;
+
 public class DeleteStepDefsPost {
 
     @Autowired
@@ -26,11 +28,19 @@ public class DeleteStepDefsPost {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
     @And("There is a post created by a user with username \"([^\"]*)\"$")
     public void thereIsAPostCreatedByAUserWithUsername(String user) {
         Post post = new Post();
-        post.setAuthor(new User("Xavier"));
-        group.setVisibility(true);
+        User author = new User();
+        author.setUsername(user);
+        author.setEmail("email@gmail.com");
+        author.setPassword("Patata1234");
+        author.setAge(19);
+        author.setName("Xavier");
+        post.setAuthor(author);
         postRepository.save(post);
     }
 
