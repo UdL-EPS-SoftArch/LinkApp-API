@@ -102,9 +102,8 @@ public class CreateMeetStepDefs
         featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
     }
 
-    @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}, meetDate {string}")
-    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus, String meetDate) throws Throwable
-    {
+    @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}")
+    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
         Boolean status = meetStatus.equals("true");
         System.out.println(featureMeet);
         stepDefs.result = stepDefs.mockMvc.perform(
@@ -116,7 +115,8 @@ public class CreateMeetStepDefs
                 .andExpect(jsonPath("$.description", is(description)))
                 .andExpect(jsonPath("$.maxUsers", is(maxUsers.intValue())))
                 .andExpect(jsonPath("$.location", is(location)))
-                .andExpect(jsonPath("$.status", is(status)));
+                .andExpect(jsonPath("$.status", is(status)))
+                .andExpect(jsonPath("$.meetDate", is(featureMeet.getMeetDate().toOffsetDateTime().toString())));
     }
 
 
