@@ -1,7 +1,10 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
-import cat.udl.eps.softarch.linkapp.repository.*;
+import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import io.cucumber.java.en.And;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,13 +18,13 @@ public class CreateMessageStepDefs {
     private GroupRepository groupRepository;
 
     @Autowired
-    private MeetRepository meetRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private MeetRepository meetRepository;
 
     private Group group;
 
@@ -48,33 +51,15 @@ public class CreateMessageStepDefs {
         meetRepository.save(meet);
     }
 
-    @And("The user with id {string} belongs to the group with id {long} as {string}")
-    public void theUserBelongsToTheGroup(String username, Long groupId, String role) {
-        if (groupRepository.existsById(groupId)) groupRepository.deleteById(groupId);
-        Group group = new Group();
-        group.setId(groupId);
-        group.setTitle("title");
-        group.setDescription("description");
-        group.setVisibility(true);
-        groupRepository.save(group);
+    @And("The user \"([^\"]*)\" is assisting to the meet with id {long}")
+    public void userIsAssistingToMeet(String username, Long meetId) {
+        User user = userRepository.findById(username).get();
+        Meet meet = meetRepository.findById(meetId).get();
 
-        if (userRepository.existsById(username)) userRepository.deleteById(username);
-        User user = new User();
-        user.setUsername("username");
-        user.setEmail("user@sample.app");
-        user.setPassword("password");
-        user.encodePassword();
-        user.setPasswordReset(true);
-        userRepository.save(user);
+        UserRole userRole = userRoleRepository.
+                findByRoleKeyUserAndRoleKeyGroup(user, group);
 
-        if (userRoleRepository.existsById(groupId)) userRoleRepository.deleteById(groupId);
-        UserRoleKey userRoleKey = new UserRoleKey();
-        userRoleKey.setUser(user);
-        userRoleKey.setGroup(group);
-
-        UserRole userRole = new UserRole();
-        userRole.setRoleKey(userRoleKey);
-        userRole.setRole(UserRoleEnum.valueOf(role));
-        userRoleRepository.save(userRole);
+        meet.getAttending().add(userRole);
     }
 }
+

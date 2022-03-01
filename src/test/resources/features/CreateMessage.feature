@@ -10,7 +10,7 @@ Feature: Create Message
   Scenario: Send a Message in a meet I am assisting
   # TO-DO differences in user permissions when highlighting messages
     Given I am authenticated as "user"
-    And The user with id "user" belongs to the group with id 1 as "AUTHORIZED"
+    And The user "user" belongs to the group 1 as "AUTHORIZED"
     # Meet class have similar tests --> TO-DO differences in user permissions when belonging to a group
     And The user "user" is assisting to the meet with id 1
     When I send a message in the meet with id 1 with message "message"
