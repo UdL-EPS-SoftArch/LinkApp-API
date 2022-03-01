@@ -8,7 +8,7 @@ Feature: Create Meet
     And The user "demo" belongs to that group as "ADMIN"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
-    And It has been created a meet with title "title", description "description", maxUsers 10, location "location", status "true", meetDate "{string}"
+    And It has been created a meet with title "title", description "description", maxUsers 10, location "location", status "true"
 
 
   Scenario: Register a meet with empty title
@@ -49,3 +49,4 @@ Feature: Create Meet
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     And I delete the meet
     Then The response code is 204
+
