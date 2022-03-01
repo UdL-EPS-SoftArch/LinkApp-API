@@ -32,7 +32,7 @@ public class ModifyStepDefs {
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/users/{username}", username)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content((new JSONObject().put("email", modifiedEmail)).toString())
+                                .content(new JSONObject().put("email", modifiedEmail).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
@@ -45,7 +45,7 @@ public class ModifyStepDefs {
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/users/{username}", username)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content((new JSONObject().put("password", encodedPassword)).toString())
+                                .content(new JSONObject().put("password", encodedPassword).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());

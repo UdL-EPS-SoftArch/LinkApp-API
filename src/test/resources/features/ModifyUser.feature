@@ -63,3 +63,10 @@ Feature: Modify User
     When I modify the email of the user "user" by ""
     Then The response code is 400
     And The error message is "must not be blank"
+
+  #Scenario: Modify password with empty password
+  #  Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+  #  And I login as "user" with password "password"
+  #  When I modify the password of the user "user" by ""
+  #  Then The response code is 400
+  #  And The error message is "must not be blank"
