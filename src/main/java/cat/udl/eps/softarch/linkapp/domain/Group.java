@@ -37,11 +37,21 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private GroupRolesEnum role;
 
+    public Group() {}
+
     @Override
     public Long getId() {
         return id;
     }
-    public Group(String name, String description, boolean visibility){
+
+    public Group(long id, String name, String description, GroupVisibilityEnum visibility){
+        this.id = id;
+        this.title = name;
+        this.description = description;
+        this.visibility = visibility;
+    }
+
+    public Group(String name, String description, GroupVisibilityEnum visibility){
         this.title = name;
         this.description = description;
         this.visibility = visibility;
