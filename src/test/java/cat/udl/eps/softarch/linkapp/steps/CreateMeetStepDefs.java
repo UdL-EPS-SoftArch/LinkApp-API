@@ -2,6 +2,7 @@ package cat.udl.eps.softarch.linkapp.steps;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import com.jayway.jsonpath.JsonPath;
@@ -25,11 +26,13 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CreateMeetStepDefs {
+public class CreateMeetStepDefs
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -39,6 +42,9 @@ public class CreateMeetStepDefs {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private MeetRepository meetRepository;
 
     @Autowired
     private UserRoleRepository userRoleRepository;
@@ -58,7 +64,8 @@ public class CreateMeetStepDefs {
     }
 
     @And("The user {string} belongs to that group as {string}")
-    public void userBelongsToGroup(String username, String role) {
+    public void userBelongsToGroup(String username, String role)
+    {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -72,18 +79,19 @@ public class CreateMeetStepDefs {
     }
 
     @When("I create a meet in that group with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
-        Meet meet = new Meet();
-        meet.setTitle(title);
-        meet.setDescription(description);
-        meet.setMaxUsers(maxUsers);
-        meet.setLocation(location);
-        meet.setMeetDate(ZonedDateTime.now());
+    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
+        Meet tmpMeet = new Meet();
+        tmpMeet.setTitle(title);
+        tmpMeet.setDescription(description);
+        tmpMeet.setMaxUsers(maxUsers);
+        tmpMeet.setLocation(location);
+        tmpMeet.setMeetDate(ZonedDateTime.now());
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         post("/meets/")
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject(stepDefs.mapper.writeValueAsString(meet))
+                                .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
                                         .put("group", "/groups/" + featureGroup.getId())
                                         .toString()
                                 )
@@ -91,12 +99,12 @@ public class CreateMeetStepDefs {
                 ).andDo(print());
         String content = stepDefs.result.andReturn().getResponse().getContentAsString();
         String uri = JsonPath.read(content, "uri");
-        meet.setId(Long.parseLong(uri.substring(uri.length() - 1)));
-        featureMeet = meet;
+        featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
     }
 
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}, meetDate {string}")
-    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus, String meetDate) throws Throwable {
+    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus, String meetDate) throws Throwable
+    {
         Boolean status = meetStatus.equals("true");
         System.out.println(featureMeet);
         stepDefs.result = stepDefs.mockMvc.perform(
@@ -111,4 +119,15 @@ public class CreateMeetStepDefs {
                 .andExpect(jsonPath("$.status", is(status)));
     }
 
+
+    @And("I delete the meet with id {long}")
+    public void iDeleteTheMeetWithId(Long meetId) throws Throwable
+    {
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        delete("/meets/" + meetId)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+    }
 }
