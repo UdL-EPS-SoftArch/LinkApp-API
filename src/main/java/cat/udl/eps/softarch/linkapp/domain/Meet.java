@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,7 +29,7 @@ public class Meet extends UriEntity<Long> {
     private String title;
 
     @NotNull
-    private Boolean status;
+    private Boolean status = true;
 
     @NotNull
     @NotBlank
@@ -50,6 +51,10 @@ public class Meet extends UriEntity<Long> {
 
     //may be null to indicate that location is not set
     private String location;
+
+    @ManyToMany
+    @JsonIdentityReference(alwaysAsId = true)
+    private Set<UserRole> attending;
 
     @Override
     public Long getId() {

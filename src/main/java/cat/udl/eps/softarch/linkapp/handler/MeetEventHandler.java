@@ -1,10 +1,15 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
+import cat.udl.eps.softarch.linkapp.domain.Group;
 import cat.udl.eps.softarch.linkapp.domain.Meet;
+import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.domain.UserRole;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -16,15 +21,33 @@ public class MeetEventHandler {
     final Logger logger = LoggerFactory.getLogger(Meet.class);
 
     final MeetRepository meetRepository;
+    final UserRoleRepository userRoleRepository;
 
-    public MeetEventHandler(MeetRepository meetRepository) {
+    public MeetEventHandler(MeetRepository meetRepository, UserRoleRepository userRoleRepository) {
         this.meetRepository = meetRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @HandleBeforeCreate
     public void handleMeetPreCreate(Meet meet) {
         meet.setCreationDate(ZonedDateTime.now());
         meet.setLastUpdate(ZonedDateTime.now());
+        meet.setStatus(true);
+        User currentUser = (User) SecurityContextHolder.
+                getContext().
+                getAuthentication().
+                getPrincipal();
+        Group group = meet.getGroup();
+
+        UserRole userRole = userRoleRepository.
+                findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
+
+        meet.getAttending().add(userRole);
+    }
+
+    @HandleBeforeLinkSave
+    public void handleMeetPreLinkSave(Meet meet, Object o) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @HandleBeforeSave
