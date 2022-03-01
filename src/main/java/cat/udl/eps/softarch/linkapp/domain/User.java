@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
@@ -47,6 +48,10 @@ public class User extends UriEntity<String> implements UserDetails {
 	@NotBlank
 	@Size(min = 2, max = 30)
 	private String name;
+
+	@NotBlank
+	@Min(18)
+	private Integer age;
 
 	public void encodePassword() {
 		this.password = passwordEncoder.encode(this.password);
