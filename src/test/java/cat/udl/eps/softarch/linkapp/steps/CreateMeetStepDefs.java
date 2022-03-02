@@ -13,6 +13,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.is;
@@ -99,7 +101,6 @@ public class CreateMeetStepDefs
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}")
     public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
         Boolean status = meetStatus.equals("true");
-        System.out.println(featureMeet);
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/meets/{id}", featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
