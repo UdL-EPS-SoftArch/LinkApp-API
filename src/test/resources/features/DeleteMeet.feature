@@ -23,6 +23,6 @@ Feature: Delete Meet
     And A group exists
     And The user "demo" belongs to that group as "ADMIN"
     And I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
-    And Update the user "demo" role to "SUBSCRIBED"
+    And I update the user "demo" role of the group to "SUBSCRIBED"
     When I delete the meet
     Then The response code is 403

@@ -119,7 +119,7 @@ public class MeetStepDefs {
                 ).andDo(print());
     }
 
-    @And("Update the user {string} role to {string}")
+    @And("I update the user {string} role of the group to {string}")
     public void updateTheUserRoleTo(String username, String role) {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
