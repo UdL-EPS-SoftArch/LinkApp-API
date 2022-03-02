@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.transaction.Transactional;
-import javax.xml.datatype.Duration;
-import java.time.Period;
 import java.time.ZonedDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,11 +23,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class CreateMeetStepDefs
-{
+public class MeetStepDefs {
+
+    private static Group featureGroup;
+
+    private static Meet featureMeet;
 
     @Autowired
     private StepDefs stepDefs;
@@ -46,10 +47,6 @@ public class CreateMeetStepDefs
 
     @Autowired
     private UserRoleRepository userRoleRepository;
-
-    private static Group featureGroup;
-    private static Meet featureMeet;
-
 
     @And("A group exists")
     public Group theGroupExists() {
@@ -97,7 +94,8 @@ public class CreateMeetStepDefs
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201){
+        if (response.getStatus() == 201)
+        {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
@@ -105,7 +103,8 @@ public class CreateMeetStepDefs
     }
 
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}")
-    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
+    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable
+    {
         Boolean status = meetStatus.equals("true");
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/meets/{id}", featureMeet.getId())
@@ -119,15 +118,22 @@ public class CreateMeetStepDefs
                 .andExpect(jsonPath("$.status", is(status)));
     }
 
-    @And("I delete the meet")
-    public void iDeleteTheMeet() throws Throwable
-    {
+    @When("I delete the meet")
+    public void iDeleteTheMeet() throws Throwable {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         delete("/meets/" + featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
+    }
+
+    @And("I update the user {string} role of the group to {string}")
+    public void updateTheUserRoleTo(String username, String role) {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+        userRole.setRole(UserRoleEnum.valueOf(role));
+        userRoleRepository.save(userRole);
     }
 
     @And("The creation time of the meet is recent")
@@ -166,4 +172,5 @@ public class CreateMeetStepDefs
             featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
         }
     }
+
 }
