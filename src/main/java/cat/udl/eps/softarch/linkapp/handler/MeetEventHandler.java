@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 
@@ -47,6 +48,7 @@ public class MeetEventHandler
     }
 
     @HandleBeforeCreate
+    @Transactional
     public void handleMeetPreCreate(Meet meet)
     {
         meet.setCreationDate(ZonedDateTime.now());
@@ -72,6 +74,7 @@ public class MeetEventHandler
     @HandleBeforeLinkSave
     public void handleMeetPreLinkSave(Meet meet, Object o)
     {
+
     }
 
     @HandleBeforeSave
@@ -79,6 +82,14 @@ public class MeetEventHandler
     {
         meet.setLastUpdate(ZonedDateTime.now());
     }
+
+
+    @HandleAfterSave
+    public void handleMeetPostSave(Meet meet)
+    {
+        meetRepository.save(meet);
+    }
+
 
     @HandleAfterCreate
     public void handleMeetPostCreate(Meet meet)

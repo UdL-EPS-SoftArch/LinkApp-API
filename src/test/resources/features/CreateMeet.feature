@@ -9,6 +9,7 @@ Feature: Create Meet
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
     And It has been created a meet with title "title", description "description", maxUsers 10, location "location", status "true"
+    And  The creation time of the meet is recent
 
 
   Scenario: Register a meet with empty title
@@ -16,6 +17,15 @@ Feature: Create Meet
     And A group exists
     And The user "demo" belongs to that group as "ADMIN"
     When I create a meet in that group with title "", description "description", maxUsers 10, location "location"
+    Then The response code is 400
+    And The error message is "must not be blank"
+
+
+  Scenario: Register a meet with empty description
+    Given I login as "demo" with password "password"
+    And A group exists
+    And The user "demo" belongs to that group as "ADMIN"
+    When I create a meet in that group with title "title", description "", maxUsers 10, location "location"
     Then The response code is 400
     And The error message is "must not be blank"
 

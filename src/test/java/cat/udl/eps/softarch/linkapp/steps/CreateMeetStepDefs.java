@@ -13,8 +13,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.transaction.Transactional;
+import javax.xml.datatype.Duration;
+import java.time.Period;
 import java.time.ZonedDateTime;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,13 +50,14 @@ public class CreateMeetStepDefs
 
 
     @And("A group exists")
-    public void theGroupWithIdExists() {
+    public Group theGroupExists() {
         Group group = new Group();
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(true);
         featureGroup = group;
         groupRepository.save(group);
+        return group;
     }
 
     @And("The user {string} belongs to that group as {string}")
@@ -99,7 +105,6 @@ public class CreateMeetStepDefs
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}")
     public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
         Boolean status = meetStatus.equals("true");
-        System.out.println(featureMeet);
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/meets/{id}", featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
@@ -121,5 +126,15 @@ public class CreateMeetStepDefs
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
+    }
+
+    @And("The creation time of the meet is recent")
+    public void theCreationTimeOfTheMeetIsRecent() {
+        ZonedDateTime date = featureMeet.getCreationDate();
+
+        assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
+        ZonedDateTime pre = ZonedDateTime.now().minusMinutes(5);
+
+        assertThat("Date was created in the last 5 min", date.isBefore(ZonedDateTime.now()));
     }
 }
