@@ -21,4 +21,11 @@ public class UserRoleKey implements Serializable
     @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public boolean equals(Object obj){
+        UserRoleKey key = (UserRoleKey) obj;
+        return this.group.getId() == key.group.getId()
+                && this.user.getId().equals(key.user.getId());
+    }
 }

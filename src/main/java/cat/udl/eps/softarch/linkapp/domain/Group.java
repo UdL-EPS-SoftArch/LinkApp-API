@@ -35,7 +35,7 @@ public class Group extends UriEntity<Long> {
 
 
     @Enumerated(EnumType.STRING)
-    private GroupRolesEnum role;
+    private UserRoleEnum role;
 
     public Group() {}
 
@@ -55,5 +55,10 @@ public class Group extends UriEntity<Long> {
         this.title = name;
         this.description = description;
         this.visibility = visibility;
+    }
+
+    public void setDescription(UserRole role, String description) {
+
+        this.description = description;
     }
 }
