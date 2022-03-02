@@ -6,23 +6,20 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 
 
-
-
 @Entity
-@Table(name="UserRole",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            columnNames = {
-                    "user_id",
-                    "group_id"
-            }
-        )
-    }
+@Table(name = "UserRole",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "user_id",
+                                "group_id"
+                        }
+                )
+        }
 )
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UserRole extends UriEntity<UserRoleKey>
-{
+public class UserRole extends UriEntity<UserRoleKey> {
 
     @EmbeddedId
     private UserRoleKey roleKey;

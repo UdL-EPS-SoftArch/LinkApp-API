@@ -44,19 +44,13 @@ Feature: Create Meet
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
 
-  Scenario: Delete a new Meet in a group I belong to and am a AUTHORIZED
+
+  Scenario: Create a new Meet and edit it
     Given I login as "demo" with password "password"
     And A group exists
     And The user "demo" belongs to that group as "AUTHORIZED"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
-    And I delete the meet
-    Then The response code is 204
-
-  Scenario: Delete a new Meet in a group I belong to and am an ADMIN
-    Given I login as "demo" with password "password"
-    And A group exists
-    And The user "demo" belongs to that group as "ADMIN"
-    When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
-    And I delete the meet
-    Then The response code is 204
-
+    Then The response code is 201
+    When I edit the meet with title "title2", description "description2", maxUsers 5, location "location2"
+    Then The response code is 200
+    And It has been created a meet with title "title2", description "description2", maxUsers 5, location "location2", status "true"
