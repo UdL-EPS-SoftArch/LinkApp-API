@@ -14,18 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class CreateMeetStepDefs
-{
+public class MeetStepDefs {
+
+    private static Group featureGroup;
+
+    private static Meet featureMeet;
 
     @Autowired
     private StepDefs stepDefs;
@@ -42,10 +42,6 @@ public class CreateMeetStepDefs
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    private static Group featureGroup;
-    private static Meet featureMeet;
-
-
     @And("A group exists")
     public void theGroupWithIdExists() {
         Group group = new Group();
@@ -57,8 +53,7 @@ public class CreateMeetStepDefs
     }
 
     @And("The user {string} belongs to that group as {string}")
-    public void userBelongsToGroup(String username, String role)
-    {
+    public void userBelongsToGroup(String username, String role) {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -72,8 +67,7 @@ public class CreateMeetStepDefs
     }
 
     @When("I create a meet in that group with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
-    {
+    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
         Meet tmpMeet = new Meet();
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
@@ -91,7 +85,7 @@ public class CreateMeetStepDefs
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201){
+        if (response.getStatus() == 201) {
             String content = stepDefs.result.andReturn().getResponse().getContentAsString();
             String uri = JsonPath.read(content, "uri");
             featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
@@ -113,14 +107,21 @@ public class CreateMeetStepDefs
                 .andExpect(jsonPath("$.status", is(status)));
     }
 
-    @And("I delete the meet")
-    public void iDeleteTheMeet() throws Throwable
-    {
+    @When("I delete the meet")
+    public void iDeleteTheMeet() throws Throwable {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         delete("/meets/" + featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
+    }
+
+    @And("Update the user {string} role to {string}")
+    public void updateTheUserRoleTo(String username, String role) {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+        userRole.setRole(UserRoleEnum.valueOf(role));
+        userRoleRepository.save(userRole);
     }
 }

@@ -4,15 +4,7 @@ import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.rest.core.annotation.HandleAfterCreate;
-import org.springframework.data.rest.core.annotation.HandleAfterDelete;
-import org.springframework.data.rest.core.annotation.HandleAfterLinkSave;
-import org.springframework.data.rest.core.annotation.HandleAfterSave;
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
-import org.springframework.data.rest.core.annotation.HandleBeforeLinkSave;
-import org.springframework.data.rest.core.annotation.HandleBeforeSave;
-import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,7 +20,9 @@ public class UserEventHandler {
     }
 
     @HandleBeforeCreate
-    public void handleUserPreCreate(User player) { logger.info("Before creating: {}", player.toString()); }
+    public void handleUserPreCreate(User player) {
+        logger.info("Before creating: {}", player.toString());
+    }
 
     @HandleBeforeSave
     public void handleUserPreSave(User player) {
