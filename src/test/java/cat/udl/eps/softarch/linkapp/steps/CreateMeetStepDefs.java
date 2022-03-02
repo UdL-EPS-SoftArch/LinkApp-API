@@ -5,6 +5,7 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -23,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -96,7 +98,7 @@ public class CreateMeetStepDefs
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
         if (response.getStatus() == 201){
-            String content = stepDefs.result.andReturn().getResponse().getContentAsString();
+            String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
         }
@@ -136,5 +138,32 @@ public class CreateMeetStepDefs
         ZonedDateTime pre = ZonedDateTime.now().minusMinutes(5);
 
         assertThat("Date was created in the last 5 min", date.isBefore(ZonedDateTime.now()));
+    }
+
+    @When("I edit the meet with title {string}, description {string}, maxUsers {long}, location {string}")
+    public void iEditTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
+        Meet tmpMeet = new Meet();
+        tmpMeet.setTitle(title);
+        tmpMeet.setDescription(description);
+        tmpMeet.setMaxUsers(maxUsers);
+        tmpMeet.setLocation(location);
+        tmpMeet.setMeetDate(ZonedDateTime.now());
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        put("/meets/" + featureMeet.getId())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
+                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .toString()
+                                )
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+        MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
+        if (response.getStatus() == 200)
+        {
+            String content = response.getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+        }
     }
 }
