@@ -31,26 +31,24 @@ public class DeleteStepDefsPost {
     @Autowired
     private PostRepository postRepository;
 
-    @And("There is a post created by a user with username \"([^\"]*)\"$")
-    public void thereIsAPostCreatedByAUserWithUsername(String user) {
+    @And("There is a post with id {string} created by a user with username {string}")
+    public Post thereIsAPostWithIdCreatedByAUserWithUsername(String id, String user) {
         Post post = new Post();
-        User author = new User();
-        author.setUsername(user);
-        author.setEmail("email@gmail.com");
-        author.setPassword("Patata1234");
-        author.setAge(19);
-        author.setName("Xavier");
+        post.setId(Long.valueOf(id));
+        post.setText("hola");
+        User author = userRepository.findById(user).get();
         post.setAuthor(author);
         postRepository.save(post);
+        return post;
     }
 
-    @When("I delete a post with id \"([^\"]*)\"$")
+    @When("I delete a post with id {string}")
     public void iDeleteAPostWithId(String id) throws Throwable{
         stepDefs.result = stepDefs.mockMvc.perform(
                 delete("/posts/{id}", id).with(AuthenticationStepDefs.authenticate()));
     }
 
-    @And("^It has been deleted a post with id \"([^\"]*)\"$")
+    @And("It has been deleted a post with id {string}")
     public void itHasBeenDeletedAPostWithId(String id) throws Throwable{
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/posts/{id}", id)

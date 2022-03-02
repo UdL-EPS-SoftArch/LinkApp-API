@@ -33,11 +33,9 @@ public class Post extends UriEntity<Long>{
 
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@NotNull
 	private ZonedDateTime creationDate;
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@NotNull
 	private ZonedDateTime lastUpdate;
 
 	@ToString.Exclude

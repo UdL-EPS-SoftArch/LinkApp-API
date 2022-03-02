@@ -45,13 +45,12 @@ public class User extends UriEntity<String> implements UserDetails {
 	@Transient
 	private boolean passwordReset;
 	
-	@NotBlank
-	@Size(min = 2, max = 30)
-	private String name;
+	//@NotBlank
+	//@Size(min = 2, max = 30)
+	//private String name;
 
-	@NotBlank
-	@Min(18)
-	private Integer age;
+	//@Min(18)
+	//private Integer age;
 
 	public void encodePassword() {
 		this.password = passwordEncoder.encode(this.password);
