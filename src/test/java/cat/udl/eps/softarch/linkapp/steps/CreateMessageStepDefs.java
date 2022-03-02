@@ -37,7 +37,7 @@ public class CreateMessageStepDefs {
     private MeetRepository meetRepository;
 
     @Autowired
-    private CreateMeetStepDefs meetStepDefs;
+    private MeetStepDefs meetStepDefs;
 
     private static String username;
     private static Group featureGroup;
