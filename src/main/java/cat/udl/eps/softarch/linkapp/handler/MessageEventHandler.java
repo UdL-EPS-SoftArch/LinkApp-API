@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 
 @Component
@@ -24,10 +25,14 @@ public class MessageEventHandler {
     }
 
     @HandleBeforeCreate
-    public void handleMessagePreCreate(Message message) {
+    public void handleMessagePreCreate(Message message) throws Exception {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         message.setAuthor(user);
         message.setCreationDate(ZonedDateTime.now());
+
+        if (message == null || message.equals("")) {
+            throw new Exception("must not be blank");
+        }
     }
 
     @HandleAfterCreate
