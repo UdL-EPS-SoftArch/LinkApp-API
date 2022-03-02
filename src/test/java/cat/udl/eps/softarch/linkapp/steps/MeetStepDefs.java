@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,13 +44,14 @@ public class MeetStepDefs {
     private UserRoleRepository userRoleRepository;
 
     @And("A group exists")
-    public void theGroupWithIdExists() {
+    public Group theGroupExists() {
         Group group = new Group();
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(true);
         featureGroup = group;
         groupRepository.save(group);
+        return group;
     }
 
     @And("The user {string} belongs to that group as {string}")
@@ -124,4 +126,15 @@ public class MeetStepDefs {
         userRole.setRole(UserRoleEnum.valueOf(role));
         userRoleRepository.save(userRole);
     }
+
+    @And("The creation time of the meet is recent")
+    public void theCreationTimeOfTheMeetIsRecent() {
+        ZonedDateTime date = featureMeet.getCreationDate();
+
+        assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
+        ZonedDateTime pre = ZonedDateTime.now().minusMinutes(5);
+
+        assertThat("Date was created in the last 5 min", date.isBefore(ZonedDateTime.now()));
+    }
+
 }

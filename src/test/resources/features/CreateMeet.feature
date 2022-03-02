@@ -9,6 +9,7 @@ Feature: Create Meet
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
     And It has been created a meet with title "title", description "description", maxUsers 10, location "location", status "true"
+    And  The creation time of the meet is recent
 
 
   Scenario: Register a meet with empty title
