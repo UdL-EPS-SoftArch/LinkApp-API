@@ -34,21 +34,21 @@ public class Post extends UriEntity<Long>{
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
-	private ZonedDateTime createDate;
+	private ZonedDateTime creationDate;
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@NotNull
 	private ZonedDateTime lastUpdate;
 
 	@ToString.Exclude
-	@ManyToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<Post> comments = new HashSet<>();
 
 	@Override
 	public Long getId() { return id; }
 
-	public ZonedDateTime getCreateDate(){
-		return createDate;
+	public ZonedDateTime getCreationDate(){
+		return creationDate;
 	}
 	public ZonedDateTime getLastUpdate() {
 		return lastUpdate;
