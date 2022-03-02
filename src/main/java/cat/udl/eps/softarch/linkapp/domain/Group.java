@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,10 +30,35 @@ public class Group extends UriEntity<Long> {
     private String description;
 
     @NotNull
-    private boolean visibility;
+    @Enumerated(EnumType.STRING)
+    private GroupVisibilityEnum visibility;
+
+
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
+
+    public Group() {}
 
     @Override
     public Long getId() {
         return id;
+    }
+
+    public Group(long id, String name, String description, GroupVisibilityEnum visibility){
+        this.id = id;
+        this.title = name;
+        this.description = description;
+        this.visibility = visibility;
+    }
+
+    public Group(String name, String description, GroupVisibilityEnum visibility){
+        this.title = name;
+        this.description = description;
+        this.visibility = visibility;
+    }
+
+    public void setDescription(UserRole role, String description) {
+        if
+        this.description = description;
     }
 }
