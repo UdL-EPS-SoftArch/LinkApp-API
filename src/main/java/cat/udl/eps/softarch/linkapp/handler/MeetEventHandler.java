@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 
 @Component
 @RepositoryEventHandler
@@ -60,14 +61,17 @@ public class MeetEventHandler
 
         UserRole userRole = userRoleRepository
                 .findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
-
         meet.getAttending().add(userRole);
+        if (userRole == null || userRole.getRole() == UserRoleEnum.SUBSCRIBED)
+        {
+            throw new AccessDeniedException("Not enough permissions");
+        }
+
     }
 
     @HandleBeforeLinkSave
     public void handleMeetPreLinkSave(Meet meet, Object o)
     {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     @HandleBeforeSave
