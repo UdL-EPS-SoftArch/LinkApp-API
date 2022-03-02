@@ -58,7 +58,6 @@ public class Group extends UriEntity<Long> {
     }
 
     public void setDescription(UserRole role, String description) {
-        if
         this.description = description;
     }
 }
