@@ -40,7 +40,6 @@ public class User extends UriEntity<String> implements UserDetails {
 	private String password;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@Transient
 	private boolean passwordReset;
 
 	public void encodePassword() {

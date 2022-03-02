@@ -64,12 +64,12 @@ Feature: Modify User
     Then The response code is 400
     And The error message is "must not be blank"
 
-  #Scenario: Modify password with empty password
-  #  Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-  #  And I login as "user" with password "password"
-  #  When I modify the password of the user "user" by ""
-  #  Then The response code is 400
-  #  And The error message is "must not be blank"
+  Scenario: Modify password with empty password
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I login as "user" with password "password"
+    When I modify the password of the user "user" by ""
+    Then The response code is 400
+    And The error message is "must not be blank"
 
   Scenario: Modify email with invalid email
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -78,12 +78,12 @@ Feature: Modify User
     Then The response code is 400
     And The error message is "must be a well-formed email address"
 
-  #Scenario: Modify password with password shorter than 8 characters
-  #  Given There is a registered user with username "user" and password "password" and email "user@sample.app"
-  #  And I login as "user" with password "password"
-  #  When I modify the password of the user "user" by "pass"
-  #  Then The response code is 400
-  #  And The error message is "length must be between 8 and 256"
+  Scenario: Modify password with password shorter than 8 characters
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I login as "user" with password "password"
+    When I modify the password of the user "user" by "pass"
+    Then The response code is 400
+    And The error message is "length must be between 8 and 256"
 
   Scenario: Modify email with an existing email
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -91,9 +91,3 @@ Feature: Modify User
     And I login as "user2" with password "password2"
     When I modify the email of the user "user2" by "user@sample.app"
     Then The response code is 409
-
-    # When modifying password I encode it
-    # But then if blank, doesn't show error, cause it is encoded? Cause if not encoded it works
-    # Same for password shorter than 8 characters
-
-    # How "error message" works? Message for modifying email that already exists necessary if not used in Register?

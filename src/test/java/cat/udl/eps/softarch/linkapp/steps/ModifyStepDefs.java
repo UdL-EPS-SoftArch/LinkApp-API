@@ -40,12 +40,15 @@ public class ModifyStepDefs {
 
     @When("^I modify the password of the user \"([^\"]*)\" by \"([^\"]*)\"$")
     public void iModifyPasswordOfUserByModifiedPasword(String username, String modifiedPassword) throws Throwable {
-        String encodedPassword = User.passwordEncoder.encode(modifiedPassword);
+        JSONObject object = new JSONObject();
+        object.put("password", modifiedPassword);
+        object.put("passwordReset", true);
+
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/users/{username}", username)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject().put("password", encodedPassword).toString())
+                                .content(object.toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
