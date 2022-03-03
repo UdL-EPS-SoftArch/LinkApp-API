@@ -9,6 +9,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -72,16 +73,11 @@ public class CreateStepDefsPost
                 .andExpect(jsonPath("$.text", is(text)));
     }
 
-    @And("It has not been created a post with author username {string}")
-    public void itHasNotBeenCreatedAPostWithTextAndAuthorUsername(String author) throws Throwable {
+
+    @And("Username {string} has not created a post")
+    public void usernameHasCreatedPosts(String author) {
         List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
-        String id = String.valueOf(posts.get(posts.size()-1).getId());
-        stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/posts/{id}", id)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .with(AuthenticationStepDefs.authenticate()));
-
-
+        Assert.assertTrue(posts.isEmpty());
 
     }
 }
