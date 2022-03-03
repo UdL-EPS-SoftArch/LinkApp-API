@@ -30,7 +30,7 @@ public class MessageEventHandler {
         message.setAuthor(user);
         message.setCreationDate(ZonedDateTime.now());
 
-        if (message == null || message.equals("")) {
+        if (message.equals("")) {
             throw new Exception("must not be blank");
         }
     }
