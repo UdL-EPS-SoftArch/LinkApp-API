@@ -1,6 +1,6 @@
 @startuml
 
-class User extends UriEntity {
+class User {
   username : String
   password : String
   email : String
@@ -19,8 +19,14 @@ class Topic {
      topic : String
 }
 
-class Role {
-     role : String
+enum UserRoleEnum {
+    ADMIN,
+    AUTHORIZED,
+    SUBSCRIBED
+}
+
+class UserRole {
+     role : UserRoleEnum
 }
 
 class Post {
@@ -31,24 +37,22 @@ class Chatroom {
      text : String
 }
 
-class UriEntity {
-  uri : String
-}
-
 class Meet {
     title : String
     description : String
     date : String
     location : String
-    maxcapacity : int
-
+    maxUsers : int
+    meetDate : ZonedDateTime
+    lastUpdate : ZonedDateTime
+    creationDate : ZonedDateTime
 }
 
 User "1" --right-- "*" Chatroom
 Meet "1" -- "*" Chatroom
 Group "*" --right-- "*" Topic
-Group "1" --left-- "*" Role
-User "1" --right-- "*" Role
+Group "1" --left-- "*" UserRole
+User "1" --right-- "*" UserRole
 User "1" --left-- "1" OAuth
 Post "0..1" --right-- "*" Post : comment <
 User "*" -- "*" Topic : interests >
