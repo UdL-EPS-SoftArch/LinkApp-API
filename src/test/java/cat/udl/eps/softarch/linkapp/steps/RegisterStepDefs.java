@@ -69,7 +69,7 @@ public class RegisterStepDefs {
     User user = new User();
     user.setUsername(username);
     user.setEmail(email);
-    user.setName("Gerard");
+    user.setName("name");
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/users")
                                 .contentType(MediaType.APPLICATION_JSON)
