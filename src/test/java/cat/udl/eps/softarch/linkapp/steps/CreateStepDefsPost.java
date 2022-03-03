@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,5 +80,12 @@ public class CreateStepDefsPost
         List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
         Assert.assertTrue(posts.isEmpty());
 
+    }
+
+    @And("Username {string} has created {string} posts")
+    public void usernameHasCreatedPosts(String author, String n_posts) {
+
+        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
+        Assert.assertEquals(String.valueOf(posts.size()),String.valueOf(n_posts));
     }
 }

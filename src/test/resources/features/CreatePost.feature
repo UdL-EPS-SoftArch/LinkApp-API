@@ -24,6 +24,15 @@ Feature: Create Post
     Then The response code is 403
     And Username "marc" has not created a post
 
+  Scenario: Create many posts by a user
+    Given There is a registered user with username "xavier" and password "password" and email "user@sample.app"
+    And I login as "xavier" with password "password"
+    When I create a post with text "create post 1" and author username "xavier"
+    And I create a post with text "create post 2" and author username "xavier"
+    And I create a post with text "create post 3" and author username "xavier"
+    Then The response code is 201
+    And Username "xavier" has created "3" posts
+    And It has been created a post with text "create post 3" and author username "xavier"
 
   #And I can login with username "user" and password "password"
   #And It exists a post with id "id" created by username "user"
