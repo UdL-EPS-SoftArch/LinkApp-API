@@ -30,7 +30,9 @@ public class UserEventHandler {
     }
 
     @HandleBeforeCreate
-    public void handleUserPreCreate(User player) { logger.info("Before creating: {}", player.toString()); }
+    public void handleUserPreCreate(User player) {
+        logger.info("Before creating: {}", player.toString());
+    }
 
     @HandleBeforeSave
     public void handleUserPreSave(User player) throws ForbiddenException{
