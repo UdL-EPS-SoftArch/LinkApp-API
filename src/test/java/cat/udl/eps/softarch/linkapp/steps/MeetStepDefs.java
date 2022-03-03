@@ -51,7 +51,7 @@ public class MeetStepDefs
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    private final Pattern idPattern = Pattern.compile("[0-9]+$");
+    private final Pattern idPattern = Pattern.compile("\\d+$");
 
     @And("A group exists")
     public Group theGroupExists()
