@@ -33,7 +33,7 @@ public class UserRole extends UriEntity<UserRoleKey>
     @Override
     public boolean equals(Object obj){
         UserRole key = (UserRole) obj;
-        return this.roleKey.equals(key);
+        return this.roleKey.equals(key.getRoleKey());
     }
 
     @Override

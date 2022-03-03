@@ -7,6 +7,7 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.cucumber.core.gherkin.Step;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -63,15 +64,14 @@ public class CreateGroupSteps {
                 .andDo(print());
     }
 
-    @Then("It has been created a Group with title \"([^\"]*)\" with id {long} and description \"([^\"]*)\"")
+    @And("It has been created a Group with title {string} with id {long} and description {string}")
     public void itHasBeenCreatedAGroup(String title, long id, String description) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                get("/groups/1")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(AuthenticationStepDefs.authenticate()))
+                        get("/groups/{id}", id)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-                .andExpect((ResultMatcher) jsonPath("$.title", is(title)))
-                .andExpect((ResultMatcher) jsonPath("$.description", is(description)));
+                .andExpect(jsonPath("$.title", is(title)));
     }
 
 

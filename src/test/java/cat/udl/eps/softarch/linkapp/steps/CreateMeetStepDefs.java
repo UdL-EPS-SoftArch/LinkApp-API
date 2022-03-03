@@ -51,7 +51,7 @@ public class CreateMeetStepDefs
         Group group = new Group();
         group.setTitle("title");
         group.setDescription("description");
-        group.setVisibility(true);
+        group.setVisibility(GroupVisibilityEnum.PUBLIC);
         featureGroup = group;
         groupRepository.save(group);
     }

@@ -7,8 +7,9 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
+import java.util.*;
 
 
 @Entity
@@ -37,6 +38,11 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @OneToMany()
+    @JsonIdentityReference(alwaysAsId = true)
+    private List<UserRole> members = new ArrayList<>();
+
+
     public Group() {}
 
     @Override
@@ -58,7 +64,15 @@ public class Group extends UriEntity<Long> {
     }
 
     public void setDescription(UserRole role, String description) {
-        if
-        this.description = description;
+        if (members.contains(role) && role.getRole() == UserRoleEnum.ADMIN){
+            this.description = description;
+            //members = new ArrayList<>();
+        }else {
+            throw new SecurityException("User not authorized!");
+        }
+    }
+
+    public void addMember(UserRole member){
+        members.add(member);
     }
 }
