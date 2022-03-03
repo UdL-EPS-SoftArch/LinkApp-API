@@ -29,9 +29,9 @@ Feature: Create Message
     Given I login as "user" with password "password"
     And The user "user" belongs to that group as "AUTHORIZED"
     # Meet class have similar tests --> TO-DO differences in user permissions when belonging to a group
+    And The user "user" is not assisting to the meet
     When I send a message to the meet with message "message"
     Then The response code is 403
-    And The error message is "you cannot send a message to a meet you are not assisting"
     # And It has been created a message with meet with (...)
 
   Scenario: Send a Message in a meet of a group I do not belong to
@@ -39,6 +39,6 @@ Feature: Create Message
     # Meet class have similar tests --> TO-DO differences in user permissions when belonging to a group
     When I send a message to the meet with message "message"
     Then The response code is 403
-    And The error message is "you cannot send a message to a meet of a group you do not belong to"
     # And It has been created a message with meet with (...)
+
 

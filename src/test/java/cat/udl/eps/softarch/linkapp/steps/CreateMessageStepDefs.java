@@ -11,7 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -74,17 +76,28 @@ public class CreateMessageStepDefs {
                 findByRoleKeyUserAndRoleKeyGroup(user, group);
 
         meet.getAttending().add(userRole);
+        meetRepository.save(meet);
+    }
+
+    @And("The user {string} is not assisting to the meet")
+    public void userIsNotAssistingToMeet(String name) {
+        username = name;
+        User user = userRepository.findById(username).get();
+        Meet meet = featureMeet;
+        Group group = featureGroup;
+
+        UserRole userRole = userRoleRepository.
+                findByRoleKeyUserAndRoleKeyGroup(user, group);
+
+        assertFalse(meet.getAttending().contains(userRole));
     }
 
     @When("I send a message to the meet with message {string}")
     public void sendMessageToMeet(String message) throws Throwable {
-        User user = userRepository.findById(username).get();
         Message tmpMessage = new Message();
         tmpMessage.setText(message);
         tmpMessage.setGroup(featureGroup);
         tmpMessage.setMeet(featureMeet);
-        tmpMessage.setAuthor(user);
-        tmpMessage.setCreationDate(ZonedDateTime.now());
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         post("/messages/")
