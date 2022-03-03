@@ -164,7 +164,7 @@ public class MeetStepDefs {
         tmpMeet.setMeetDate(ZonedDateTime.now());
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        put("/meets/" + featureMeet.getId())
+                        put(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
                                         .put("group", "/groups/" + featureGroup.getId())
@@ -177,7 +177,11 @@ public class MeetStepDefs {
         {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Matcher m = idPattern.matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            featureMeet = meetRepository.findById(Long.parseLong(m.group())).get();
         }
     }
 
