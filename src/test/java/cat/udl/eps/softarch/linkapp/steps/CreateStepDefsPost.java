@@ -69,7 +69,19 @@ public class CreateStepDefsPost
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-
                 .andExpect(jsonPath("$.text", is(text)));
+    }
+
+    @And("It has not been created a post with author username {string}")
+    public void itHasNotBeenCreatedAPostWithTextAndAuthorUsername(String author) throws Throwable {
+        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
+        String id = String.valueOf(posts.get(posts.size()-1).getId());
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/posts/{id}", id)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()));
+
+
+
     }
 }
