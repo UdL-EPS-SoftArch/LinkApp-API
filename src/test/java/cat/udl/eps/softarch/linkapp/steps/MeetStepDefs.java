@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -48,6 +50,8 @@ public class MeetStepDefs
 
     @Autowired
     private UserRoleRepository userRoleRepository;
+
+    private final Pattern idPattern = Pattern.compile("[0-9]+$");
 
     @And("A group exists")
     public Group theGroupExists()
@@ -100,7 +104,11 @@ public class MeetStepDefs
         {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Matcher m = idPattern.matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            featureMeet = meetRepository.findById(Long.parseLong(m.group())).get();
         }
     }
 
@@ -109,7 +117,7 @@ public class MeetStepDefs
     {
         Boolean status = meetStatus.equals("true");
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/meets/{id}", featureMeet.getId())
+                        get(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -125,7 +133,7 @@ public class MeetStepDefs
     {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        delete("/meets/" + featureMeet.getId())
+                        delete(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
@@ -162,7 +170,7 @@ public class MeetStepDefs
         tmpMeet.setMeetDate(ZonedDateTime.now());
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        put("/meets/" + featureMeet.getId())
+                        put(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(
                                         new JSONObject(
@@ -209,7 +217,11 @@ public class MeetStepDefs
         {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Matcher m = idPattern.matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            featureMeet = meetRepository.findById(Long.parseLong(m.group())).get();
         }
     }
 
