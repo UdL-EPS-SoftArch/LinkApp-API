@@ -54,6 +54,7 @@ Feature: Create Meet
     When I edit the meet with title "title2", description "description2", maxUsers 5, location "location2"
     Then The response code is 200
     And It has been created a meet with title "title2", description "description2", maxUsers 5, location "location2", status "true"
+    And The edition time of the meet is recent
 
   Scenario: Create a new Meet and patch it
     Given I login as "demo" with password "password"
@@ -64,3 +65,4 @@ Feature: Create Meet
     When I patch the meet with title "title2", description "description2", maxUsers 5, location "location2"
     Then The response code is 200
     And It has been created a meet with title "title2", description "description2", maxUsers 5, location "location2", status "true"
+    And The edition time of the meet is recent

@@ -225,4 +225,14 @@ public class MeetStepDefs
         }
     }
 
+    @And("The edition time of the meet is recent")
+    public void theEditionTimeOfTheMeetIsRecent()
+    {
+        ZonedDateTime date = featureMeet.getLastUpdate();
+
+        assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
+        ZonedDateTime pre = ZonedDateTime.now().minusMinutes(5);
+
+        assertThat("Date was edited in the last 5 min", date.isBefore(ZonedDateTime.now()));
+    }
 }
