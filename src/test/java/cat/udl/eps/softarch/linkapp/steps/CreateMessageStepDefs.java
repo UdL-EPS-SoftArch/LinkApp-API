@@ -97,13 +97,10 @@ public class CreateMessageStepDefs {
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201){
+        if (response.getStatus() == 201) {
             String content = stepDefs.result.andReturn().getResponse().getContentAsString();
             String uri = JsonPath.read(content, "uri");
             featureMessage = messageRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
-        }
-        else if(response.getStatus() == 400){
-            // TO-DO
         }
 
     }
