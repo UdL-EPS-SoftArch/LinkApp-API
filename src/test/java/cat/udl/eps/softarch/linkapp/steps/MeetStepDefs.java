@@ -27,7 +27,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class MeetStepDefs {
+public class MeetStepDefs
+{
 
     private static Group featureGroup;
 
@@ -49,7 +50,8 @@ public class MeetStepDefs {
     private UserRoleRepository userRoleRepository;
 
     @And("A group exists")
-    public Group theGroupExists() {
+    public Group theGroupExists()
+    {
         Group group = new Group();
         group.setTitle("title");
         group.setDescription("description");
@@ -119,7 +121,8 @@ public class MeetStepDefs {
     }
 
     @When("I delete the meet")
-    public void iDeleteTheMeet() throws Throwable {
+    public void iDeleteTheMeet() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         delete("/meets/" + featureMeet.getId())
@@ -129,7 +132,8 @@ public class MeetStepDefs {
     }
 
     @And("I update the user {string} role of the group to {string}")
-    public void updateTheUserRoleTo(String username, String role) {
+    public void updateTheUserRoleTo(String username, String role)
+    {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
         userRole.setRole(UserRoleEnum.valueOf(role));
@@ -137,7 +141,8 @@ public class MeetStepDefs {
     }
 
     @And("The creation time of the meet is recent")
-    public void theCreationTimeOfTheMeetIsRecent() {
+    public void theCreationTimeOfTheMeetIsRecent()
+    {
         ZonedDateTime date = featureMeet.getCreationDate();
 
         assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
@@ -147,7 +152,8 @@ public class MeetStepDefs {
     }
 
     @When("I edit the meet with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iEditTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
+    public void iEditTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
@@ -158,7 +164,41 @@ public class MeetStepDefs {
                 .perform(
                         put("/meets/" + featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
+                                .content(
+                                        new JSONObject(
+                                            stepDefs.mapper.writeValueAsString(tmpMeet)
+                                        )
+                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .toString()
+                                )
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+        MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
+        if (response.getStatus() == 200)
+        {
+            String content = response.getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+        }
+    }
+
+    @When("I patch the meet with title {string}, description {string}, maxUsers {long}, location {string}")
+    public void iPatchTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
+        Meet tmpMeet = new Meet();
+        tmpMeet.setId(featureMeet.getId());
+        tmpMeet.setTitle(title);
+        tmpMeet.setDescription(description);
+        tmpMeet.setMaxUsers(maxUsers);
+        tmpMeet.setLocation(location);
+        tmpMeet.setMeetDate(ZonedDateTime.now());
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        patch("/meets/" + featureMeet.getId())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                            stepDefs.mapper.writeValueAsString(tmpMeet)
+                                        )
                                         .put("group", "/groups/" + featureGroup.getId())
                                         .toString()
                                 )
