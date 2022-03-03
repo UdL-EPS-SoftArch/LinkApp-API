@@ -58,4 +58,12 @@ public class DeleteStepDefsPost {
     }
 
 
+    @And("There is no post created with id {string}")
+    public void thereIsNoPostCreatedWithId(String id)  throws Throwable{
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/posts/{id}", id)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andExpect(jsonPath("$.id").doesNotExist());
+    }
 }

@@ -10,3 +10,9 @@ Feature: Delete Post
     Then The response code is 204
     And It has been deleted a post with id "1"
 
+  Scenario: Delete an unexisting post
+    Given I login as "demo" with password "password"
+    And There is no post created with id "1"
+    When I delete a post with id "1"
+    Then The response code is 404
+
