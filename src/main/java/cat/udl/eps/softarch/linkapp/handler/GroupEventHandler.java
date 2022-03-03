@@ -20,7 +20,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RepositoryEventHandler
-public class GroupEventHandler {
+public class
+        GroupEventHandler {
     final Logger logger = LoggerFactory.getLogger(Group.class);
 
     final GroupRepository groupRepository;

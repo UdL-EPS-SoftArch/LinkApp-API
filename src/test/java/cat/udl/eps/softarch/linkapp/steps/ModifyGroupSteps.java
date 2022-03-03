@@ -12,8 +12,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ModifyGroupSteps {
 
@@ -29,9 +31,19 @@ public class ModifyGroupSteps {
     private static Group group;
 
     @And("A already created group where with name {string}, id {long} and description {string}")
-    public void groupCreated(String name, long id, String description){
+    public void groupCreated(String name, long id, String description) throws Exception {
         group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC);
         groupRepository.save(group);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        post("/groups/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                        stepDefs.mapper.writeValueAsString(group)
+                                ).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
     @And("The user {string} is an Admin {string} of the group")
@@ -51,21 +63,29 @@ public class ModifyGroupSteps {
     }
     @When("The user {string} modifies the group {long} description to {string}")
     public void userModifiesGroup(String username, long id, String newDescription) throws Exception {
+        JSONObject newJsonDescription = new JSONObject();
+        newJsonDescription.put("description", newDescription);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                patch("/groups/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newJsonDescription.toString())
+                        .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+
         User user = userRepository.findById(username).get();
         UserRole member = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
         group.setDescription(member, newDescription);
 
+    }
+
+    @And ("The description of group {long} now is {string}")
+    public void itHasBeenModifiedAGroup(long id, String description) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        post("/groups/")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
-                                ).toString())
+                        get("/groups/{id}", id)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print());
-
-
+                .andDo(print())
+                .andExpect(jsonPath("$.description", is(description)));
     }
 
 
