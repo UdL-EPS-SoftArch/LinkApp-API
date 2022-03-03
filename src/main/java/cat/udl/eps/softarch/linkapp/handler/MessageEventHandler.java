@@ -5,7 +5,6 @@ import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.domain.UserRole;
 import cat.udl.eps.softarch.linkapp.repository.MessageRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 
 @Component
@@ -45,15 +43,22 @@ public class MessageEventHandler {
         }else{
             throw new AccessDeniedException("you cannot send a message to a meet you are not assisting");
         }
+
         if (message.equals("")) {
             throw new Exception("must not be blank");
         }
+    }
+
+    @HandleBeforeDelete
+    public void handleMessagePreDelete(Message message) {
+        throw new AccessDeniedException("Cannot delete a message");
     }
 
     @HandleAfterCreate
     public void handleMeetPostCreate(Message message) {
         messageRepository.save(message);
     }
+
 }
 
 
