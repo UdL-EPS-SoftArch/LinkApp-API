@@ -26,9 +26,10 @@ public class PostEventHandler {
     }
 
     @HandleBeforeCreate
-    public void handlePostPreCreate(Post Post) {
-        Post.setCreationDate(ZonedDateTime.now());
-        Post.setLastUpdate(ZonedDateTime.now());
+    public void handlePostPreCreate(Post post) {
+        post.setCreationDate(ZonedDateTime.now());
+        post.setLastUpdate(ZonedDateTime.now());
+
     }
 
     @HandleBeforeSave
@@ -37,8 +38,18 @@ public class PostEventHandler {
     }
 
     @HandleAfterCreate
-    public void handlePostPostCreate(Post Post) {
-        PostRepository.save(Post);
+    public void handlePostPostCreate(Post post) throws AccessDeniedException {
+
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        User user = post.getAuthor();
+
+        if (!Objects.equals(currentUser.getId(), user.getId()))
+        {
+            throw new AccessDeniedException("Not enough permissions");
+        }PostRepository.save(post);
     }
 
     @HandleBeforeDelete
