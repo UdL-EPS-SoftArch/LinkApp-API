@@ -33,8 +33,13 @@ public class UserEventHandler {
     public void handleUserPreCreate(User player) { logger.info("Before creating: {}", player.toString()); }
 
     @HandleBeforeSave
-    public void handleUserPreSave(User player) {
+    public void handleUserPreSave(User player) throws ForbiddenException{
         logger.info("Before updating: {}", player.toString());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        boolean sameId = user.getId().equals(player.getId());
+        if (!sameId){
+            throw new ForbiddenException();
+        }
     }
 
     @HandleBeforeDelete
@@ -64,6 +69,7 @@ public class UserEventHandler {
         logger.info("After updating: {}", player.toString());
         if (player.isPasswordReset()) {
             player.encodePassword();
+            player.setPasswordReset(false);
         }
         userRepository.save(player);
     }
