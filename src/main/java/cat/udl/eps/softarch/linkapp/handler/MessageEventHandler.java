@@ -3,13 +3,13 @@ package cat.udl.eps.softarch.linkapp.handler;
 import cat.udl.eps.softarch.linkapp.domain.Message;
 import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.MessageRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 
 @Component
@@ -35,10 +35,16 @@ public class MessageEventHandler {
         }
     }
 
+    @HandleBeforeDelete
+    public void handleMessagePreDelete(Message message) {
+        throw new AccessDeniedException("Cannot delete a message");
+    }
+
     @HandleAfterCreate
     public void handleMeetPostCreate(Message message) {
         messageRepository.save(message);
     }
+
 }
 
 

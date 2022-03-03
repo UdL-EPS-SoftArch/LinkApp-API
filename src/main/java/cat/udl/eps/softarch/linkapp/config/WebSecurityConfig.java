@@ -29,7 +29,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
                     .antMatchers(HttpMethod.GET, "/identity").authenticated()
                     .antMatchers(HttpMethod.POST, "/users").anonymous()
                     .antMatchers(HttpMethod.POST, "/users/*").denyAll()
-                    .antMatchers(HttpMethod.DELETE, "/messages/*").denyAll()
                     .antMatchers(HttpMethod.PUT, "/messages/*").denyAll()
                     .antMatchers(HttpMethod.PATCH, "/messages/*").denyAll()
                     .antMatchers(HttpMethod.POST, "/**/*").authenticated()

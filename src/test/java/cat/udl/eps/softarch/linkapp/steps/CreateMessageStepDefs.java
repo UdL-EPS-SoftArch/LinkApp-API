@@ -13,8 +13,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.time.ZonedDateTime;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -102,7 +101,16 @@ public class CreateMessageStepDefs {
             String uri = JsonPath.read(content, "uri");
             featureMessage = messageRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
         }
+    }
 
+    @When("I delete the message")
+    public void iDeleteTheMessage() throws Throwable {
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        delete("/messages/" + featureMessage.getId())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
     }
 }
 
