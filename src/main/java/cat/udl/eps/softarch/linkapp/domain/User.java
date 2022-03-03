@@ -44,12 +44,11 @@ public class User extends UriEntity<String> implements UserDetails {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Transient
 	private boolean passwordReset;
-	
+
 	@NotBlank
 	@Size(min = 2, max = 30)
 	private String name;
 
-	@NotBlank
 	@Min(18)
 	private Integer age;
 

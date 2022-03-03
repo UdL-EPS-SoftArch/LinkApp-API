@@ -32,6 +32,7 @@ public class AuthenticationConfig extends GlobalAuthenticationConfigurerAdapter 
       User player = new User();
       player.setEmail("demo@sample.app");
       player.setUsername("demo");
+      player.setName("name");
       player.setPassword(defaultPassword);
       player.encodePassword();
       userRepository.save(player);

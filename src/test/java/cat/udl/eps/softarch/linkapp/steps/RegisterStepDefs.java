@@ -38,6 +38,7 @@ public class RegisterStepDefs {
       User user = new User();
       user.setEmail(email);
       user.setUsername(username);
+      user.setName("name");
       user.setPassword(password);
       user.encodePassword();
       userRepository.save(user);
@@ -75,6 +76,7 @@ public class RegisterStepDefs {
     User user = new User();
     user.setUsername(username);
     user.setEmail(email);
+    user.setName("Gerard");
 
     stepDefs.result = stepDefs.mockMvc.perform(
             post("/users")
