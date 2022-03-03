@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -42,6 +44,8 @@ public class MeetStepDefs {
 
     @Autowired
     private UserRoleRepository userRoleRepository;
+
+    private final Pattern idPattern = Pattern.compile("[0-9]+$");
 
     @And("A group exists")
     public Group theGroupExists() {
@@ -90,7 +94,11 @@ public class MeetStepDefs {
         if (response.getStatus() == 201) {
             String content = stepDefs.result.andReturn().getResponse().getContentAsString();
             String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Matcher m = idPattern.matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            featureMeet = meetRepository.findById(Long.parseLong(m.group())).get();
         }
     }
 
@@ -98,7 +106,7 @@ public class MeetStepDefs {
     public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
         Boolean status = meetStatus.equals("true");
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/meets/{id}", featureMeet.getId())
+                        get(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -113,7 +121,7 @@ public class MeetStepDefs {
     public void iDeleteTheMeet() throws Throwable {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        delete("/meets/" + featureMeet.getId())
+                        delete(featureMeet.getUri())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
