@@ -5,7 +5,6 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
@@ -89,7 +88,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         post("/meets/")
@@ -168,7 +168,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         put(featureMeet.getUri())
@@ -200,7 +201,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         patch("/meets/" + featureMeet.getId())
@@ -245,11 +247,9 @@ public class MeetStepDefs
         userRoleKey.setUser(user);
         userRoleKey.setGroup(featureGroup);
 
-        try
-        {
+        try {
             userRoleRepository.deleteById(userRoleKey);
-        } catch (EmptyResultDataAccessException e)
-        {
+        } catch (EmptyResultDataAccessException e) {
             // do nothing
         }
     }

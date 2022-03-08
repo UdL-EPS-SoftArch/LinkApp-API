@@ -20,5 +20,4 @@ public interface MeetRepository extends PagingAndSortingRepository<Meet, Long> {
 
   List<Meet> findByTitleContaining(@Param("title") String title);
   List<Meet> findByStatus(@Param("status") Boolean status);
-  List<Meet> findByStatusAndMeetDateLessThan(@Param("status") Boolean status, @Param("meetDate") ZonedDateTime meetDate);
 }
