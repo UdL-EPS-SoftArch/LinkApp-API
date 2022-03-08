@@ -1,8 +1,8 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
-import cat.udl.eps.softarch.linkapp.domain.Group;
-import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
@@ -16,6 +16,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
@@ -34,6 +35,36 @@ public class
     public void handleGroupPreLinkSave(Group group, Object o) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+    @HandleBeforeCreate
+    @Transactional
+    public void handleGroupPreCreate(Group group){
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        UserRole userRole = new UserRole();
+        UserRoleKey userRoleKey = new UserRoleKey();
+        userRoleKey.setUser(currentUser);
+        userRoleKey.setGroup(group);
+        userRole.setRoleKey(userRoleKey);
+        userRole.setRole(UserRoleEnum.ADMIN);
+
+        group.addMember(userRole);
+    }
+
+
+    @HandleBeforeDelete
+    @Transactional
+    public void handleGroupPreDelete(Group group){
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+
+    }
+
 
     @HandleBeforeSave
     public void handleGroupBeforeSave(Group group) {
