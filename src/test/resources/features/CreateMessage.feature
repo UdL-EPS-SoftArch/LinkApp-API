@@ -41,4 +41,21 @@ Feature: Create Message
     Then The response code is 403
     # And It has been created a message with meet with (...)
 
+  Scenario: Send a Message in a meet of a group I do not belong to
+    Given I login as "user" with password "password"
+    # Meet class have similar tests --> TO-DO differences in user permissions when belonging to a group
+    When I send a message to the meet with message "message"
+    Then The response code is 403
+    # And It has been created a message with meet with (...)
+
+  Scenario: Edit a Message
+    Given I login as "user" with password "password"
+    And The user "user" belongs to that group as "AUTHORIZED"
+    And The user "user" is assisting to the meet
+    When I send a message to the meet with message "message"
+    Then The response code is 201
+    When I edit the message with message "message-edited"
+    Then The response code is 403
+
+
 

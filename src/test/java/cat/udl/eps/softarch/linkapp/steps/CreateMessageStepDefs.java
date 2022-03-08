@@ -116,6 +116,17 @@ public class CreateMessageStepDefs {
         }
     }
 
+    @When("I edit the message with message {string}")
+    public void editMessageToMeet(String editedMessage) throws Throwable {
+        featureMessage.setText(editedMessage);
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        put("/messages/" + featureMessage.getId())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+    }
+
     @When("I delete the message")
     public void iDeleteTheMessage() throws Throwable {
         stepDefs.result = stepDefs.mockMvc
