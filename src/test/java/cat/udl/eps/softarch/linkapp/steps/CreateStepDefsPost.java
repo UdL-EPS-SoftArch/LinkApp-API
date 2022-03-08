@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
-import cat.udl.eps.softarch.linkapp.domain.*;
+import cat.udl.eps.softarch.linkapp.domain.Post;
+import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -118,22 +119,28 @@ public class CreateStepDefsPost
 
     }
 
-    @When("I create a comment {string} to previous post with author username {string}")
+    @When("I create a comment to the previous post with text {string} and author username {string}")
     public void iCreateACommentToPreviousPostWithAuthorUsername(String comment, String author) throws Throwable {
-
-
-    }
-
-    @And("It has been created a comment {string} with author username {string}")
-    public void itHasBeenCreatedACommentWithAuthorUsername(String comment, String author) throws Throwable{
         List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
-        String id = String.valueOf(posts.get(posts.size()-1).getId());
+        Post father = posts.get(posts.size()-1);
+
+        Post post = new Post();
+        User user = userRepository.findById(author).get();
+        post.setText(comment);
+        post.setAuthor(user);
+
+
+        post.setFather(father);
+
+        System.out.println(post);
+        System.out.println(post.getFather());
+
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/posts/{id}",id)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print())
-                .andExpect(jsonPath("$.comments", is(comment)));
+                        post("/posts/")
+                                .content(stepDefs.mapper.writeValueAsString(post))
+                                .with(AuthenticationStepDefs.authenticate())).andDo(print());
+
+
 
     }
 
@@ -144,25 +151,20 @@ public class CreateStepDefsPost
         Post comm = posts.get(posts.size()-1);
         Post father = posts.get(posts.size()-2);
 
-        String id_post = String.valueOf(father.getId());
         String id_comm = String.valueOf(comm.getId());
 
-        comm.setFather(father);
-
-        System.out.println(comm);
-        System.out.println(comm.getFather());
+        //System.out.println(comm);
+        //System.out.println(comm.getFather());
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/posts/{id}",id_comm)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-                .andExpect(jsonPath("$.text", is(comment)))
-                .andExpect(jsonPath("$.father", is(post)));
+                .andExpect(jsonPath("$.text", is(comment)));
 
+        Assert.assertEquals(comm.getFather(),father);
 
-        System.out.println(comm);
-        System.out.println(comm.getFather());
 
     }
 }

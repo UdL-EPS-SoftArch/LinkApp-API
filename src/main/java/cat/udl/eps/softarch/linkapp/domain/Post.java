@@ -40,7 +40,7 @@ public class Post extends UriEntity<Long>{
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIdentityReference(alwaysAsId = true)
-	private Post father = null;
+	private Post father;
 
 	@Override
 	public Long getId() { return id; }

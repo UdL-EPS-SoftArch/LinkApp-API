@@ -34,7 +34,6 @@ Feature: Create Post
   Scenario: Create a comment in a post with log in
     Given I login as "demo" with password "password"
     And I create a post with text "create post 1" and author username "demo"
-    When I create a post with text "create comment 1" and author username "demo"
-    And The post with text "create comment 1" is a comment from post with text "create comment 1" with author "demo"
+    When I create a comment to the previous post with text "create comment 1" and author username "demo"
     Then The response code is 201
-    And It has been created a comment "create comment 1" with author username "demo"
+    And The post with text "create comment 1" is a comment from post with text "create comment 1" with author "demo"

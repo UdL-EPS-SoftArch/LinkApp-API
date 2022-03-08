@@ -28,8 +28,8 @@ public class RegisterStepDefs {
   @Given("^There is no registered user with username \"([^\"]*)\"$")
   public void thereIsNoRegisteredUserWithUsername(String user) {
     Assert.assertFalse("User \""
-                    +  user + "\"shouldn't exist",
-                    userRepository.existsById(user));
+                    + user + "\"shouldn't exist",
+            userRepository.existsById(user));
   }
 
   @Given("^There is a registered user with username \"([^\"]*)\" and password \"([^\"]*)\" and email \"([^\"]*)\"$")
@@ -50,11 +50,11 @@ public class RegisterStepDefs {
     AuthenticationStepDefs.currentPassword = password;
 
     stepDefs.result = stepDefs.mockMvc.perform(
-        get("/identity", username)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate()))
-        .andDo(print())
-        .andExpect(status().isOk());
+                    get("/identity", username)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(AuthenticationStepDefs.authenticate()))
+            .andDo(print())
+            .andExpect(status().isOk());
   }
 
   @And("^I cannot login with username \"([^\"]*)\" and password \"([^\"]*)\"$")
@@ -63,11 +63,11 @@ public class RegisterStepDefs {
     AuthenticationStepDefs.currentPassword = password;
 
     stepDefs.result = stepDefs.mockMvc.perform(
-        get("/identity", username)
-            .accept(MediaType.APPLICATION_JSON)
-            .with(AuthenticationStepDefs.authenticate()))
-        .andDo(print())
-        .andExpect(status().isUnauthorized());
+                    get("/identity", username)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(AuthenticationStepDefs.authenticate()))
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
   }
 
   @When("^I register a new user with username \"([^\"]*)\", email \"([^\"]*)\" and password \"([^\"]*)\"$")
@@ -77,22 +77,22 @@ public class RegisterStepDefs {
     user.setEmail(email);
 
     stepDefs.result = stepDefs.mockMvc.perform(
-            post("/users")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(new JSONObject(
-                            stepDefs.mapper.writeValueAsString(user)
-                    ).put("password", password).toString())
-                    .accept(MediaType.APPLICATION_JSON)
-                    .with(AuthenticationStepDefs.authenticate()))
+                    post("/users")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(new JSONObject(
+                                    stepDefs.mapper.writeValueAsString(user)
+                            ).put("password", password).toString())
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(AuthenticationStepDefs.authenticate()))
             .andDo(print());
   }
 
   @And("^It has been created a user with username \"([^\"]*)\" and email \"([^\"]*)\", the password is not returned$")
   public void itHasBeenCreatedAUserWithUsername(String username, String email) throws Throwable {
     stepDefs.result = stepDefs.mockMvc.perform(
-            get("/users/{username}", username)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .with(AuthenticationStepDefs.authenticate()))
+                    get("/users/{username}", username)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(AuthenticationStepDefs.authenticate()))
             .andDo(print())
             .andExpect(jsonPath("$.email", is(email)))
             .andExpect(jsonPath("$.password").doesNotExist());
@@ -101,9 +101,9 @@ public class RegisterStepDefs {
   @And("^It has not been created a user with username \"([^\"]*)\"$")
   public void itHasNotBeenCreatedAUserWithUsername(String username) throws Throwable {
     stepDefs.result = stepDefs.mockMvc.perform(
-            get("/users/{username}", username)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .with(AuthenticationStepDefs.authenticate()))
+                    get("/users/{username}", username)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .with(AuthenticationStepDefs.authenticate()))
             .andExpect(status().isNotFound());
   }
 }
