@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.lang.Nullable;
 
 
 import javax.persistence.*;
@@ -31,16 +32,18 @@ public class Post extends UriEntity<Long>{
 	private User author;
 
 
-
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private ZonedDateTime creationDate;
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private ZonedDateTime lastUpdate;
 
+
 	@ToString.Exclude
-	@OneToMany(cascade = CascadeType.ALL)
-	private Set<Post> comments = new HashSet<>();
+	@JsonIdentityReference(alwaysAsId = true)
+	@ManyToOne(cascade = CascadeType.ALL)
+	@Nullable
+	private Post father;
 
 	@Override
 	public Long getId() { return id; }
