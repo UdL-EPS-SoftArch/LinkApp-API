@@ -6,13 +6,12 @@ import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 
 @Component
 @RepositoryEventHandler
@@ -72,7 +71,7 @@ public class MeetEventHandler
     }
 
     @HandleBeforeLinkSave
-    public void handleMeetPreLinkSave(Meet meet, Object o)
+    public void handleMeetPostCreate(Meet meet)
     {
 
     }
@@ -86,13 +85,6 @@ public class MeetEventHandler
 
     @HandleAfterSave
     public void handleMeetPostSave(Meet meet)
-    {
-        meetRepository.save(meet);
-    }
-
-
-    @HandleAfterCreate
-    public void handleMeetPostCreate(Meet meet)
     {
         meetRepository.save(meet);
     }
