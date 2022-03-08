@@ -47,6 +47,10 @@ public class MessageEventHandler {
         if (message.equals("")) {
             throw new Exception("must not be blank");
         }
+
+        if (!message.getMeet().getStatus()) {
+            throw new AccessDeniedException("you cannot send a message to a closed meet");
+        }
     }
 
     @HandleBeforeDelete

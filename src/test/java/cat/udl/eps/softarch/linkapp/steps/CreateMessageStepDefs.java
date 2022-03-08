@@ -4,6 +4,7 @@ import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.*;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -116,6 +120,17 @@ public class CreateMessageStepDefs {
         }
     }
 
+    @Then("It has been created a message with message {string}")
+    public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable
+    {
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/messages/{id}", featureMessage.getId())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.text", is(message)));
+    }
+
     @When("I delete the message")
     public void iDeleteTheMessage() throws Throwable {
         stepDefs.result = stepDefs.mockMvc
@@ -124,6 +139,21 @@ public class CreateMessageStepDefs {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
+    }
+
+    @And("The creation time of the message is recent")
+    public void theCreationTimeOfTheMessageIsRecent() {
+        ZonedDateTime date = featureMessage.getCreationDate();
+
+        assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
+        ZonedDateTime pre = ZonedDateTime.now().minusSeconds(30);
+
+        assertThat("Date was created in the last 30 seconds", date.isBefore(ZonedDateTime.now()));
+    }
+
+    @And("The meet has closed")
+    public void theMeetHasClosed() {
+        featureMeet.setStatus(Boolean.FALSE);
     }
 }
 
