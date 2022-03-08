@@ -42,4 +42,9 @@ Feature: Create Message
     When I send a message to the meet with message "message"
     Then The response code is 403
 
+  Scenario: Send a Message in a meet of a group I do not belong to
+    Given I login as "user" with password "password"
+    When I send a message to the meet with message "message"
+    Then The response code is 403
+
 

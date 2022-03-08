@@ -41,11 +41,11 @@ public class MessageEventHandler {
         if (message.getMeet().getAttending().contains(userRole)) {
             message.setAuthor(currentUser);
         }else{
-            throw new AccessDeniedException("you cannot send a message to a meet you are not assisting");
+            throw new AccessDeniedException("You cannot send a message to a meet you are not assisting");
         }
 
         if (message.equals("")) {
-            throw new Exception("must not be blank");
+            throw new Exception("Must not be blank");
         }
 
         if (!message.getMeet().getStatus()) {
@@ -55,7 +55,14 @@ public class MessageEventHandler {
 
     @HandleBeforeDelete
     public void handleMessagePreDelete(Message message) {
-        throw new AccessDeniedException("Cannot delete a message");
+        throw new AccessDeniedException("You cannot delete a message");
+    }
+
+    @HandleBeforeSave
+    public void handleMessagePreSave(Message message) {
+        if(messageRepository.existsById(message.getId())){
+            throw new AccessDeniedException("You cannot edit a message");
+        }
     }
 
     @HandleAfterCreate
