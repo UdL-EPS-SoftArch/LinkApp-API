@@ -31,7 +31,6 @@ public class Post extends UriEntity<Long>{
 	@JsonIdentityReference(alwaysAsId = true)
 	private User author;
 
-
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private ZonedDateTime creationDate;
 
@@ -39,11 +38,9 @@ public class Post extends UriEntity<Long>{
 	private ZonedDateTime lastUpdate;
 
 
-	@ToString.Exclude
-	@JsonIdentityReference(alwaysAsId = true)
 	@ManyToOne(cascade = CascadeType.ALL)
-	@Nullable
-	private Post father;
+	@JsonIdentityReference(alwaysAsId = true)
+	private Post father = null;
 
 	@Override
 	public Long getId() { return id; }

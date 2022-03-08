@@ -31,6 +31,7 @@ public class PostEventHandler {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
+
         User user = post.getAuthor();
 
         if (!Objects.equals(currentUser.getId(), user.getId()))
