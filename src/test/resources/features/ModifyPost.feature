@@ -17,3 +17,9 @@ Feature: Modify Post
     When I modify a post with id "1" with new text "new text"
     Then The response code is 403
 
+  Scenario: Modify an unexisting post
+    Given I login as "demo" with password "password"
+    And There is no post created with id "1"
+    When I modify a post with id "1" with new text "new text"
+    Then The response code is 404
+
