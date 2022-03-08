@@ -5,15 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.springframework.lang.Nullable;
 
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Data
@@ -31,6 +27,7 @@ public class Post extends UriEntity<Long>{
 	@JsonIdentityReference(alwaysAsId = true)
 	private User author;
 
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private ZonedDateTime creationDate;
 
@@ -38,8 +35,9 @@ public class Post extends UriEntity<Long>{
 	private ZonedDateTime lastUpdate;
 
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ToString.Exclude
 	@JsonIdentityReference(alwaysAsId = true)
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Post father;
 
 	@Override
