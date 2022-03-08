@@ -28,21 +28,11 @@ public class DeleteGroupSteps {
     private static Group group;
 
     @When("The user {string} deletes the group {long}")
-    public void userDeletesGroup(String username, long id, String newDescription) throws Exception {
-        User user = userRepository.findById(username).get();
-        UserRole member = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
-        group.setDescription(member, newDescription);
-
+    public void userDeletesGroup(String username, long id) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        post("/groups/")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
-                                ).toString())
+                        delete("/groups/{id}", id)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-
-
     }
 }
