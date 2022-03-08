@@ -8,27 +8,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.HandleAfterLinkSave;
-import org.springframework.data.rest.core.annotation.HandleAfterSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeLinkSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Component
 @RepositoryEventHandler
-public class
-        GroupEventHandler {
+public class GroupEventHandler {
     final Logger logger = LoggerFactory.getLogger(Group.class);
 
     final GroupRepository groupRepository;
 
-    public GroupEventHandler(GroupRepository groupRepository) {
+    final UserRoleRepository userRoleRepository;
+
+
+    public GroupEventHandler(GroupRepository groupRepository, UserRoleRepository userRoleRepository) {
         this.groupRepository = groupRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @HandleBeforeLinkSave
@@ -36,7 +43,7 @@ public class
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    @HandleBeforeCreate
+    /*@HandleBeforeCreate
     @Transactional
     public void handleGroupPreCreate(Group group){
         User currentUser = (User) SecurityContextHolder
@@ -52,19 +59,7 @@ public class
 
         group.addMember(userRole);
     }
-
-
-    @HandleBeforeDelete
-    @Transactional
-    public void handleGroupPreDelete(Group group){
-        User currentUser = (User) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-
-    }
-
+*/
 
     @HandleBeforeSave
     public void handleGroupBeforeSave(Group group) {
