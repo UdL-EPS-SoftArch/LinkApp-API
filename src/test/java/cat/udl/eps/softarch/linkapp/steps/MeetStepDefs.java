@@ -6,6 +6,7 @@ import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -234,5 +235,22 @@ public class MeetStepDefs
         ZonedDateTime pre = ZonedDateTime.now().minusMinutes(5);
 
         assertThat("Date was edited in the last 5 min", date.isBefore(ZonedDateTime.now()));
+    }
+
+    @And("The user {string} does not belong to the group")
+    public void theUserDoesNotBelongToTheGroup(String username) {
+        User user = userRepository.findById(username).get();
+
+        UserRoleKey userRoleKey = new UserRoleKey();
+        userRoleKey.setUser(user);
+        userRoleKey.setGroup(featureGroup);
+
+        try
+        {
+            userRoleRepository.deleteById(userRoleKey);
+        } catch (EmptyResultDataAccessException e)
+        {
+            // do nothing
+        }
     }
 }

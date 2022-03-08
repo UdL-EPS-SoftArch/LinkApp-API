@@ -37,6 +37,13 @@ Feature: Create Meet
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 403
 
+  Scenario: Create a new Meet without a group
+    Given I login as "demo" with password "password"
+    And A group exists
+    And The user "demo" does not belong to the group
+    When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
+    Then The response code is 403
+
   Scenario: Create a new Meet in a group I belong to and am a AUTHORIZED
     Given I login as "demo" with password "password"
     And A group exists
