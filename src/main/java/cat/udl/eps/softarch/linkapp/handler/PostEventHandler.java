@@ -44,6 +44,16 @@ public class PostEventHandler {
 
     @HandleBeforeSave
     public void handlePostBeforeSave(Post post) {
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        User user = post.getAuthor();
+
+        if (!Objects.equals(currentUser.getId(), user.getId()))
+        {
+            throw new AccessDeniedException("Not enough permissions");
+        }
         post.setLastUpdate(ZonedDateTime.now());
     }
 
