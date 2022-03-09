@@ -34,7 +34,6 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private GroupVisibilityEnum visibility;
 
-
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
@@ -45,31 +44,16 @@ public class Group extends UriEntity<Long> {
 
     public Group() {}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    public Group(long id, String name, String description, GroupVisibilityEnum visibility){
+    public Group(long id, String name, String description, GroupVisibilityEnum visibility) {
         this.id = id;
         this.title = name;
         this.description = description;
         this.visibility = visibility;
     }
 
-    public Group(String name, String description, GroupVisibilityEnum visibility){
-        this.title = name;
-        this.description = description;
-        this.visibility = visibility;
-    }
-
-    public void setDescription(UserRole role, String description) {
-        if (members.contains(role) && role.getRole() == UserRoleEnum.ADMIN){
-            this.description = description;
-            //members = new ArrayList<>();
-        }else {
-            throw new SecurityException("User not authorized!");
-        }
+    @Override
+    public Long getId() {
+        return id;
     }
 
     public void addMember(UserRole member){

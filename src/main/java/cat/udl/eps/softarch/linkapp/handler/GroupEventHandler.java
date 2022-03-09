@@ -6,10 +6,10 @@ import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 
@@ -47,7 +47,7 @@ GroupEventHandler {
 
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
 
-        if (userRole.getRole() != UserRoleEnum.ADMIN){
+        if (userRole.getRole() != UserRoleEnum.ADMIN) {
             throw new AccessDeniedException("Only ADMINS can delete Groups!");
         }
 

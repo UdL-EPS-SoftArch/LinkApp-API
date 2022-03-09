@@ -1,11 +1,13 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
+import cat.udl.eps.softarch.linkapp.LinkAppApplication;
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.java.en.Given;
+import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
@@ -36,6 +38,8 @@ public class MeetStepDefs
     private static Group featureGroup;
 
     private static Meet featureMeet;
+
+    private static Meet cronMeet;
 
     @Autowired
     private StepDefs stepDefs;
@@ -89,7 +93,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         post("/meets/")
@@ -168,7 +173,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         put(featureMeet.getUri())
@@ -200,7 +206,8 @@ public class MeetStepDefs
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
         tmpMeet.setLocation(location);
-        tmpMeet.setMeetDate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         patch("/meets/" + featureMeet.getId())
@@ -245,12 +252,37 @@ public class MeetStepDefs
         userRoleKey.setUser(user);
         userRoleKey.setGroup(featureGroup);
 
-        try
-        {
+        try {
             userRoleRepository.deleteById(userRoleKey);
-        } catch (EmptyResultDataAccessException e)
-        {
+        } catch (EmptyResultDataAccessException e) {
             // do nothing
         }
+    }
+
+    @Given("I create a meet that ends in the past in that group")
+    public void iCreateAMeetThatEndsInThePast() {
+        cronMeet = new Meet();
+        cronMeet.setGroup(featureGroup);
+        cronMeet.setTitle("title");
+        cronMeet.setDescription("description");
+        cronMeet.setMaxUsers(10L);
+        cronMeet.setLocation("location");
+        cronMeet.setCreationDate(ZonedDateTime.now());
+        cronMeet.setLastUpdate(ZonedDateTime.now());
+        cronMeet.setInitialMeetDate(ZonedDateTime.now().minusDays(1));
+        cronMeet.setFinalMeetDate(ZonedDateTime.now().minusDays(1).plusHours(1));
+        meetRepository.save(cronMeet);
+    }
+
+    @When("The cron status job is executed")
+    public void theCronStatusJobIsExecuted() {
+        LinkAppApplication.updateMeetStatusJob(meetRepository);
+    }
+
+    @Then("Then the meet status is false")
+    public void thenTheMeetStatusIsFalse() {
+        assert cronMeet.getId() != null;
+        Meet meet = meetRepository.findById(cronMeet.getId()).get();
+        Assert.assertFalse(meet.getStatus());
     }
 }

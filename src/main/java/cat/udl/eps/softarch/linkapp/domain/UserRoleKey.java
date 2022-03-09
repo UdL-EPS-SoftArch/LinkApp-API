@@ -2,8 +2,10 @@ package cat.udl.eps.softarch.linkapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,8 +27,12 @@ public class UserRoleKey implements Serializable
 
     @Override
     public boolean equals(Object obj){
+        if (!(obj instanceof UserRoleKey)) {
+            return false;
+        }
+
         UserRoleKey key = (UserRoleKey) obj;
-        return this.group.getId() == key.group.getId()
-                && this.user.getId().equals(key.user.getId());
+        return Objects.equals(this.group.getId(), key.group.getId())
+                && Objects.equals(this.user.getId(), key.user.getId());
     }
 }

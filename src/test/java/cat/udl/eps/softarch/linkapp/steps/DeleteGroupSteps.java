@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DeleteGroupSteps {
     @Autowired
@@ -30,9 +31,20 @@ public class DeleteGroupSteps {
     @When("The user {string} deletes the group {long}")
     public void userDeletesGroup(String username, long id) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        delete("/groups/{id}", id)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .with(AuthenticationStepDefs.authenticate()))
+                delete("/groups/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(AuthenticationStepDefs.authenticate())
+                )
+                .andDo(print());
+    }
+
+    @When("The user deletes the group")
+    public void userDeletesGroup2() throws Exception {
+        stepDefs.result = stepDefs.mockMvc.perform(
+            delete("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .with(AuthenticationStepDefs.authenticate())
+                )
                 .andDo(print());
 
     }

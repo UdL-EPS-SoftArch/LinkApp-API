@@ -32,6 +32,20 @@ public class ModifyGroupSteps {
 
     private static Group group;
 
+
+    @When("The user {string} modifies the group description to {string}")
+    public void userModifiesGroup(String username, String newDescription) throws Exception {
+
+        JSONObject newJsonDescription = new JSONObject();
+        newJsonDescription.put("description", newDescription);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                patch("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newJsonDescription.toString())
+                        .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
     @And("A already created group where with name {string}, id {long} and description {string}")
     public void groupCreated(String name, long id, String description) throws Exception {
         group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC);
@@ -63,27 +77,11 @@ public class ModifyGroupSteps {
         group.addMember(userRole);
         userRoleRepository.save(userRole);
     }
-    @When("The user {string} modifies the group {long} description to {string}")
-    public void userModifiesGroup(String username, long id, String newDescription) throws Exception {
-        JSONObject newJsonDescription = new JSONObject();
-        newJsonDescription.put("description", newDescription);
+
+    @And ("The description of the group is now {string}")
+    public void itHasBeenModifiedAGroup(String description) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                patch("/groups/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(newJsonDescription.toString())
-                        .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print());
-
-        User user = userRepository.findById(username).get();
-        UserRole member = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
-        group.setDescription(member, newDescription);
-
-    }
-
-    @And ("The description of group {long} now is {string}")
-    public void itHasBeenModifiedAGroup(long id, String description) throws Exception {
-        stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/groups/{id}", id)
+                        get("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())

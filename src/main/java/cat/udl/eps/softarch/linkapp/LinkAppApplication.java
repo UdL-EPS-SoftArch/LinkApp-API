@@ -7,7 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @SpringBootApplication
@@ -21,9 +23,18 @@ public class LinkAppApplication {
     @Autowired
     private MeetRepository meetRepository;
 
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void cron() {
-        List<Meet> meets = meetRepository.findByStatus(true);
-        System.out.println(meets);
+    @Scheduled(cron = "${meet-status-cron}")
+    @Transactional
+    protected void updateMeetStatusCronJob() {
+        updateMeetStatusJob(meetRepository);
     }
+
+    public static void updateMeetStatusJob(MeetRepository meetRepository) {
+        List<Meet> meets = meetRepository.findByStatusAndFinalMeetDateLessThan(true, ZonedDateTime.now());
+        for (Meet meet : meets) {
+            meet.setStatus(false);
+            meetRepository.save(meet);
+        }
+    }
+
 }

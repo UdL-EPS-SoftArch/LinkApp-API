@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
+import cat.udl.eps.softarch.linkapp.exception.ValidationError;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.data.rest.core.annotation.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException.UnprocessableEntity;
 
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
@@ -48,8 +50,16 @@ public class MeetEventHandler
 
     @HandleBeforeCreate
     @Transactional
-    public void handleMeetPreCreate(Meet meet)
-    {
+    public void handleMeetPreCreate(Meet meet) {
+        ZonedDateTime now = ZonedDateTime.now().minusMinutes(1);
+        if (meet.getInitialMeetDate().isBefore(now))
+            throw new ValidationError("Initial meet date can't be in the past");
+        if (meet.getFinalMeetDate().isBefore(now))
+            throw new ValidationError("Final meet date can't be in the past");
+        if (meet.getInitialMeetDate().isAfter(meet.getFinalMeetDate())) {
+            throw new ValidationError("Final date can't be set before initial date");
+        }
+
         meet.setCreationDate(ZonedDateTime.now());
         meet.setLastUpdate(ZonedDateTime.now());
         meet.setStatus(true);

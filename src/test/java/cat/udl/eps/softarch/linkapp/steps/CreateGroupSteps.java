@@ -6,6 +6,7 @@ import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.jayway.jsonpath.JsonPath;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -14,7 +15,11 @@ import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -22,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CreateGroupSteps {
 
@@ -32,46 +38,50 @@ public class CreateGroupSteps {
     @Autowired
     private GroupRepository groupRepository;
 
-    private static String username;
-    private static String password;
+    private final Pattern idPattern = Pattern.compile("\\d+$");
 
-    @Given("^I am authenticated as \"([^\"]*)\"")
-    public void authenticatedAs(String username) {
-        if (userRepository.existsById(username)) userRepository.deleteById(username);
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword("password");
-        user.setEmail("user@linkup.com");
-        user.encodePassword();
-        userRepository.save(user);
-        CreateGroupSteps.username = username;
-        CreateGroupSteps.password = "password";
-    }
+    private static Group group;
 
-    @When("^I Create a public Group called \"([^\"]*)\" with id \"([^\"]*)\" with description \"([^\"]*)\"")
-    public void iCreateAPublicGroup(String groupName, long id, String description) throws Exception {
-        Group group = new Group(id, groupName, description, GroupVisibilityEnum.PUBLIC);
-        //groupRepository.save(group);
+    public static Group getCreatedGroup() { return group; }
+
+    @When("^I Create a public Group called \"([^\"]*)\" with description \"([^\"]*)\"")
+    public void iCreateAPublicGroup(String groupName, String description) throws Exception {
+        Group tmpGroup = new Group();
+        tmpGroup.setTitle(groupName);
+        tmpGroup.setDescription(description);
+        tmpGroup.setVisibility(GroupVisibilityEnum.PUBLIC);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/groups/")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
                         .content(new JSONObject(
-                                stepDefs.mapper.writeValueAsString(group)
+                                    stepDefs.mapper.writeValueAsString(tmpGroup)
                                 ).toString())
-                                .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+
+        MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
+        if (response.getStatus() == 201)
+        {
+            String content = response.getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            Matcher m = idPattern.matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            group = groupRepository.findById(Long.parseLong(m.group())).get();
+        }
     }
 
-    @And("It has been created a Group with title {string} with id {long} and description {string}")
-    public void itHasBeenCreatedAGroup(String title, long id, String description) throws Exception {
+    @And("It has been created a Group with title {string} and description {string}")
+    public void itHasBeenCreatedAGroup(String title, String description) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/groups/{id}", id)
+                        get("/groups/{id}", group.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-                .andExpect(jsonPath("$.title", is(title)));
+                .andExpect(jsonPath("$.title", is(title)))
+                .andExpect(jsonPath("$.description", is(description)));
     }
 
 
