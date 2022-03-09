@@ -25,14 +25,11 @@ public class LinkAppApplication {
 
     @Scheduled(cron = "0/30 * * * * *")
     @Transactional
-    public void cron() {
-        ZonedDateTime now = ZonedDateTime.now();
-        List<Meet> meets = meetRepository.findByStatus(true);
+    public void updateMeetStatusCronJob() {
+        List<Meet> meets = meetRepository.findByStatusAndFinalMeetDateLessThan(true, ZonedDateTime.now());
         for (Meet meet : meets) {
-            if (meet.getFinalMeetDate().isBefore(now)) {
-                meet.setStatus(false);
-                meetRepository.save(meet);
-            }
+            meet.setStatus(false);
+            meetRepository.save(meet);
         }
     }
 
