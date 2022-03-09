@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 
 @Embeddable
@@ -12,12 +13,12 @@ import java.io.Serializable;
 public class UserRoleKey implements Serializable
 {
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "user_id")
     private User user;

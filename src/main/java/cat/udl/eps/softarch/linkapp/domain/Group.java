@@ -38,7 +38,7 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany()
+    @OneToMany(cascade = CascadeType.ALL)
     @JsonIdentityReference(alwaysAsId = true)
     private List<UserRole> members = new ArrayList<>();
 
