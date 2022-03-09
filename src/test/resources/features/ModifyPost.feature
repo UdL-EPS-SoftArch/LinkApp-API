@@ -5,21 +5,23 @@ Feature: Modify Post
 
   Scenario: Modify an existing post
     Given I login as "demo" with password "password"
-    And There is a post with id "1" created by a user with username "demo"
-    When I modify a post with id "1" with new text "new text"
+    And There is a post created by a user with username "demo"
+    When I modify the post just created with new text "new text"
     Then The response code is 200
-    And It has been modified a post with id "1" with the text "new text"
+    And It has been modified the post just created with the text "new text"
 
   Scenario: Modify a post created by another user
-    Given I login as "demo" with password "password"
-    And There is a registered user with username "user" and password "existing" and email "user@sample.app"
-    And There is a post with id "1" created by a user with username "user"
-    When I modify a post with id "1" with new text "new text"
+    Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
+    And I login as "user" with password "existing"
+    And There is a post created by a user with username "user"
+    And I'm not logged in
+    And I login as "demo" with password "password"
+    When I modify the post just created with new text "new text"
     Then The response code is 403
 
   Scenario: Modify an unexisting post
     Given I login as "demo" with password "password"
     And There is no post created with id "1"
-    When I modify a post with id "1" with new text "new text"
+    When I modify the post with id "1" with new text "new text"
     Then The response code is 404
 
