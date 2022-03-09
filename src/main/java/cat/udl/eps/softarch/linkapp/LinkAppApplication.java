@@ -23,7 +23,7 @@ public class LinkAppApplication {
     @Autowired
     private MeetRepository meetRepository;
 
-    @Scheduled(cron = "0/30 * * * * *")
+    @Scheduled(cron = "${meet-status-cron}")
     @Transactional
     public void updateMeetStatusCronJob() {
         List<Meet> meets = meetRepository.findByStatusAndFinalMeetDateLessThan(true, ZonedDateTime.now());
