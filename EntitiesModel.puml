@@ -44,7 +44,8 @@ class Meet {
     date : String
     location : String
     maxUsers : int
-    meetDate : ZonedDateTime
+    initialMeetDate : ZonedDateTime
+    finalMeetDate : ZonedDateTime
     lastUpdate : ZonedDateTime
     creationDate : ZonedDateTime
 }
