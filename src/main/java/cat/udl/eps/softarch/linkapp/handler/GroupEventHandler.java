@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 
@@ -37,7 +38,19 @@ GroupEventHandler {
     }
 
     @HandleBeforeDelete
-    public void handleGroupBeforeDelete(Group group) {
+    public void handleGroupBeforeDelete(Group group) throws AccessDeniedException {
+
+        User user = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
+
+        if (userRole.getRole() != UserRoleEnum.ADMIN){
+            throw new AccessDeniedException("Only ADMINS can delete Groups!");
+        }
+
         List<UserRole> roles = userRoleRepository.findByRoleKeyGroup(group);
         for (UserRole role: roles) {
             assert role.getId() != null;
