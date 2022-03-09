@@ -1,37 +1,34 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
-import cat.udl.eps.softarch.linkapp.domain.Group;
-import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.rest.core.annotation.HandleAfterCreate;
-import org.springframework.data.rest.core.annotation.HandleAfterDelete;
-import org.springframework.data.rest.core.annotation.HandleAfterLinkSave;
-import org.springframework.data.rest.core.annotation.HandleAfterSave;
-import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
-import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
-import org.springframework.data.rest.core.annotation.HandleBeforeLinkSave;
-import org.springframework.data.rest.core.annotation.HandleBeforeSave;
-import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+import org.springframework.data.rest.core.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
 @RepositoryEventHandler
-public class GroupEventHandler {
+public class
+        GroupEventHandler {
     final Logger logger = LoggerFactory.getLogger(Group.class);
 
     final GroupRepository groupRepository;
+    final UserRoleRepository userRoleRepository;
 
-    public GroupEventHandler(GroupRepository groupRepository) {
+    public GroupEventHandler(GroupRepository groupRepository, UserRoleRepository userRoleRepository) {
         this.groupRepository = groupRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @HandleBeforeLinkSave
     public void handleGroupPreLinkSave(Group group, Object o) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     }
 
     @HandleBeforeSave
@@ -39,9 +36,38 @@ public class GroupEventHandler {
         logger.info("Before updating: {}", group.toString());
     }
 
+    @HandleBeforeDelete
+    public void handleGroupBeforeDelete(Group group) {
+        List<UserRole> roles = userRoleRepository.findByRoleKeyGroup(group);
+        for (UserRole role: roles) {
+            assert role.getId() != null;
+            userRoleRepository.deleteById(role.getId());
+        }
+    }
+
+    @HandleBeforeCreate
+    public void handleGroupPreCreate(Group group) {
+
+    }
+
+
     @HandleAfterCreate
     public void handleGroupPostCreate(Group group) {
         groupRepository.save(group);
+        User user = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        UserRoleKey userRoleKey = new UserRoleKey();
+        userRoleKey.setUser(user);
+        userRoleKey.setGroup(group);
+
+        UserRole userRole = new UserRole();
+        userRole.setRoleKey(userRoleKey);
+        userRole.setRole(UserRoleEnum.ADMIN);
+
+        userRoleRepository.save(userRole);
     }
 
     @HandleAfterDelete
