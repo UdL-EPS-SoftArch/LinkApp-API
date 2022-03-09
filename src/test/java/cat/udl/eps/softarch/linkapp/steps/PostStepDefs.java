@@ -31,10 +31,10 @@ public class PostStepDefs {
 
     //////////GENERAL STEP DEFS//////////
 
-    @And("There is a post created by a user with username {string}")
-    public void thereIsAPostCreatedByAUserWithUsername(String user) throws Throwable {
+    @And("There is a post created by a user with username {string} with text {string}")
+    public void thereIsAPostCreatedByAUserWithUsername(String user, String text) throws Throwable {
         Post post = new Post();
-        post.setText("hola");
+        post.setText(text);
         User author = userRepository.findById(user).get();
         post.setAuthor(author);
 
@@ -96,6 +96,16 @@ public class PostStepDefs {
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
+    @And("The post has not been deleted")
+    public void thePostHasNotBeenDeleted() throws Throwable{
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(newResourceUri)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.id").exists());
+    }
+
     //////////MODIFY POST STEP DEFS//////////
 
     @When("I modify the post just created with new text {string}")
@@ -128,5 +138,15 @@ public class PostStepDefs {
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(text)));
+    }
+
+    @And("The post has not been modified")
+    public void thePostHasNotBeenModified() throws Throwable{
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(newResourceUri)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.text", is("hola")));
     }
 }
