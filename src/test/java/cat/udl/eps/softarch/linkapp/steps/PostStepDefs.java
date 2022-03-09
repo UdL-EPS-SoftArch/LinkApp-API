@@ -55,10 +55,10 @@ public class PostStepDefs {
                 .andExpect(jsonPath("$.id").doesNotExist());
     }
 
-    @And("There is a comment created by a user with username {string} from the post just created by user with username {string}")
-    public void thereIsACommentCreatedByAUserWithUsernameFromThePostJustCreated(String user, String father) throws Throwable{
+    @And("There is a comment created by a user with username {string} with text {string} from the post just created by user with username {string}")
+    public void thereIsACommentCreatedByAUserWithUsernameFromThePostJustCreated(String user, String text, String father) throws Throwable{
         Post post_child = new Post();
-        post_child.setText("hola");
+        post_child.setText(text);
         User author = userRepository.findById(user).get();
         post_child.setAuthor(author);
         List<Post> posts = postRepository.findByAuthor_UsernameContaining(father);
