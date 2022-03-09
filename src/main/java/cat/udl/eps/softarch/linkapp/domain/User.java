@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
+import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.Collection;
 
 @Entity
@@ -39,16 +39,23 @@ public class User extends UriEntity<String> implements UserDetails {
     @Length(min = 8, max = 256)
     private String password;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Transient
-    private boolean passwordReset;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private boolean passwordReset;
 
-    public void encodePassword() {
-        this.password = passwordEncoder.encode(this.password);
-    }
+	@NotBlank
+	@Size(min = 2, max = 30)
+	private String name;
 
+	@Min(18)
+	private Integer age;
+
+	public void encodePassword() {
+		this.password = passwordEncoder.encode(this.password);
+	}
     @Override
-    public String getId() { return username;}
+    public String getId() {
+        return username;
+    }
 
     @Override
     @JsonValue(value = false)
