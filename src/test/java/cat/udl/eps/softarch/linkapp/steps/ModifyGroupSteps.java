@@ -6,11 +6,14 @@ import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 
@@ -33,17 +36,47 @@ public class ModifyGroupSteps {
     private static Group group;
 
 
-    @When("The user {string} modifies the group description to {string}")
+    @When("The allowed user {string} modifies the group description to {string}")
     public void userModifiesGroup(String username, String newDescription) throws Exception {
+        User user = userRepository.findById(username).get();
+        Group tmpGroup = groupRepository.findById((long) 1).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
 
+        tmpGroup.setDescription(newDescription);
         JSONObject newJsonDescription = new JSONObject();
         newJsonDescription.put("description", newDescription);
         stepDefs.result = stepDefs.mockMvc.perform(
-                patch("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
+                patch("/groups/{id}", tmpGroup.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newJsonDescription.toString())
                         .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+    }
+    @When("A NOT allowed user modifies the group description to {string}")
+    public void userNotAllowedModifiesGroup(String newDescription) throws Exception {
+        User user = userRepository.findById("demo").get();
+        Group tmpGroup = groupRepository.findById((long) 1).get();
+        UserRole userRole = new UserRole();
+        UserRoleKey userRoleKey = new UserRoleKey();
+        userRoleKey.setGroup(tmpGroup);
+        userRoleKey.setUser(user);
+        userRole.setRoleKey(userRoleKey);
+        userRole.setRole(UserRoleEnum.SUBSCRIBED);
+
+        try {
+            tmpGroup.setDescription(newDescription, userRole);
+
+            JSONObject newJsonDescription = new JSONObject();
+            newJsonDescription.put("description", newDescription);
+            stepDefs.result = stepDefs.mockMvc.perform(
+                            patch("/groups/{id}", tmpGroup.getId())
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(newJsonDescription.toString())
+                                    .with(AuthenticationStepDefs.authenticate()))
+                    .andDo(print());
+        } catch (AccessDeniedException e){
+
+        }
     }
 
     @And("A already created group where with name {string}, id {long} and description {string}")
@@ -74,18 +107,23 @@ public class ModifyGroupSteps {
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.valueOf(role));
 
-        group.addMember(userRole);
         userRoleRepository.save(userRole);
     }
 
     @And ("The description of the group is now {string}")
     public void itHasBeenModifiedAGroup(String description) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
+                        get("/groups/{id}", group.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.description", is(description)));
+    }
+
+    @Then("Nothing happens")
+    public void nothingHappens(){
+        assert stepDefs.result == null;
+
     }
 
 

@@ -1,9 +1,12 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
 
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -37,10 +40,6 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonIdentityReference(alwaysAsId = true)
-    private List<UserRole> members = new ArrayList<>();
-
 
     public Group() {}
 
@@ -56,7 +55,19 @@ public class Group extends UriEntity<Long> {
         return id;
     }
 
-    public void addMember(UserRole member){
-        members.add(member);
+    @Override
+    public boolean equals(Object object){
+        Group group = (Group) object;
+        return group.getId().equals(this.getId());
+    }
+
+    public void setDescription(String description, UserRole userRole) {
+        if (userRole.getRole() == UserRoleEnum.ADMIN && userRole.getRoleKey().getGroup().equals(this)){
+            this.description = description;
+        } else {
+            throw new AccessDeniedException("User doesn't have permissions");
+        }
+
+
     }
 }
