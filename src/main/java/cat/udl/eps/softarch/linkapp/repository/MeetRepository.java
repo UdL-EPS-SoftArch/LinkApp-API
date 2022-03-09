@@ -5,6 +5,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RepositoryRestResource
@@ -18,4 +19,7 @@ public interface MeetRepository extends PagingAndSortingRepository<Meet, Long> {
    */
 
   List<Meet> findByTitleContaining(@Param("title") String title);
+  List<Meet> findByStatus(@Param("status") Boolean status);
+  List<Meet> findByStatusAndFinalMeetDateLessThan(@Param("status") Boolean status, @Param("finalMeetDate") ZonedDateTime meetDate);
+
 }
