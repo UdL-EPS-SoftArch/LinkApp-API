@@ -25,7 +25,11 @@ public class LinkAppApplication {
 
     @Scheduled(cron = "${meet-status-cron}")
     @Transactional
-    public void updateMeetStatusCronJob() {
+    protected void updateMeetStatusCronJob() {
+        updateMeetStatusJob(meetRepository);
+    }
+
+    public static void updateMeetStatusJob(MeetRepository meetRepository) {
         List<Meet> meets = meetRepository.findByStatusAndFinalMeetDateLessThan(true, ZonedDateTime.now());
         for (Meet meet : meets) {
             meet.setStatus(false);
