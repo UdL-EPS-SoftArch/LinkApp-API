@@ -58,13 +58,6 @@ public class MessageEventHandler {
         throw new AccessDeniedException("You cannot delete a message");
     }
 
-    @HandleBeforeSave
-    public void handleMessagePreSave(Message message) {
-        if(messageRepository.existsById(message.getId())){
-            throw new AccessDeniedException("You cannot edit a message");
-        }
-    }
-
     @HandleAfterCreate
     public void handleMeetPostCreate(Message message) {
         messageRepository.save(message);
