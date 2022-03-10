@@ -93,12 +93,21 @@ public class ModifyGroupSteps {
                 .andDo(print())
                 .andExpect(jsonPath("$.description", is(description)));
     }
+    @And("The user {string} creates a group with name {string}, id {long} and description {string}")
+    public void createGroup(String username, String name, long id, String description) throws Exception {
+        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC);
 
-    @Then("Nothing happens")
-    public void nothingHappens(){
-        assert stepDefs.result == null;
-
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        post("/groups/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                        stepDefs.mapper.writeValueAsString(group)
+                                ).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
+
 
 
 

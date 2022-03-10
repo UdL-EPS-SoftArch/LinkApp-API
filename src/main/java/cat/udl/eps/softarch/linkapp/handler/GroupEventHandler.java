@@ -89,9 +89,8 @@ GroupEventHandler {
         UserRole userRole = new UserRole();
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.ADMIN);
-
+        //groupRepository.save(group);
         userRoleRepository.save(userRole);
-        groupRepository.save(group);
     }
 
     @HandleAfterDelete
