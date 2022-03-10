@@ -153,9 +153,6 @@ public class CreateStepDefsPost
 
         String id_comm = String.valueOf(comm.getId());
 
-        //System.out.println(comm);
-        //System.out.println(comm.getFather());
-
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/posts/{id}",id_comm)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -163,7 +160,12 @@ public class CreateStepDefsPost
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(comment)));
 
-        Assert.assertEquals(comm.getFather(),father);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/posts/{id}",id_comm+"/father")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.text", is(father.getText())));
 
 
     }
