@@ -6,6 +6,7 @@ import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Component
 @RepositoryEventHandler
 public class
-        GroupEventHandler {
+GroupEventHandler {
     final Logger logger = LoggerFactory.getLogger(Group.class);
 
     final GroupRepository groupRepository;
@@ -31,13 +32,36 @@ public class
 
     }
 
+
     @HandleBeforeSave
     public void handleGroupBeforeSave(Group group) {
-        logger.info("Before updating: {}", group.toString());
+        User user = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
+
+        if (userRole == null || userRole.getRole() != UserRoleEnum.ADMIN) {
+            throw new AccessDeniedException("Only ADMINS can modify Groups!");
+        }
+
+
     }
 
     @HandleBeforeDelete
-    public void handleGroupBeforeDelete(Group group) {
+    public void handleGroupBeforeDelete(Group group) throws AccessDeniedException {
+
+        User user = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
+
+        if (userRole == null || userRole.getRole() != UserRoleEnum.ADMIN) {
+            throw new AccessDeniedException("Only ADMINS can delete Groups!");
+        }
+
         List<UserRole> roles = userRoleRepository.findByRoleKeyGroup(group);
         for (UserRole role: roles) {
             assert role.getId() != null;
@@ -53,7 +77,6 @@ public class
 
     @HandleAfterCreate
     public void handleGroupPostCreate(Group group) {
-        groupRepository.save(group);
         User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -66,7 +89,7 @@ public class
         UserRole userRole = new UserRole();
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.ADMIN);
-
+        //groupRepository.save(group);
         userRoleRepository.save(userRole);
     }
 
@@ -80,4 +103,3 @@ public class
         logger.info("After linking: {} to {}", player.toString(), o.toString());
     }
 }
-

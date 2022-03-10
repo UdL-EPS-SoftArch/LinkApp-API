@@ -56,6 +56,7 @@ public class MeetStepDefs {
     @And("A group exists")
     public Group theGroupExists() {
         Group group = new Group();
+        group.setId((long) 1);
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(GroupVisibilityEnum.PUBLIC);
