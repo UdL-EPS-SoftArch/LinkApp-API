@@ -95,7 +95,7 @@ public class ModifyGroupSteps {
                 .andDo(print());
     }
 
-    @And("The user {string} is an Admin {string} of the group")
+    @And("The user {string} is a User {string} of the group")
     public void userAdminOfThatGroup(String username, String role){
         User user = userRepository.findById(username).get();
 

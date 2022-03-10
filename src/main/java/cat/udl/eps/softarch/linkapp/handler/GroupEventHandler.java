@@ -32,6 +32,7 @@ GroupEventHandler {
 
     }
 
+
     @HandleBeforeSave
     public void handleGroupBeforeSave(Group group) {
         logger.info("Before updating: {}", group.toString());
