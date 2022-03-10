@@ -35,7 +35,17 @@ GroupEventHandler {
 
     @HandleBeforeSave
     public void handleGroupBeforeSave(Group group) {
-        logger.info("Before updating: {}", group.toString());
+        User user = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
+
+        if (userRole == null || userRole.getRole() != UserRoleEnum.ADMIN) {
+            throw new AccessDeniedException("Only ADMINS can modify Groups!");
+        }
+
+
     }
 
     @HandleBeforeDelete
@@ -48,7 +58,7 @@ GroupEventHandler {
 
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
 
-        if (userRole.getRole() != UserRoleEnum.ADMIN) {
+        if (userRole == null || userRole.getRole() != UserRoleEnum.ADMIN) {
             throw new AccessDeniedException("Only ADMINS can delete Groups!");
         }
 
@@ -67,7 +77,6 @@ GroupEventHandler {
 
     @HandleAfterCreate
     public void handleGroupPostCreate(Group group) {
-        groupRepository.save(group);
         User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -82,6 +91,7 @@ GroupEventHandler {
         userRole.setRole(UserRoleEnum.ADMIN);
 
         userRoleRepository.save(userRole);
+        groupRepository.save(group);
     }
 
     @HandleAfterDelete

@@ -36,13 +36,13 @@ public class ModifyGroupSteps {
     private static Group group;
 
 
-    @When("The allowed user {string} modifies the group description to {string}")
+    @When("A user {string} modifies the group description to {string}")
     public void userModifiesGroup(String username, String newDescription) throws Exception {
-        User user = userRepository.findById(username).get();
+        //User user = userRepository.findById(username).get();
         Group tmpGroup = groupRepository.findById((long) 1).get();
-        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
+        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
 
-        tmpGroup.setDescription(newDescription);
+        tmpGroup.setDescription(newDescription);*/
         JSONObject newJsonDescription = new JSONObject();
         newJsonDescription.put("description", newDescription);
         stepDefs.result = stepDefs.mockMvc.perform(
@@ -51,32 +51,6 @@ public class ModifyGroupSteps {
                         .content(newJsonDescription.toString())
                         .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-    }
-    @When("A NOT allowed user modifies the group description to {string}")
-    public void userNotAllowedModifiesGroup(String newDescription) throws Exception {
-        User user = userRepository.findById("demo").get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        UserRole userRole = new UserRole();
-        UserRoleKey userRoleKey = new UserRoleKey();
-        userRoleKey.setGroup(tmpGroup);
-        userRoleKey.setUser(user);
-        userRole.setRoleKey(userRoleKey);
-        userRole.setRole(UserRoleEnum.SUBSCRIBED);
-
-        try {
-            tmpGroup.setDescription(newDescription, userRole);
-
-            JSONObject newJsonDescription = new JSONObject();
-            newJsonDescription.put("description", newDescription);
-            stepDefs.result = stepDefs.mockMvc.perform(
-                            patch("/groups/{id}", tmpGroup.getId())
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(newJsonDescription.toString())
-                                    .with(AuthenticationStepDefs.authenticate()))
-                    .andDo(print());
-        } catch (AccessDeniedException e){
-
-        }
     }
 
     @And("A already created group where with name {string}, id {long} and description {string}")

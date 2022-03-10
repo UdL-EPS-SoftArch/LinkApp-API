@@ -61,7 +61,7 @@ public class Group extends UriEntity<Long> {
         return group.getId().equals(this.getId());
     }
 
-    public void setDescription(String description, UserRole userRole) {
+/*    public void setDescription(String description, UserRole userRole) {
         if (userRole.getRole() == UserRoleEnum.ADMIN && userRole.getRoleKey().getGroup().equals(this)){
             this.description = description;
         } else {
@@ -70,4 +70,5 @@ public class Group extends UriEntity<Long> {
 
 
     }
+    */
 }
