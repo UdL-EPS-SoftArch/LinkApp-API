@@ -19,4 +19,5 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
    */
 
   List<Post> findByAuthor_UsernameContaining(@Param("text") String text);
+  List<Post> findByTextContaining(@Param("text") String text);
 }

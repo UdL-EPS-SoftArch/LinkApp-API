@@ -53,14 +53,10 @@ public class CreateStepDefsPost
 
 
 
-    @When("I create a post with text {string} and author username {string}")
-    public void iCreateAPostWithIdAndTextAndAuthorUsername(String description, String author)throws Throwable {
+    @When("I create a post with text {string}")
+    public void iCreateAPostWithText(String description)throws Throwable {
         Post post = new Post();
-        User user = userRepository.findById(author).get();
         post.setText(description);
-        post.setAuthor(user);
-        featureUser = user;
-        featurePost = post;
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/posts/")
                                 .content(stepDefs.mapper.writeValueAsString(post))
@@ -70,16 +66,21 @@ public class CreateStepDefsPost
     }
 
 
-    @And("It has been created a post with text {string} and author username {string}")
-    public void itHasBeenCreatedAPostWithTextAndAuthorUsername(String text, String author) throws Throwable {
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
-        String id = String.valueOf(posts.get(posts.size()-1).getId());
+    @And("It has been created a post with text {string}")
+    public void itHasBeenCreatedAPostWithTextAndAuthorUsername(String text) throws Throwable {
+        List<Post> posts = postRepository.findByTextContaining(text);
+        Post post = posts.get(posts.size()-1);
+        String id = String.valueOf(post.getId());
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/posts/{id}",id)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(text)));
+
+
+        User user = userRepository.findByUsername("demo");
+        Assert.assertEquals(user.getId(),post.getAuthor().getId());
     }
 
 

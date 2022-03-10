@@ -85,4 +85,5 @@ public class User extends UriEntity<String> implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
+
 }

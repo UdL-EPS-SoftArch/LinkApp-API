@@ -18,4 +18,5 @@ public interface UserRepository extends PagingAndSortingRepository<User, String>
    */
 
   List<User> findByUsernameContaining(@Param("text") String text);
+  User findByUsername(@Param("username") String username);
 }
