@@ -50,11 +50,9 @@ public class MeetEventHandler {
         ZonedDateTime now = ZonedDateTime.now().minusMinutes(1);
         if (meet.getInitialMeetDate().isBefore(now))
             throw new ValidationError("Initial meet date can't be in the past");
-        if (meet.getFinalMeetDate().isBefore(now))
-            throw new ValidationError("Final meet date can't be in the past");
-        if (meet.getInitialMeetDate().isAfter(meet.getFinalMeetDate())) {
+
+        if (meet.getInitialMeetDate().isAfter(meet.getFinalMeetDate()))
             throw new ValidationError("Final date can't be set before initial date");
-        }
 
         meet.setCreationDate(ZonedDateTime.now());
         meet.setLastUpdate(ZonedDateTime.now());
