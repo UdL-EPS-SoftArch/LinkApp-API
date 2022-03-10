@@ -52,3 +52,12 @@ Feature: Delete User
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I login as "user" with password "password"
     And There is no registered user with username "usertodelete"
+
+  Scenario: Delete a user that belongs to a group
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
+    And I login as "user" with password "password"
+    And A group exists
+    And The user "user" belongs to that group as "SUBSCRIBED"
+    When I delete the user with username "user"
+    Then The response code is 204
+    And It has been deleted a user with username "user" and email "user@sample.app"
