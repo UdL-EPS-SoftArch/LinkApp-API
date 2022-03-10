@@ -14,6 +14,7 @@ Feature: Create Message
     Then The response code is 201
     And It has been created a message with message "message"
     And The creation time of the message is recent
+    And The author of the message is correct
 
   Scenario: Send a blank message in a meet I am assisting
     Given I login as "user" with password "password"
