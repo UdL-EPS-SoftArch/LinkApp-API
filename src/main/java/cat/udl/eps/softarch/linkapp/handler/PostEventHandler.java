@@ -34,13 +34,13 @@ public class PostEventHandler {
 
         //User user = post.getAuthor();
         post.setAuthor(currentUser);
-
         //if (!Objects.equals(currentUser.getId(), user.getId()))
         //{
         //    throw new AccessDeniedException("Not enough permissions");
         //}PostRepository.save(post);
         post.setCreationDate(ZonedDateTime.now());
         post.setLastUpdate(ZonedDateTime.now());
+
     }
 
     @HandleBeforeSave
@@ -49,12 +49,13 @@ public class PostEventHandler {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
-        User user = post.getAuthor();
 
-        if (!Objects.equals(currentUser.getId(), user.getId()))
-        {
-            throw new AccessDeniedException("Not enough permissions");
-        }
+        //User user = post.getAuthor();
+        post.setAuthor(currentUser);
+        //if (!Objects.equals(currentUser.getId(), user.getId()))
+        //{
+        //    throw new AccessDeniedException("Not enough permissions");
+        //}PostRepository.save(post);
         post.setLastUpdate(ZonedDateTime.now());
     }
 
