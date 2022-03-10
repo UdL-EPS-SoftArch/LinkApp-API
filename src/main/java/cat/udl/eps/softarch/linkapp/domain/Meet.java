@@ -45,7 +45,10 @@ public class Meet extends UriEntity<Long> {
     private ZonedDateTime lastUpdate;
 
     @NotNull
-    private ZonedDateTime meetDate;
+    private ZonedDateTime initialMeetDate;
+
+    @NotNull
+    private ZonedDateTime finalMeetDate;
 
     //may be null to indicate that this is not set
     private Long maxUsers = null;

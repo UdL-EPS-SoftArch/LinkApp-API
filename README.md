@@ -27,5 +27,5 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 
 ## Entities Model
 
-![EntityModelsDiagram](http://www.plantuml.com/plantuml/svg/5SqnhW8X40RW_ftYUG2OtcefjZ1Paqqs7W1X528CPFY9rrUhh_oM0Q-OjVoTieGo8qyj_mdeuqoa_csV6MdUvs0DJS026rgbMzpCkX_cQ0yu3OcsB2_Nkt7xXQeVOALLa95vN5laOlilMLZYrmy0?v1)
+![EntityModelsDiagram](http://www.plantuml.com/plantuml/svg/5SqnhW8X40RW_ftYUG2OtcefjZ1Paqqs7W1X528CPFY9rrUhh_oM0Q-OjVoTieGo8qyj_mdeuqoa_csV6MdUvs0DJS026rgbMzpCkX_cQ0yu3OcsB2_Nkt7xXQeVOALLa95vN5laOlilMLZYrmy0?v3)
 

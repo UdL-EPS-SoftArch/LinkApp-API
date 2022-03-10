@@ -60,7 +60,8 @@ public class MessageStepDefs {
         meet.setStatus(true);
         meet.setLastUpdate(ZonedDateTime.now());
         meet.setCreationDate(ZonedDateTime.now());
-        meet.setMeetDate(ZonedDateTime.now().plusDays(1));
+        meet.setInitialMeetDate(ZonedDateTime.now());
+        meet.setFinalMeetDate(ZonedDateTime.now().plusDays(1));
         featureMeet = meet;
         meetRepository.save(meet);
     }

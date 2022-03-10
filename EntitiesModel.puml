@@ -3,6 +3,7 @@
 class User {
   username : String
   password : String
+  name : String
   email : String
   age: int
 
@@ -33,23 +34,28 @@ class Post {
      text : String
 }
 
-class Chatroom {
-     text : String
-}
-
 class Meet {
     title : String
     description : String
     date : String
     location : String
     maxUsers : int
-    meetDate : ZonedDateTime
+    initialMeetDate : ZonedDateTime
+    finalMeetDate : ZonedDateTime
     lastUpdate : ZonedDateTime
     creationDate : ZonedDateTime
 }
 
-User "1" --right-- "*" Chatroom
-Meet "1" -- "*" Chatroom
+class Message {
+     text : String
+     author: User
+     meet: Meet
+     group: Group
+     creationDate: ZonedDateTime
+}
+
+User "1" --right-- "*" Message
+Meet "1" -- "*" Message
 Group "*" --right-- "*" Topic
 Group "1" --left-- "*" UserRole
 User "1" --right-- "*" UserRole

@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserRoleRepository extends PagingAndSortingRepository<UserRole, Long>{
+public interface UserRoleRepository extends PagingAndSortingRepository<UserRole, UserRoleKey>{
     /* Interface provides automatically, as defined in https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
      * count, delete, deleteAll, deleteById, existsById, findAll, findAllById, findById, save, saveAll
      *
