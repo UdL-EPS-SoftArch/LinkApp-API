@@ -50,12 +50,12 @@ public class PostEventHandler {
                 .getAuthentication()
                 .getPrincipal();
 
-        //User user = post.getAuthor();
-        post.setAuthor(currentUser);
-        //if (!Objects.equals(currentUser.getId(), user.getId()))
-        //{
-        //    throw new AccessDeniedException("Not enough permissions");
-        //}PostRepository.save(post);
+        User user = post.getAuthor();
+
+        if (!Objects.equals(currentUser.getId(), user.getId()))
+        {
+            throw new AccessDeniedException("Not enough permissions");
+        }//PostRepository.save(post);
         post.setLastUpdate(ZonedDateTime.now());
     }
 
