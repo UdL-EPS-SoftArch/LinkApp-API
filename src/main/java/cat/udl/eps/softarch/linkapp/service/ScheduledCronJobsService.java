@@ -1,4 +1,4 @@
-package cat.udl.eps.softarch.linkapp;
+package cat.udl.eps.softarch.linkapp.service;
 
 import cat.udl.eps.softarch.linkapp.domain.Meet;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
@@ -10,11 +10,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
-public class ScheduledCronJobs {
+public class ScheduledCronJobsService {
 
     private final MeetRepository meetRepository;
 
-    public ScheduledCronJobs(MeetRepository meetRepository) {
+    public ScheduledCronJobsService(MeetRepository meetRepository) {
         this.meetRepository = meetRepository;
     }
 

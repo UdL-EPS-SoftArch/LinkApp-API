@@ -47,3 +47,17 @@ Feature: Create Meet
     And The user "demo" belongs to that group as "AUTHORIZED"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
+
+  Scenario: Create a new Meet with initial date in the past
+    Given I login as "demo" with password "password"
+    And A group exists
+    And The user "demo" belongs to that group as "ADMIN"
+    When I create a meet in that group with initial date in the past
+    Then The response code is 422
+
+  Scenario: Create a new Meet with final date before initial date
+    Given I login as "demo" with password "password"
+    And A group exists
+    And The user "demo" belongs to that group as "ADMIN"
+    When I create a meet in that group with final date before initial date
+    Then The response code is 422
