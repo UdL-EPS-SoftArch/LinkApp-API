@@ -36,6 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CreateStepDefsPost
 {
+    private String newResourceUri;
+
+    private String newResourceUriComment;
 
     private Post featurePost;
 
@@ -62,7 +65,7 @@ public class CreateStepDefsPost
                                 .content(stepDefs.mapper.writeValueAsString(post))
                                 .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
-
+        newResourceUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
     }
 
 
@@ -70,9 +73,8 @@ public class CreateStepDefsPost
     public void itHasBeenCreatedAPostWithTextAndAuthorUsername(String text) throws Throwable {
         List<Post> posts = postRepository.findByTextContaining(text);
         Post post = posts.get(posts.size()-1);
-        String id = String.valueOf(post.getId());
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/posts/{id}",id)
+                        get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -93,48 +95,34 @@ public class CreateStepDefsPost
 
     @And("Username {string} has created {string} posts")
     public void usernameHasCreatedPosts(String author, String n_posts) {
-
         List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
         Assert.assertEquals(String.valueOf(posts.size()),String.valueOf(n_posts));
     }
 
-    @When("I create a comment {string} and author username {string}")
-    public void iCreateACommentAndAuthorUsername(String comment, String author) {
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
-        String id = String.valueOf(posts.get(posts.size()-1).getId());
-    }
 
-    @And("I create a comment with text {string} and author username {string}")
+
+    @And("I create a comment with text {string}")
     public void iCreateACommentWithIdAndTextAndAuthorUsername(String description, String author) throws Throwable {
         Post post = new Post();
-        User user = userRepository.findById(author).get();
         post.setText(description);
-        post.setAuthor(user);
-        featureUser = user;
-        featurePost = post;
+
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
                         .content(stepDefs.mapper.writeValueAsString(post))
                         .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
-
+        newResourceUriComment = stepDefs.result.andReturn().getResponse().getHeader("Location");
     }
 
-    @When("I create a comment to the previous post with text {string} and author username {string}")
-    public void iCreateACommentToPreviousPostWithAuthorUsername(String comment, String author) throws Throwable {
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
+    @When("I create a comment to the previous post with text {string}")
+    public void iCreateACommentToPreviousPostWithAuthorUsername(String comment) throws Throwable {
+        List<Post> posts = postRepository.findByTextContaining("create post 1");
         Post father = posts.get(posts.size()-1);
 
         Post post = new Post();
-        User user = userRepository.findById(author).get();
         post.setText(comment);
-        post.setAuthor(user);
-
 
         post.setFather(father);
-
-        System.out.println(post);
-        System.out.println(post.getFather());
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/posts/")
@@ -142,32 +130,29 @@ public class CreateStepDefsPost
                                 .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
 
-
+        newResourceUriComment = stepDefs.result.andReturn().getResponse().getHeader("Location");
     }
 
-    @And("The post with text {string} is a comment from post with text {string} with author {string}")
-    public void thePostWithTextIsACommentFromPostWithText(String comment, String post, String author) throws Throwable {
+    @And("The post with text {string} is a comment from post with text {string}")
+    public void thePostWithTextIsACommentFromPostWithText(String comment, String post) throws Throwable {
 
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining(author);
-        Post comm = posts.get(posts.size()-1);
-        Post father = posts.get(posts.size()-2);
+        List<Post> posts = postRepository.findByTextContaining(post);
+        Post father = posts.get(posts.size()-1);
 
-        String id_comm = String.valueOf(comm.getId());
-
+        System.out.println(newResourceUriComment);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/posts/{id}",id_comm)
+                        get(newResourceUriComment)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(comment)));
 
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/posts/{id}",id_comm+"/father")
+                        get(newResourceUriComment+"/father")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(father.getText())));
-
 
     }
 }
