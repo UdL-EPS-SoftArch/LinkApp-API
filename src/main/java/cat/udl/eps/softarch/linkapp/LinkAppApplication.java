@@ -20,21 +20,4 @@ public class LinkAppApplication {
         SpringApplication.run(LinkAppApplication.class, args);
     }
 
-    @Autowired
-    private MeetRepository meetRepository;
-
-    @Scheduled(cron = "${meet-status-cron}")
-    @Transactional
-    protected void updateMeetStatusCronJob() {
-        updateMeetStatusJob(meetRepository);
-    }
-
-    public static void updateMeetStatusJob(MeetRepository meetRepository) {
-        List<Meet> meets = meetRepository.findByStatusAndFinalMeetDateLessThan(true, ZonedDateTime.now());
-        for (Meet meet : meets) {
-            meet.setStatus(false);
-            meetRepository.save(meet);
-        }
-    }
-
 }

@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
-import cat.udl.eps.softarch.linkapp.LinkAppApplication;
+import cat.udl.eps.softarch.linkapp.ScheduledCronJobs;
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
@@ -276,7 +276,7 @@ public class MeetStepDefs
 
     @When("The cron status job is executed")
     public void theCronStatusJobIsExecuted() {
-        LinkAppApplication.updateMeetStatusJob(meetRepository);
+        ScheduledCronJobs.updateMeetStatusJob(meetRepository);
     }
 
     @Then("Then the meet status is false")
