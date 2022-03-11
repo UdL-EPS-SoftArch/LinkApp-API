@@ -1,17 +1,20 @@
 Feature: Create Post
+  In order to create a post
   As a user
+  I want to create a new post
 
   Scenario: Create Post
     Given I login as "demo" with password "password"
     When I create a post with text "create post 1"
     Then The response code is 201
-    And It has been created a post with text "create post 1"
+    And There is a post created with text "create post 1"
 
   Scenario: Create Post without log in
     Given There is a registered user with username "marc" and password "password" and email "marc@sample.app"
+    And I'm not logged in
     When I create a post with text "create post 1"
     Then The response code is 401
-    And Username "marc" has not created a post
+    And There is no post created
 
   Scenario: Create many posts by a user
     Given I login as "demo" with password "password"
@@ -19,8 +22,7 @@ Feature: Create Post
     And I create a post with text "create post 2"
     And I create a post with text "create post 3"
     Then The response code is 201
-    And Username "demo" has created "3" posts
-    And It has been created a post with text "create post 3"
+    And There are "3" posts created
 
   Scenario: Create a comment in a post with log in
     Given I login as "demo" with password "password"
