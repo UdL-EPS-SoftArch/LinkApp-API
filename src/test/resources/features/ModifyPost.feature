@@ -5,46 +5,46 @@ Feature: Modify Post
 
   Scenario: Modify an existing post
     Given I login as "demo" with password "password"
-    And There is a post created by a user with username "demo" with text "hola"
+    And I create a post with text "hola"
     When I modify the post just created with new text "new text"
     Then The response code is 200
     And It has been modified the post just created with the text "new text"
 
   Scenario: Modify a post created by another user
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
-    And I login as "user" with password "existing"
-    And There is a post created by a user with username "user" with text "hola"
-    And I'm not logged in
     And I login as "demo" with password "password"
+    And I create a post with text "hola"
+    And I'm not logged in
+    And I login as "user" with password "existing"
     When I modify the post just created with new text "new text"
     Then The response code is 403
     And The post has not been modified
 
   Scenario: Modify an unexisting post
     Given I login as "demo" with password "password"
-    And There is no post created with id "1"
-    When I modify the post with id "1" with new text "new text"
+    And There is no post created
+    When I modify the post just created with new text "new text"
     Then The response code is 404
 
   Scenario: Modify an existing comment from a post
-    Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
-    And I login as "user" with password "existing"
-    And There is a post created by a user with username "user" with text "ei"
-    And I'm not logged in
+    Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I login as "demo" with password "password"
-    And There is a comment created by a user with username "demo" with text "hola" from the post just created by user with username "user"
-    When I modify the post just created with new text "new text"
+    And I create a post with text "create post 1"
+    And I'm not logged in
+    And I login as "user" with password "password"
+    And I create a comment to the previous post with text "create comment 1"
+    When I modify the comment just created with new text "new text"
     Then The response code is 200
-    And It has been modified the post just created with the text "new text"
+    And It has been modified the comment just created with the text "new text"
 
   Scenario: Modify a comment created by another user
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
-    And I login as "user" with password "existing"
-    And There is a post created by a user with username "user" with text "hola"
-    And There is a comment created by a user with username "user" with text "hola" from the post just created by user with username "user"
-    And I'm not logged in
     And I login as "demo" with password "password"
+    And I create a post with text "create post 1"
+    And I create a comment to the previous post with text "create comment 1"
+    And I'm not logged in
+    And I login as "user" with password "existing"
     When I modify the post just created with new text "new text"
     Then The response code is 403
-    And The post has not been modified
+    And The comment has not been modified
 
