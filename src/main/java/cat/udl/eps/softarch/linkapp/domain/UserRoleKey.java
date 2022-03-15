@@ -35,4 +35,10 @@ public class UserRoleKey implements Serializable {
         return Objects.equals(this.group.getId(), key.group.getId())
                 && Objects.equals(this.user.getId(), key.user.getId());
     }
+
+    @Override
+    public String toString()
+    {
+        return "UserRoleKey_user_id_" + user.getId() + "_group_id_" + group.getId();
+    }
 }

@@ -155,10 +155,12 @@ public class MeetStepDefs
 
         JSONObject object = new JSONObject();
         object.put("role", UserRoleEnum.SUBSCRIBED);
+        String uri = userRole.getUri();
+        System.out.println(uri);
 
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch(userRole.getUri())
+                        patch(uri)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(object.toString())
                                 .accept(MediaType.APPLICATION_JSON)
