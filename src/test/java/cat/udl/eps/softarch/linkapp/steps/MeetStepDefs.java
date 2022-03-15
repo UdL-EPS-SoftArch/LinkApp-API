@@ -151,12 +151,24 @@ public class MeetStepDefs
     }
 
     @And("I update the user {string} role of the group to {string}")
-    public void updateTheUserRoleTo(String username, String role)
+    public void updateTheUserRoleTo(String username, String role) throws Throwable
     {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
-        userRole.setRole(UserRoleEnum.valueOf(role));
-        userRoleRepository.save(userRole);
+        //userRole.setRole(UserRoleEnum.valueOf(role));
+        //userRoleRepository.save(userRole);
+
+        JSONObject object = new JSONObject();
+        object.put("role", UserRoleEnum.SUBSCRIBED);
+
+        // Patch updates one field whereas put overwrites all fields
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch(userRole.getUri())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(object.toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
     @And("The creation time of the meet is recent")
