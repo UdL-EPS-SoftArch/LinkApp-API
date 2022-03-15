@@ -1,7 +1,10 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
+import cat.udl.eps.softarch.linkapp.domain.Group;
+import cat.udl.eps.softarch.linkapp.domain.Meet;
 import cat.udl.eps.softarch.linkapp.domain.Post;
 import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
@@ -36,6 +39,8 @@ public class PostStepDefs {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private GroupRepository groupRepository;
 
     //////////GENERAL STEP DEFS//////////
 
@@ -48,7 +53,7 @@ public class PostStepDefs {
 
     @When("I delete the post")
     public void iDeleteAPost() throws Throwable{
-        if (newResourceUriComment != null) {
+        if (newResourceUri != null) {
             stepDefs.result = stepDefs.mockMvc.perform(
                     delete(newResourceUri).with(AuthenticationStepDefs.authenticate()));
         }else{
@@ -219,11 +224,19 @@ public class PostStepDefs {
     //CREATE STEP DEFS
     @When("I create a post with text {string}")
     public void iCreateAPostWithText(String description)throws Throwable {
+
+        List<Group> groups = groupRepository.findByTitleContaining("title");
+        Group group = groups.get(groups.size()-1);
         Post post = new Post();
         post.setText(description);
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
-                        .content(stepDefs.mapper.writeValueAsString(post))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
+                                .put("group", "/groups/" + group.getId())
+                                .toString()
+                        )
+                        .with(AuthenticationStepDefs.authenticate())
                         .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
         newResourceUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
@@ -242,8 +255,6 @@ public class PostStepDefs {
                 .andExpect(jsonPath("$.text", is(text)));
 
 
-        User user = userRepository.findByUsername("demo");
-        Assert.assertEquals(user.getId(),post.getAuthor().getId());
     }
 
 ///****
@@ -274,19 +285,26 @@ public class PostStepDefs {
 
     @When("I create a comment to the previous post with text {string}")
     public void iCreateACommentToPreviousPostWithAuthorUsername(String comment) throws Throwable {
+
+        List<Group> groups = groupRepository.findByTitleContaining("title");
+        Group group = groups.get(groups.size()-1);
+
         List<Post> posts = postRepository.findByTextContaining("create post 1");
         System.out.println(posts);
         Post father = posts.get(posts.size()-1);
 
         Post post = new Post();
         post.setText(comment);
-
         post.setFather(father);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
-                        .content(stepDefs.mapper.writeValueAsString(post))
-                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
+                        .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
+                        .put("group", "/groups/" + group.getId())
+                        .toString()
+                )
+                .with(AuthenticationStepDefs.authenticate())
+                .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
 
         newResourceUriComment = stepDefs.result.andReturn().getResponse().getHeader("Location");
