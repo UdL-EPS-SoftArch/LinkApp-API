@@ -80,9 +80,11 @@ public class PostEventHandler {
                 .getAuthentication()
                 .getPrincipal();
 
-        UserRole userRole = post.getAuthor();
-        if (!Objects.equals(currentUser.getId(), userRole.getRoleKey().getUser().getId()) ||
-                userRole.getRole() == UserRoleEnum.ADMIN)
+        UserRole authorUserRole = post.getAuthor();
+        UserRole currentUserRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(currentUser, post.getGroup());
+
+        if (!Objects.equals(authorUserRole.getRoleKey().getUser().getId(), currentUserRole.getRoleKey().getUser().getId()) &&
+                currentUserRole.getRole() != UserRoleEnum.ADMIN)
         {
             throw new AccessDeniedException("Not enough permissions");
         }
