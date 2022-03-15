@@ -1,8 +1,8 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
-import cat.udl.eps.softarch.linkapp.domain.Post;
-import cat.udl.eps.softarch.linkapp.domain.User;
+import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
@@ -19,12 +19,15 @@ public class PostEventHandler {
 
     final Logger logger = LoggerFactory.getLogger(Post.class);
 
-    final PostRepository PostRepository;
+    final PostRepository postRepository;
+
+    final UserRoleRepository userRoleRepository;
 
 
 
-    public PostEventHandler(PostRepository PostRepository) {
-        this.PostRepository = PostRepository;
+    public PostEventHandler(PostRepository postRepository, UserRoleRepository userRoleRepository) {
+        this.postRepository = postRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @HandleBeforeCreate
@@ -34,12 +37,15 @@ public class PostEventHandler {
                 .getAuthentication()
                 .getPrincipal();
 
-        //User user = post.getAuthor();
-        post.setAuthor(currentUser);
-        //if (!Objects.equals(currentUser.getId(), user.getId()))
-        //{
-        //    throw new AccessDeniedException("Not enough permissions");
-        //}PostRepository.save(post);
+        Group group = post.getGroup();
+
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
+        post.setAuthor(userRole);
+
+        if (userRole == null) {
+            throw new AccessDeniedException("Not enough permissions");
+        }
+
         post.setCreationDate(ZonedDateTime.now());
         post.setLastUpdate(ZonedDateTime.now());
 
@@ -52,12 +58,12 @@ public class PostEventHandler {
                 .getAuthentication()
                 .getPrincipal();
 
-        User user = post.getAuthor();
+        UserRole userRole = post.getAuthor();
 
-        if (!Objects.equals(currentUser.getId(), user.getId()))
+        if (!Objects.equals(currentUser.getId(), userRole.getRoleKey().getUser().getId()))
         {
             throw new AccessDeniedException("Not enough permissions");
-        }//PostRepository.save(post);
+        }
         post.setLastUpdate(ZonedDateTime.now());
     }
 
@@ -73,8 +79,10 @@ public class PostEventHandler {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
-        User user = post.getAuthor();
-        if (!Objects.equals(currentUser.getId(), user.getId()))
+
+        UserRole userRole = post.getAuthor();
+        if (!Objects.equals(currentUser.getId(), userRole.getRoleKey().getUser().getId()) ||
+                userRole.getRole() == UserRoleEnum.ADMIN)
         {
             throw new AccessDeniedException("Not enough permissions");
         }

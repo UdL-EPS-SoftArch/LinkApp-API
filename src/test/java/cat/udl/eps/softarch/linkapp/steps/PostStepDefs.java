@@ -4,6 +4,7 @@ import cat.udl.eps.softarch.linkapp.domain.Post;
 import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
+import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
@@ -35,43 +36,12 @@ public class PostStepDefs {
     @Autowired
     private PostRepository postRepository;
 
+
     //////////GENERAL STEP DEFS//////////
-// En realitat, més que There is és un I create, perquè es fa un mètode Mock .post. Reutilitzo un altre mètode per no tenir codi repetit que fa el mateix
-//  @And("There is a post created by a user with username {string} with text {string}")
-//  public void thereIsAPostCreatedByAUserWithUsername(String user, String text) throws Throwable {
-//        Post post = new Post();
-//        post.setText(text);
-//        User author = userRepository.findById(user).get();
-//        post.setAuthor(author);
-//        stepDefs.result = stepDefs.mockMvc.perform(
-//                post("/posts/")
-//                        .content(stepDefs.mapper.writeValueAsString(post))
-//                       .with(AuthenticationStepDefs.authenticate())).andDo(print());
-//
-//        newResourceUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
-//    }
 
     @And("There is no post created")
     public void thereIsNoPostCreatedWithId()  throws Throwable{
         Assert.assertEquals(0,postRepository.count());
-    }
-
-    @And("There is a comment created by a user with username {string} with text {string} from the post just created by user with username {string}")
-    public void thereIsACommentCreatedByAUserWithUsernameFromThePostJustCreated(String user, String text, String father) throws Throwable{
-        Post post_child = new Post();
-        post_child.setText(text);
-        User author = userRepository.findById(user).get();
-        post_child.setAuthor(author);
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining(father);
-        String id = String.valueOf(posts.get(posts.size()-1).getId());
-        post_child.setFather(postRepository.findById(Long.valueOf(id)).get());
-
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/posts/")
-                        .content(stepDefs.mapper.writeValueAsString(post_child))
-                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
-
-        newResourceUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
     }
 
     //////////DELETE STEP DEFS//////////
@@ -123,7 +93,7 @@ public class PostStepDefs {
 
     @When("I modify the post just created with new text {string}")
     public void iModifyThePostJustCreated(String text) throws Throwable{
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining("user");
+        List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
         System.out.println(posts);
         if (!posts.isEmpty()) {
             String id = String.valueOf(posts.get(posts.size() - 1).getId());
@@ -161,7 +131,7 @@ public class PostStepDefs {
 
     @When("I modify the comment just created with new text {string}")
     public void iModifyTheCommentJustCreated(String text) throws Throwable{
-        List<Post> posts = postRepository.findByAuthor_UsernameContaining("user");
+        List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
         if (!posts.isEmpty()) {
             String id = String.valueOf(posts.get(posts.size() - 1).getId());
 

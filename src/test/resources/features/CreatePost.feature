@@ -5,6 +5,8 @@ Feature: Create Post
 
   Scenario: Create Post
     Given I login as "demo" with password "password"
+    And A group exists
+    And The user "demo" belongs to that group as "ADMIN"
     When I create a post with text "create post 1"
     Then The response code is 201
     And There is a post created with text "create post 1"

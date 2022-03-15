@@ -25,7 +25,11 @@ public class Post extends UriEntity<Long>{
 
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
-	private User author;
+	private UserRole author;
+
+	@ManyToOne
+	@JsonIdentityReference(alwaysAsId = true)
+	private Group group;
 
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
