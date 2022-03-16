@@ -34,8 +34,8 @@ public class Group extends UriEntity<Long> {
     private GroupVisibilityEnum visibility;
 
     //@NotNull
-    @Enumerated(EnumType.STRING)
-    private ThemeEnum theme;
+    @ElementCollection
+    private List<ThemeEnum> themes;
 
     @Override
     public Long getId() {
