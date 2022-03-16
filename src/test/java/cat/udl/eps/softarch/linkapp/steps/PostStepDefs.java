@@ -1,21 +1,15 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
 import cat.udl.eps.softarch.linkapp.domain.Group;
-import cat.udl.eps.softarch.linkapp.domain.Meet;
 import cat.udl.eps.softarch.linkapp.domain.Post;
-import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
-import cat.udl.eps.softarch.linkapp.repository.UserRepository;
-import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 
@@ -35,9 +29,6 @@ public class PostStepDefs {
     private StepDefs stepDefs;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PostRepository postRepository;
 
     @Autowired
@@ -54,16 +45,8 @@ public class PostStepDefs {
 
     @When("I delete the post")
     public void iDeleteAPost() throws Throwable{
-        System.out.println(newResourceUri);
-
-        if (newResourceUri != null) {
-            stepDefs.result = stepDefs.mockMvc.perform(
-                    delete(newResourceUri).with(AuthenticationStepDefs.authenticate()));
-        }else{
-            //Quan no existeix un post, es fica /1 perquè el get funcioni correctament
-            stepDefs.result = stepDefs.mockMvc.perform(
-                    delete("/posts/1").with(AuthenticationStepDefs.authenticate()));
-        }
+        stepDefs.result = stepDefs.mockMvc.perform(
+                delete(newResourceUri).with(AuthenticationStepDefs.authenticate()));
     }
 
     @When("I delete the comment")
@@ -80,7 +63,6 @@ public class PostStepDefs {
 
     @And("It has been deleted the post")
     public void itHasBeenDeletedAPost() throws Throwable{
-        System.out.println(postRepository.findAll());
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -112,76 +94,52 @@ public class PostStepDefs {
     @When("I modify the post just created with new text {string}")
     public void iModifyThePostJustCreated(String text) throws Throwable{
         List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
-        System.out.println(posts);
-        if (!posts.isEmpty()) {
-            String id = String.valueOf(posts.get(posts.size() - 1).getId());
 
-            if (newResourceUri != null) {
-                stepDefs.result = stepDefs.mockMvc.perform(
-                                patch(newResourceUri)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(new JSONObject().put("text", text).toString())
-                                        .accept(MediaType.APPLICATION_JSON)
-                                        .with(AuthenticationStepDefs.authenticate()))
-                        .andDo(print());
-            } else {
-                //Scenario:Modify a post created by another user
-                stepDefs.result = stepDefs.mockMvc.perform(
-                                patch("/posts/{id}", id)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(new JSONObject().put("text", text).toString())
-                                        .accept(MediaType.APPLICATION_JSON)
-                                        .with(AuthenticationStepDefs.authenticate()))
-                        .andDo(print());
-            }
-        }else{
-            //Si no existeixen posts, es crida a posts/1 perquè el get funcioni correctament. Scenario: Modify an unexisting post
+        String id = String.valueOf(posts.get(posts.size() - 1).getId());
+
+        if (newResourceUri != null) {
             stepDefs.result = stepDefs.mockMvc.perform(
-                            patch("/posts/1")
+                            patch(newResourceUri)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(new JSONObject().put("text", text).toString())
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .with(AuthenticationStepDefs.authenticate()))
+                    .andDo(print());
+        } else {
+            //Modify a post created by another user
+            stepDefs.result = stepDefs.mockMvc.perform(
+                            patch("/posts/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(new JSONObject().put("text", text).toString())
                                     .accept(MediaType.APPLICATION_JSON)
                                     .with(AuthenticationStepDefs.authenticate()))
                     .andDo(print());
         }
-
     }
 
     @When("I modify the comment just created with new text {string}")
     public void iModifyTheCommentJustCreated(String text) throws Throwable{
         List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
-        if (!posts.isEmpty()) {
-            String id = String.valueOf(posts.get(posts.size() - 1).getId());
+        String id = String.valueOf(posts.get(posts.size() - 1).getId());
 
-            if (newResourceUriComment != null) {
-                stepDefs.result = stepDefs.mockMvc.perform(
-                                patch(newResourceUriComment)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(new JSONObject().put("text", text).toString())
-                                        .accept(MediaType.APPLICATION_JSON)
-                                        .with(AuthenticationStepDefs.authenticate()))
-                        .andDo(print());
-            } else {
-
-                stepDefs.result = stepDefs.mockMvc.perform(
-                                patch("/posts/{id}", id)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(new JSONObject().put("text", text).toString())
-                                        .accept(MediaType.APPLICATION_JSON)
-                                        .with(AuthenticationStepDefs.authenticate()))
-                        .andDo(print());
-            }
-        }else{
-            //Si no existeixen posts, es crida a posts/1 perquè el get funcioni correctament. Scenario: Modify an unexisting post
+        if (newResourceUriComment != null) {
             stepDefs.result = stepDefs.mockMvc.perform(
-                            patch("/posts/1")
+                            patch(newResourceUriComment)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(new JSONObject().put("text", text).toString())
+                                    .accept(MediaType.APPLICATION_JSON)
+                                    .with(AuthenticationStepDefs.authenticate()))
+                    .andDo(print());
+        } else {
+            //Modify a comment created by another user
+            stepDefs.result = stepDefs.mockMvc.perform(
+                            patch("/posts/{id}", id)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(new JSONObject().put("text", text).toString())
                                     .accept(MediaType.APPLICATION_JSON)
                                     .with(AuthenticationStepDefs.authenticate()))
                     .andDo(print());
         }
-
     }
 
 
@@ -270,32 +228,6 @@ public class PostStepDefs {
 
     }
 
-///****
-    @And("Username {string} has not created a post")
-    public void usernameHasNotCreatedPosts(String num_post) {
-        Assert.assertTrue(num_post.isEmpty());
-
-    }
-
-    @And("There are {string} posts created")
-    public void usernameHasCreatedPosts(String n_posts) {
-        Long posts = postRepository.count();
-        Assert.assertEquals(posts,Long.valueOf(n_posts));
-    }
-///****
-    @And("I create a comment with text {string}")
-    public void iCreateACommentWithIdAndTextAndAuthorUsername(String description, String author) throws Throwable {
-        Post post = new Post();
-        post.setText(description);
-
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/posts/")
-                        .content(stepDefs.mapper.writeValueAsString(post))
-                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
-
-        newResourceUriComment = stepDefs.result.andReturn().getResponse().getHeader("Location");
-    }
-
     @When("I create a comment to the previous post with text {string}")
     public void iCreateACommentToPreviousPostWithAuthorUsername(String comment) throws Throwable {
 
@@ -303,7 +235,6 @@ public class PostStepDefs {
         Group group = groups.get(groups.size()-1);
 
         List<Post> posts = postRepository.findByTextContaining("create post 1");
-        System.out.println(posts);
         Post father = posts.get(posts.size()-1);
 
         Post post = new Post();
@@ -330,7 +261,6 @@ public class PostStepDefs {
         List<Post> posts = postRepository.findByTextContaining(post);
         Post father = posts.get(posts.size()-1);
 
-        System.out.println(newResourceUriComment);
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUriComment)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -344,6 +274,11 @@ public class PostStepDefs {
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(father.getText())));
+    }
 
+    @And("There are {string} posts created")
+    public void usernameHasCreatedPosts(String n_posts) {
+        Long posts = postRepository.count();
+        Assert.assertEquals(posts,Long.valueOf(n_posts));
     }
 }

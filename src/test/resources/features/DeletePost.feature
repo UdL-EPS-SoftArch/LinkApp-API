@@ -17,7 +17,7 @@ Feature: Delete Post
     And A group exists
     And The user "demo" belongs to that group as "SUBSCRIBED"
     And There is no post created
-    When I delete the post
+    When I delete the post with id "100000"
     Then The response code is 404
 
   Scenario: Delete a post created by another user as an SUBSCRIBED user

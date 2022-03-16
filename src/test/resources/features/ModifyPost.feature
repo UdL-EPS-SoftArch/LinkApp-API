@@ -44,7 +44,7 @@ Feature: Modify Post
     And A group exists
     And The user "demo" belongs to that group as "SUBSCRIBED"
     And There is no post created
-    When I modify the post just created with new text "new text"
+    When I modify the post with id "10000" with new text "something"
     Then The response code is 404
 
   Scenario: Modify an existing comment from a post
