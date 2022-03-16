@@ -93,53 +93,24 @@ public class PostStepDefs {
 
     @When("I modify the post just created with new text {string}")
     public void iModifyThePostJustCreated(String text) throws Throwable{
-        List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
-
-        String id = String.valueOf(posts.get(posts.size() - 1).getId());
-
-        if (newResourceUri != null) {
-            stepDefs.result = stepDefs.mockMvc.perform(
-                            patch(newResourceUri)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(new JSONObject().put("text", text).toString())
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .with(AuthenticationStepDefs.authenticate()))
-                    .andDo(print());
-        } else {
-            //Modify a post created by another user
-            stepDefs.result = stepDefs.mockMvc.perform(
-                            patch("/posts/{id}", id)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(new JSONObject().put("text", text).toString())
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .with(AuthenticationStepDefs.authenticate()))
-                    .andDo(print());
-        }
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch(newResourceUri)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject().put("text", text).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
     @When("I modify the comment just created with new text {string}")
     public void iModifyTheCommentJustCreated(String text) throws Throwable{
-        List<Post> posts = postRepository.findByAuthor_RoleKey_User_UsernameContaining("user");
-        String id = String.valueOf(posts.get(posts.size() - 1).getId());
-
-        if (newResourceUriComment != null) {
-            stepDefs.result = stepDefs.mockMvc.perform(
-                            patch(newResourceUriComment)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(new JSONObject().put("text", text).toString())
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .with(AuthenticationStepDefs.authenticate()))
-                    .andDo(print());
-        } else {
-            //Modify a comment created by another user
-            stepDefs.result = stepDefs.mockMvc.perform(
-                            patch("/posts/{id}", id)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(new JSONObject().put("text", text).toString())
-                                    .accept(MediaType.APPLICATION_JSON)
-                                    .with(AuthenticationStepDefs.authenticate()))
-                    .andDo(print());
-        }
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch(newResourceUriComment)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject().put("text", text).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
 
