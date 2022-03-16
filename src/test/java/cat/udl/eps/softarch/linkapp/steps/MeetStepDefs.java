@@ -150,11 +150,9 @@ public class MeetStepDefs
     {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
-        //userRole.setRole(UserRoleEnum.valueOf(role));
-        //userRoleRepository.save(userRole);
 
         JSONObject object = new JSONObject();
-        object.put("role", UserRoleEnum.SUBSCRIBED);
+        object.put("role", role);
 
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
@@ -164,6 +162,20 @@ public class MeetStepDefs
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+    }
+
+    @And("The role of the user {string} has been changed to {string}")
+    public void userRoleUpdatedTo(String username, String role) throws Throwable
+    {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.role", is(role)));
     }
 
     @And("The creation time of the meet is recent")

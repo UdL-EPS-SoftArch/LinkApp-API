@@ -12,6 +12,7 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "ADMIN"
     When I update the user "user2" role of the group to "AUTHORIZED"
     Then The response code is 200
+    Then The role of the user "user2" has been changed to "AUTHORIZED"
 
   Scenario: Modify admin to subscribed
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -22,6 +23,7 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "ADMIN"
     When I update the user "user2" role of the group to "SUBSCRIBED"
     Then The response code is 200
+    Then The role of the user "user2" has been changed to "SUBSCRIBED"
 
   Scenario: Modify authorized to subscribed
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -32,6 +34,7 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "AUTHORIZED"
     When I update the user "user2" role of the group to "SUBSCRIBED"
     Then The response code is 200
+    Then The role of the user "user2" has been changed to "SUBSCRIBED"
 
   Scenario: Modify subscribed to admin
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -42,6 +45,7 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "SUBSCRIBED"
     When I update the user "user2" role of the group to "ADMIN"
     Then The response code is 200
+    Then The role of the user "user2" has been changed to "ADMIN"
 
   Scenario: Modify authorized to admin
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
@@ -52,3 +56,4 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "AUTHORIZED"
     When I update the user "user2" role of the group to "ADMIN"
     Then The response code is 200
+    Then The role of the user "user2" has been changed to "ADMIN"
