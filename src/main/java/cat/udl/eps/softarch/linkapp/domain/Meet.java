@@ -56,10 +56,6 @@ public class Meet extends UriEntity<Long> {
     //may be null to indicate that location is not set
     private String location = null;
 
-    @ManyToMany
-    @JsonIdentityReference(alwaysAsId = true)
-    private Set<UserRole> attending = new HashSet<>();
-
     @Override
     public Long getId() {
         return id;
