@@ -47,6 +47,7 @@ public class CreateGroupSteps {
     @When("^I Create a public Group called \"([^\"]*)\" with description \"([^\"]*)\"")
     public void iCreateAPublicGroup(String groupName, String description) throws Exception {
         Group tmpGroup = new Group();
+        tmpGroup.setId((long) 1);
         tmpGroup.setTitle(groupName);
         tmpGroup.setDescription(description);
         tmpGroup.setVisibility(GroupVisibilityEnum.PUBLIC);

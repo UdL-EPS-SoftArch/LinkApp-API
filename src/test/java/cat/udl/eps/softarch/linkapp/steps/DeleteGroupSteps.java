@@ -26,15 +26,26 @@ public class DeleteGroupSteps {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    private static Group group;
+
+    @When("The user {string} deletes the group {long}")
+    public void userDeletesGroup(String username, long id) throws Exception {
+        stepDefs.result = stepDefs.mockMvc.perform(
+                delete("/groups/{id}", id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(AuthenticationStepDefs.authenticate())
+                )
+                .andDo(print());
+    }
+
     @When("The user deletes the group")
-    public void userDeletesGroup() throws Exception {
+    public void userDeletesGroup2() throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
             delete("/groups/{id}", CreateGroupSteps.getCreatedGroup().getId())
                     .accept(MediaType.APPLICATION_JSON)
                     .with(AuthenticationStepDefs.authenticate())
                 )
                 .andDo(print());
-
 
     }
 }
