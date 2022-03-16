@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 public class PostStepDefs {
@@ -53,6 +54,8 @@ public class PostStepDefs {
 
     @When("I delete the post")
     public void iDeleteAPost() throws Throwable{
+        System.out.println(newResourceUri);
+
         if (newResourceUri != null) {
             stepDefs.result = stepDefs.mockMvc.perform(
                     delete(newResourceUri).with(AuthenticationStepDefs.authenticate()));
@@ -77,11 +80,21 @@ public class PostStepDefs {
 
     @And("It has been deleted the post")
     public void itHasBeenDeletedAPost() throws Throwable{
+        System.out.println(postRepository.findAll());
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
-                .andExpect(jsonPath("$.id").doesNotExist());
+                .andExpect(status().isNotFound());
+    }
+
+    @And("It has been deleted the comment")
+    public void itHasBeenDeletedAComment() throws Throwable{
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(newResourceUriComment)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andExpect(status().isNotFound());
     }
 
     @And("The post has not been deleted")
@@ -91,7 +104,7 @@ public class PostStepDefs {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(status().isOk());
     }
 
     //////////MODIFY POST STEP DEFS//////////
@@ -296,6 +309,7 @@ public class PostStepDefs {
         Post post = new Post();
         post.setText(comment);
         post.setFather(father);
+
 
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")

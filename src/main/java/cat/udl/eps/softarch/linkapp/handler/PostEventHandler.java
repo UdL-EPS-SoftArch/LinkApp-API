@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Component;
 import org.springframework.security.access.AccessDeniedException;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -73,6 +74,7 @@ public class PostEventHandler {
 
     }
 
+
     @HandleBeforeDelete
     public void handlePostPreDelete(Post post) throws AccessDeniedException {
         User currentUser = (User) SecurityContextHolder
@@ -88,6 +90,12 @@ public class PostEventHandler {
         {
             throw new AccessDeniedException("Not enough permissions");
         }
+
+        List<Post> sonsToDelete = postRepository.findByFather(post);
+
+        postRepository.deleteAll(sonsToDelete);
+
+
     }
 
 }

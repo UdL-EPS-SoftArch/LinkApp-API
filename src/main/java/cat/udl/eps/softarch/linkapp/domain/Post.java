@@ -41,7 +41,7 @@ public class Post extends UriEntity<Long>{
 
 	@ToString.Exclude
 	@JsonIdentityReference(alwaysAsId = true)
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	private Post father;
 
 	@Override
