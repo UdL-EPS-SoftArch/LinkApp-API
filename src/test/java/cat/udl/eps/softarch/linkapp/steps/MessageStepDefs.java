@@ -169,8 +169,11 @@ public class MessageStepDefs {
 
     @And("The meet has closed")
     public void theMeetHasClosed() {
-        featureMeet.setStatus(Boolean.FALSE);
-        meetRepository.save(featureMeet);
+        assert featureMeet.getId() != null;
+        Meet meet = meetRepository.findById(featureMeet.getId()).get();
+        meet.setStatus(Boolean.FALSE);
+        meetRepository.save(meet);
+        featureMeet = meet;
     }
 }
 
