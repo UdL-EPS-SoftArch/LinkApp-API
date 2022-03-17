@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -174,6 +174,13 @@ public class MessageStepDefs {
         meet.setStatus(Boolean.FALSE);
         meetRepository.save(meet);
         featureMeet = meet;
+    }
+
+    @And("The author of the message is correct")
+    public void theAuthorIsCorrent() {
+        User author = userRepository.findById(username).get();
+        System.out.println(messageRepository.findByAuthor(author).size());
+        assertEquals(messageRepository.findByAuthor(author).get(0).getId(), featureMessage.getId());
     }
 }
 

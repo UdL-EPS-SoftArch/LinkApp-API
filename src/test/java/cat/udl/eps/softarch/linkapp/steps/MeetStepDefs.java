@@ -1,6 +1,6 @@
 package cat.udl.eps.softarch.linkapp.steps;
 
-import cat.udl.eps.softarch.linkapp.LinkAppApplication;
+import cat.udl.eps.softarch.linkapp.service.ScheduledCronJobsService;
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
@@ -12,10 +12,13 @@ import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -25,17 +28,12 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MeetStepDefs
-{
+public class MeetStepDefs {
 
     private static Group featureGroup;
 
@@ -64,6 +62,7 @@ public class MeetStepDefs
     public Group theGroupExists()
     {
         Group group = new Group();
+        group.setId(1L);
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(GroupVisibilityEnum.PUBLIC);
@@ -194,8 +193,8 @@ public class MeetStepDefs
                                         new JSONObject(
                                             stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
-                                        .put("group", "/groups/" + featureGroup.getId())
-                                        .toString()
+                                                .put("group", featureGroup.getUri())
+                                                .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
@@ -226,8 +225,8 @@ public class MeetStepDefs
                                 .content(new JSONObject(
                                             stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
-                                        .put("group", "/groups/" + featureGroup.getId())
-                                        .toString()
+                                                .put("group", featureGroup.getUri())
+                                                .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
@@ -287,7 +286,7 @@ public class MeetStepDefs
 
     @When("The cron status job is executed")
     public void theCronStatusJobIsExecuted() {
-        LinkAppApplication.updateMeetStatusJob(meetRepository);
+        ScheduledCronJobsService.updateMeetStatusJob(meetRepository);
     }
 
     @Then("Then the meet status is false")
@@ -295,6 +294,58 @@ public class MeetStepDefs
         assert cronMeet.getId() != null;
         Meet meet = meetRepository.findById(cronMeet.getId()).get();
         Assert.assertFalse(meet.getStatus());
+    }
+
+    @When("I create a meet in that group with initial date in the past")
+    public void iCreateAMeetInThatGroupWithInitialDateInThePast() throws Throwable {
+        Meet tmpMeet = new Meet();
+        tmpMeet.setGroup(featureGroup);
+        tmpMeet.setTitle("title");
+        tmpMeet.setDescription("description");
+        tmpMeet.setMaxUsers(10L);
+        tmpMeet.setLocation("location");
+        tmpMeet.setCreationDate(ZonedDateTime.now());
+        tmpMeet.setLastUpdate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now().minusDays(1));
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().minusDays(1).plusHours(1));
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        post("/meets/")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                                stepDefs.mapper.writeValueAsString(tmpMeet)
+                                        )
+                                                .put("group", featureGroup.getUri())
+                                                .toString()
+                                )
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+    }
+
+    @When("I create a meet in that group with final date before initial date")
+    public void iCreateAMeetInThatGroupWithFinalDateBeforeInitialDate() throws Throwable{
+        Meet tmpMeet = new Meet();
+        tmpMeet.setGroup(featureGroup);
+        tmpMeet.setTitle("title");
+        tmpMeet.setDescription("description");
+        tmpMeet.setMaxUsers(10L);
+        tmpMeet.setLocation("location");
+        tmpMeet.setCreationDate(ZonedDateTime.now());
+        tmpMeet.setLastUpdate(ZonedDateTime.now());
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now().plusDays(1));
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusDays(1).minusHours(1));
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        post("/meets/")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                                stepDefs.mapper.writeValueAsString(tmpMeet)
+                                        )
+                                                .put("group", "/groups/" + featureGroup.getId())
+                                                .toString()
+                                )
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
     }
 
     @When("The user {string} tries to attend the meeting")
@@ -307,15 +358,15 @@ public class MeetStepDefs
 
 
         JSONObject object = new JSONObject(
-            stepDefs.mapper.writeValueAsString(meetAttending)
+                stepDefs.mapper.writeValueAsString(meetAttending)
         );
 
         stepDefs.result = stepDefs.mockMvc.perform(
-            post("/meetAttendings/")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(object.toString())
-                    .accept(MediaType.APPLICATION_JSON)
-                    .with(AuthenticationStepDefs.authenticate()))
-            .andDo(print());
+                        post("/meetAttendings/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(object.toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 }
