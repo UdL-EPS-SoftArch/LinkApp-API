@@ -39,6 +39,7 @@ public class Group extends UriEntity<Long> {
 
     //@NotNull
     @ElementCollection(fetch=FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
     private List<ThemeEnum> themes;
 
     @Enumerated(EnumType.STRING)

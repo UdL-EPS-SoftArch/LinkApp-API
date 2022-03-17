@@ -1,6 +1,8 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
-public enum ThemeEnum {
+import java.io.Serializable;
+
+public enum ThemeEnum implements Serializable {
     ARTS,
     CULTURE,
     LITERATURE,
