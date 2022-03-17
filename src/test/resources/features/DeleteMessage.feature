@@ -14,5 +14,3 @@ Feature: Delete Message
     When I delete the message
     Then The response code is 403
 
-
-

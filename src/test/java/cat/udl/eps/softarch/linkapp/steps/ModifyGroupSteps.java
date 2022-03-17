@@ -9,6 +9,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,31 +65,23 @@ public class ModifyGroupSteps {
         /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
 
         tmpGroup.setDescription(newDescription);*/
+        int length = tmpGroup.getThemes().size();
+        JSONArray newThemes = new JSONArray();
+        JSONObject newThemesObject = new JSONObject();
 
-        List<ThemeEnum> themes = tmpGroup.getThemes();
-        themes.add(ThemeEnum.valueOf(newTheme));
-        group = new Group(tmpGroup.getId(), tmpGroup.getTitle(), tmpGroup.getDescription(), GroupVisibilityEnum.PUBLIC, themes);
-        groupRepository.save(group);
-
-        /*JSONObject newJsonThemes = new JSONObject();
-        List<ThemeEnum> newThemes = tmpGroup.getThemes();
-        newThemes.add(ThemeEnum.valueOf(newTheme));
-        newJsonThemes.put("themes", newThemes);*/
+        for(int i=0;i<length;i++) {
+            newThemes.put(tmpGroup.getThemes().get(i));
+        }
+        newThemes.put(ThemeEnum.valueOf(newTheme));
+        //List<ThemeEnum> newThemes = tmpGroup.getThemes();
+        newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/groups/{id}", tmpGroup.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
-                                ).toString())
-                                .accept(MediaType.APPLICATION_JSON)
+                                .content(newThemesObject.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        /*stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(newJsonThemes.toString())
-                                .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print());*/
+        group = groupRepository.findById(group.getId()).get();
     }
 
     @And("A already created group where with name {string}, id {long} and description {string}")
@@ -108,8 +102,27 @@ public class ModifyGroupSteps {
 
     @And("A already created group where with name {string}, id {long} and description {string} and theme {string}")
     public void groupCreated(String name, long id, String description, String theme) throws Exception {
-        List<ThemeEnum> themes = new ArrayList<>();
+        List<ThemeEnum> themes = new ArrayList<ThemeEnum>();
         themes.add(ThemeEnum.valueOf(theme));
+        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC, themes);
+        groupRepository.save(group);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        post("/groups/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                        stepDefs.mapper.writeValueAsString(group)
+                                ).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @And("A already created group where with name {string}, id {long} and description {string} and theme {string} and {string}")
+    public void groupCreatedMultipleGroups(String name, long id, String description, String theme1, String theme2) throws Exception {
+        List<ThemeEnum> themes = new ArrayList<ThemeEnum>();
+        themes.add(ThemeEnum.valueOf(theme1));
+        themes.add(ThemeEnum.valueOf(theme2));
         group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC, themes);
         groupRepository.save(group);
 
@@ -168,9 +181,6 @@ public class ModifyGroupSteps {
     public void numberOfThemes(Long themesSize) {
         assertEquals(group.getThemes().size(), themesSize);
     }
-
-
-
 
 
 }

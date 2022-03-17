@@ -19,6 +19,15 @@ Scenario: Modify group
     Then The response code is 204
     And The number of related themes is 2
 
+  Scenario: Add a theme to a group that already contains a related list of themes
+    Given I login as "demo" with password "password"
+    And A already created group where with name "GEIADE", id 1 and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
+    And The number of related themes is 2
+    And The user "demo" is a User "ADMIN" of the group
+    When A user "demo" adds the group theme "CARS"
+    Then The response code is 204
+    And The number of related themes is 3
+
   Scenario: Modify group but has not permission
     Given I login as "demo" with password "password"
     And A already created group where with name "GEIADE", id 1 and description "Generacio GEIADE 2017-2022"
