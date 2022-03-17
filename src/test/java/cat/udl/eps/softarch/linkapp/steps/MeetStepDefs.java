@@ -151,14 +151,11 @@ public class MeetStepDefs
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
 
-        JSONObject object = new JSONObject();
-        object.put("role", role);
-
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch(userRole.getUri())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(object.toString())
+                                .content(new JSONObject().put("role", role).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());

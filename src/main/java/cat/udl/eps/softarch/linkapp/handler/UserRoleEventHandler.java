@@ -4,8 +4,6 @@ import cat.udl.eps.softarch.linkapp.domain.Group;
 import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.domain.UserRole;
 import cat.udl.eps.softarch.linkapp.domain.UserRoleEnum;
-import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
-import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +18,10 @@ public class UserRoleEventHandler {
 
     final Logger logger = LoggerFactory.getLogger(UserRole.class);
 
-    final UserRepository userRepository;
     final UserRoleRepository userRoleRepository;
-    final GroupRepository groupRepository;
 
-    public UserRoleEventHandler(UserRepository userRepository, UserRoleRepository userRoleRepository, GroupRepository groupRepository) {
-        this.userRepository = userRepository;
+    public UserRoleEventHandler(UserRoleRepository userRoleRepository) {
         this.userRoleRepository = userRoleRepository;
-        this.groupRepository = groupRepository;
     }
 
     @HandleBeforeCreate
@@ -44,7 +38,9 @@ public class UserRoleEventHandler {
         Group group = userRole.getRoleKey().getGroup();
         UserRole userRolePrincipal = userRoleRepository
                 .findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
-        if (userRolePrincipal == null || userRolePrincipal.getRole() != UserRoleEnum.ADMIN) {
+        if (currentUser.getId().equals(userRole.getRoleKey().getUser().getId())) {
+            throw new AccessDeniedException("Not enough permissions");
+        }else if (userRolePrincipal == null || userRolePrincipal.getRole() != UserRoleEnum.ADMIN) {
             throw new AccessDeniedException("Not enough permissions");
         }
     }
