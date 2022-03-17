@@ -1,7 +1,7 @@
-Feature: Register UserRole
+Feature: Delete UserRole
   In order to interact with a group
   As a user
-  I want to register new roles
+  I want to register and delete new roles
 
   Scenario: Subscribe to a new group
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
