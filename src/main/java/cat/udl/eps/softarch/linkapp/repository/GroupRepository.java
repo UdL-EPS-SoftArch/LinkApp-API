@@ -16,5 +16,4 @@ public interface GroupRepository extends PagingAndSortingRepository<Group, Long>
      */
 
     List<Group> findByTitleContaining(@Param("title") String title);
-
 }

@@ -16,5 +16,6 @@ public interface MeetAttendingRepository extends PagingAndSortingRepository<Meet
      * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
      */
     Optional<MeetAttending> findByMeetAttendingKeyUserAndMeetAttendingKeyMeet(@Param("user") User user, @Param("meet") Meet meet);
+    List<MeetAttending> findByMeetAttendingKeyMeetAndAttends(@Param("meet") Meet meet, @Param("attends") Boolean attends);
     List<MeetAttending> findByMeetAttendingKeyMeet(@Param("meet") Meet meet);
 }

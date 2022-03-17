@@ -50,6 +50,6 @@ public class MeetAttendingKey implements Serializable {
     @Override
     public String toString()
     {
-        return "UserRoleKey_user_id_" + user.getId() + "_meet_id_" + meet.getId();
+        return "MeetAttendingKey_user_id_" + user.getId() + "_meet_id_" + meet.getId();
     }
 }

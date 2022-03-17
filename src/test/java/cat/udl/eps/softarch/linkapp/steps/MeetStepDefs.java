@@ -6,6 +6,7 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MeetStepDefs
 {
@@ -150,13 +152,10 @@ public class MeetStepDefs
     {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
-        //userRole.setRole(UserRoleEnum.valueOf(role));
-        //userRoleRepository.save(userRole);
 
         JSONObject object = new JSONObject();
         object.put("role", UserRoleEnum.SUBSCRIBED);
 
-        // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch(userRole.getUri())
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -296,5 +295,27 @@ public class MeetStepDefs
         assert cronMeet.getId() != null;
         Meet meet = meetRepository.findById(cronMeet.getId()).get();
         Assert.assertFalse(meet.getStatus());
+    }
+
+    @When("The user {string} tries to attend the meeting")
+    public void theUserTriesToAttendTheMeeting(String username) throws Throwable {
+        User user = userRepository.findById(username).get();
+        MeetAttendingKey meetAttendingKey = new MeetAttendingKey(featureMeet, user);
+        MeetAttending meetAttending = new MeetAttending();
+        meetAttending.setMeetAttendingKey(meetAttendingKey);
+        meetAttending.setAttends(true);
+
+
+        JSONObject object = new JSONObject(
+            stepDefs.mapper.writeValueAsString(meetAttending)
+        );
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+            post("/meetAttendings/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(object.toString())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .with(AuthenticationStepDefs.authenticate()))
+            .andDo(print());
     }
 }
