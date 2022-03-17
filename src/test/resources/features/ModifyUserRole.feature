@@ -129,7 +129,6 @@ Feature: Modify User Role
     When I update the user "user2" role of the group to "ADMIN"
     Then The response code is 403
 
-    ###
   Scenario: Modify admin role of a user to authorized as authorized
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And There is a registered user with username "user2" and password "password2" and email "user2@sample.app"
@@ -189,7 +188,6 @@ Feature: Modify User Role
     And The user "user2" belongs to that group as "AUTHORIZED"
     When I update the user "user2" role of the group to "ADMIN"
     Then The response code is 403
-    ###
 
   Scenario: Modify own admin role to authorized
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
