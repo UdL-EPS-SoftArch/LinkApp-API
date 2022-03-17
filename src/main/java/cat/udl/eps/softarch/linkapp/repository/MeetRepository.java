@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.repository;
 
+import cat.udl.eps.softarch.linkapp.domain.Group;
 import cat.udl.eps.softarch.linkapp.domain.Meet;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,5 +22,6 @@ public interface MeetRepository extends PagingAndSortingRepository<Meet, Long> {
   List<Meet> findByTitleContaining(@Param("title") String title);
   List<Meet> findByStatus(@Param("status") Boolean status);
   List<Meet> findByStatusAndFinalMeetDateLessThan(@Param("status") Boolean status, @Param("finalMeetDate") ZonedDateTime meetDate);
+  List<Meet> findByGroup(@Param("group") Group group);
 
 }
