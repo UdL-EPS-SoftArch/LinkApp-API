@@ -31,6 +31,7 @@ public class UserRoleEventHandler {
 
     @HandleBeforeSave
     public void handleUserRolePreSave(UserRole userRole) {
+        //User who modifies role
         User currentUser = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -38,9 +39,10 @@ public class UserRoleEventHandler {
         Group group = userRole.getRoleKey().getGroup();
         UserRole userRolePrincipal = userRoleRepository
                 .findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
+
         if (currentUser.getId().equals(userRole.getRoleKey().getUser().getId())) {
             throw new AccessDeniedException("Not enough permissions");
-        }else if (userRolePrincipal == null || userRolePrincipal.getRole() != UserRoleEnum.ADMIN) {
+        } else if (userRolePrincipal == null || userRolePrincipal.getRole() != UserRoleEnum.ADMIN) {
             throw new AccessDeniedException("Not enough permissions");
         }
     }
