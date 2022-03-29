@@ -64,12 +64,20 @@ public class ModifyGroupSteps {
         Group tmpGroup = groupRepository.findById((long) 1).get();
         /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
 
+        boolean exists = false;
+        for(ThemeEnum item : ThemeEnum.values()) {
+            if (item.name().equalsIgnoreCase(deletedTheme)) {
+                exists = true;
+                break;
+            }
+        }
+
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
         for(int i=0;i<length;i++) {
-            if(tmpGroup.getThemes().get(i) != ThemeEnum.valueOf(deletedTheme)){
+            if(!exists || tmpGroup.getThemes().get(i) != ThemeEnum.valueOf(deletedTheme)){
                 newThemes.put(tmpGroup.getThemes().get(i));
             }
         }
@@ -90,6 +98,15 @@ public class ModifyGroupSteps {
         Group tmpGroup = groupRepository.findById((long) 1).get();
         /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
 
+        boolean exists = false;
+        for(ThemeEnum item : ThemeEnum.values()) {
+            if (item.name().equalsIgnoreCase(newTheme)) {
+                exists = true;
+                break;
+            }
+        }
+
+
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
@@ -97,7 +114,7 @@ public class ModifyGroupSteps {
         for(int i=0;i<length;i++) {
             newThemes.put(tmpGroup.getThemes().get(i));
         }
-        if(!tmpGroup.getThemes().contains(ThemeEnum.valueOf(newTheme))){
+        if(exists && !tmpGroup.getThemes().contains(ThemeEnum.valueOf(newTheme))){
             newThemes.put(ThemeEnum.valueOf(newTheme));
         }
         //List<ThemeEnum> newThemes = tmpGroup.getThemes();
