@@ -58,13 +58,38 @@ public class ModifyGroupSteps {
                 .andDo(print());
     }
 
+    @When("A user {string} deletes the group theme {string}")
+    public void userDeletesTheme(String username, String deletedTheme) throws Exception {
+        //User user = userRepository.findById(username).get();
+        Group tmpGroup = groupRepository.findById((long) 1).get();
+        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+
+        int length = tmpGroup.getThemes().size();
+        JSONArray newThemes = new JSONArray();
+        JSONObject newThemesObject = new JSONObject();
+
+        for(int i=0;i<length;i++) {
+            if(tmpGroup.getThemes().get(i) != ThemeEnum.valueOf(deletedTheme)){
+                newThemes.put(tmpGroup.getThemes().get(i));
+            }
+        }
+        //List<ThemeEnum> newThemes = tmpGroup.getThemes();
+        newThemesObject.put("themes", newThemes);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch("/groups/{id}", tmpGroup.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(newThemesObject.toString())
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+        group = groupRepository.findById(group.getId()).get();
+    }
+
     @When("A user {string} adds the group theme {string}")
     public void userAddsTheme(String username, String newTheme) throws Exception {
         //User user = userRepository.findById(username).get();
         Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
+        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
 
-        tmpGroup.setDescription(newDescription);*/
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
@@ -72,7 +97,9 @@ public class ModifyGroupSteps {
         for(int i=0;i<length;i++) {
             newThemes.put(tmpGroup.getThemes().get(i));
         }
-        newThemes.put(ThemeEnum.valueOf(newTheme));
+        if(!tmpGroup.getThemes().contains(ThemeEnum.valueOf(newTheme))){
+            newThemes.put(ThemeEnum.valueOf(newTheme));
+        }
         //List<ThemeEnum> newThemes = tmpGroup.getThemes();
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(

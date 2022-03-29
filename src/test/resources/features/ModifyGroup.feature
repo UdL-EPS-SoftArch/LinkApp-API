@@ -37,6 +37,24 @@ Feature: ModifyGroup
     Then The response code is 204
     And The number of related themes is 3
 
+  Scenario: Add a theme to a group that is already related to that theme
+    Given I login as "demo" with password "password"
+    And A already created group where with name "GEIADE", id 1 and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
+    And The number of related themes is 2
+    And The user "demo" is a User "ADMIN" of the group
+    When A user "demo" adds the group theme "ARTS"
+    Then The response code is 204
+    And The number of related themes is 2
+
+  Scenario: Delete a theme related to a group
+    Given I login as "demo" with password "password"
+    And A already created group where with name "GEIADE", id 1 and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
+    And The number of related themes is 2
+    And The user "demo" is a User "ADMIN" of the group
+    When A user "demo" deletes the group theme "ARTS"
+    Then The response code is 204
+    And The number of related themes is 1
+
   Scenario: Modify group but has not permission
     Given I login as "demo" with password "password"
     And A already created group where with name "GEIADE", id 1 and description "Generacio GEIADE 2017-2022"
