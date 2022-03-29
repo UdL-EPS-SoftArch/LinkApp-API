@@ -179,7 +179,7 @@ public class ModifyGroupSteps {
 
     @And("The number of related themes is {long}")
     public void numberOfThemes(Long themesSize) {
-        assertEquals(group.getThemes().size(), themesSize);
+        assertEquals((group.getThemes() == null) ? 0 : group.getThemes().size(), themesSize);
     }
 
 
