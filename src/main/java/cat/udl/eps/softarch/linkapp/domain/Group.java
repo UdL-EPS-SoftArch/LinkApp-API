@@ -1,18 +1,12 @@
 package cat.udl.eps.softarch.linkapp.domain;
 
 
-import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.*;
 
 
 @Entity
@@ -74,14 +68,4 @@ public class Group extends UriEntity<Long> {
         return group.getId().equals(this.getId());
     }
 
-/*    public void setDescription(String description, UserRole userRole) {
-        if (userRole.getRole() == UserRoleEnum.ADMIN && userRole.getRoleKey().getGroup().equals(this)){
-            this.description = description;
-        } else {
-            throw new AccessDeniedException("User doesn't have permissions");
-        }
-
-
-    }
-    */
 }
