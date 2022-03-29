@@ -2,6 +2,8 @@ package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
+import cat.udl.eps.softarch.linkapp.repository.PostRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +23,15 @@ GroupEventHandler {
 
     final GroupRepository groupRepository;
     final UserRoleRepository userRoleRepository;
+    final PostRepository postRepository;
+    final MeetRepository meetRepository;
 
-    public GroupEventHandler(GroupRepository groupRepository, UserRoleRepository userRoleRepository) {
+    public GroupEventHandler(GroupRepository groupRepository, UserRoleRepository userRoleRepository,
+                             PostRepository postRepository, MeetRepository meetRepository) {
         this.groupRepository = groupRepository;
         this.userRoleRepository = userRoleRepository;
+        this.postRepository = postRepository;
+        this.meetRepository = meetRepository;
     }
 
     @HandleBeforeLinkSave
@@ -67,6 +74,20 @@ GroupEventHandler {
             assert role.getId() != null;
             userRoleRepository.deleteById(role.getId());
         }
+
+        List<Post> posts = postRepository.findByGroup(group);
+        for (Post post: posts) {
+            assert post.getId() != null;
+            postRepository.deleteById(post.getId());
+        }
+
+        List<Meet> meets = meetRepository.findByGroup(group);
+        for (Meet meet: meets){
+            assert meet.getId() != null;
+            postRepository.deleteById(meet.getId());
+
+        }
+
     }
 
     @HandleBeforeCreate
