@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
+import cat.udl.eps.softarch.linkapp.exception.ValidationError;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.PostRepository;
@@ -12,7 +13,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -41,7 +44,7 @@ GroupEventHandler {
 
 
     @HandleBeforeSave
-    public void handleGroupBeforeSave(Group group) {
+    public void handleGroupBeforeSave(Group group) throws Exception {
         User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
@@ -52,9 +55,12 @@ GroupEventHandler {
             throw new AccessDeniedException("Only ADMINS can modify Groups!");
         }
 
-
-
-
+        Set<ThemeEnum> set = new HashSet<>();
+        for (ThemeEnum theme : group.getThemes()) {
+            if (!set.add(theme)) {
+                throw new ValidationError("Repeated theme!");
+            }
+        }
     }
 
     @HandleBeforeDelete

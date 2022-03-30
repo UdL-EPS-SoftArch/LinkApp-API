@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -58,30 +59,22 @@ public class ModifyGroupSteps {
                 .andDo(print());
     }
 
-    @When("A user {string} deletes the group theme {string}")
+    @When("A user {string} deletes the theme {string}")
     public void userDeletesTheme(String username, String deletedTheme) throws Exception {
         //User user = userRepository.findById(username).get();
         Group tmpGroup = groupRepository.findById((long) 1).get();
         /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
-
-        boolean exists = false;
-        for(ThemeEnum item : ThemeEnum.values()) {
-            if (item.name().equalsIgnoreCase(deletedTheme)) {
-                exists = true;
-                break;
-            }
-        }
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
         for(int i=0;i<length;i++) {
-            if(!exists || tmpGroup.getThemes().get(i) != ThemeEnum.valueOf(deletedTheme)){
+            if(!tmpGroup.getThemes().get(i).name().equals(deletedTheme)){
                 newThemes.put(tmpGroup.getThemes().get(i));
             }
         }
-        //List<ThemeEnum> newThemes = tmpGroup.getThemes();
+
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/groups/{id}", tmpGroup.getId())
@@ -92,20 +85,38 @@ public class ModifyGroupSteps {
         group = groupRepository.findById(group.getId()).get();
     }
 
-    @When("A user {string} adds the group theme {string}")
-    public void userAddsTheme(String username, String newTheme) throws Exception {
+    @When("A user {string} deletes the themes {string}, {string}")
+    public void userDeletesThemes(String username, String deletedTheme1, String deletedTheme2) throws Exception {
         //User user = userRepository.findById(username).get();
         Group tmpGroup = groupRepository.findById((long) 1).get();
         /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
 
-        boolean exists = false;
-        for(ThemeEnum item : ThemeEnum.values()) {
-            if (item.name().equalsIgnoreCase(newTheme)) {
-                exists = true;
-                break;
+        int length = tmpGroup.getThemes().size();
+        JSONArray newThemes = new JSONArray();
+        JSONObject newThemesObject = new JSONObject();
+
+        for(int i=0;i<length;i++) {
+            if(!tmpGroup.getThemes().get(i).name().equals(deletedTheme1) && !tmpGroup.getThemes().get(i).name().equals(deletedTheme2)){
+                newThemes.put(tmpGroup.getThemes().get(i));
             }
         }
 
+        newThemesObject.put("themes", newThemes);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch("/groups/{id}", tmpGroup.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(newThemesObject.toString())
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+        group = groupRepository.findById(group.getId()).get();
+    }
+
+
+    @When("A user {string} adds the theme {string}")
+    public void userAddsTheme(String username, String newTheme) throws Throwable {
+        //User user = userRepository.findById(username).get();
+        Group tmpGroup = groupRepository.findById((long) 1).get();
+        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
@@ -114,10 +125,8 @@ public class ModifyGroupSteps {
         for(int i=0;i<length;i++) {
             newThemes.put(tmpGroup.getThemes().get(i));
         }
-        if(exists && !tmpGroup.getThemes().contains(ThemeEnum.valueOf(newTheme))){
-            newThemes.put(ThemeEnum.valueOf(newTheme));
-        }
-        //List<ThemeEnum> newThemes = tmpGroup.getThemes();
+        newThemes.put(newTheme);
+
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/groups/{id}", tmpGroup.getId())
@@ -127,6 +136,34 @@ public class ModifyGroupSteps {
                 .andDo(print());
         group = groupRepository.findById(group.getId()).get();
     }
+
+    @When("A user {string} adds the themes {string}, {string}, {string}")
+    public void userAddsThemes(String username, String newTheme1, String newTheme2, String newTheme3) throws Throwable {
+        //User user = userRepository.findById(username).get();
+        Group tmpGroup = groupRepository.findById((long) 1).get();
+        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+
+        int length = tmpGroup.getThemes().size();
+        JSONArray newThemes = new JSONArray();
+        JSONObject newThemesObject = new JSONObject();
+
+        for(int i=0;i<length;i++) {
+            newThemes.put(tmpGroup.getThemes().get(i));
+        }
+        newThemes.put(newTheme1);
+        newThemes.put(newTheme2);
+        newThemes.put(newTheme3);
+
+        newThemesObject.put("themes", newThemes);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch("/groups/{id}", tmpGroup.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(newThemesObject.toString())
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+        group = groupRepository.findById(group.getId()).get();
+    }
+
 
     @And("A already created group where with name {string}, id {long} and description {string}")
     public void groupCreated(String name, long id, String description) throws Exception {
@@ -223,7 +260,7 @@ public class ModifyGroupSteps {
 
     @And("The number of related themes is {long}")
     public void numberOfThemes(Long themesSize) {
-        assertEquals((group.getThemes() == null) ? 0 : group.getThemes().size(), themesSize);
+        assertEquals(themesSize, (group.getThemes() == null) ? 0 : group.getThemes().size());
     }
 
 

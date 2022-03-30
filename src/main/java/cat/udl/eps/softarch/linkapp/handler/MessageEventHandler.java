@@ -4,6 +4,7 @@ import cat.udl.eps.softarch.linkapp.domain.MeetAttending;
 import cat.udl.eps.softarch.linkapp.domain.Message;
 import cat.udl.eps.softarch.linkapp.domain.User;
 import cat.udl.eps.softarch.linkapp.domain.UserRole;
+import cat.udl.eps.softarch.linkapp.exception.ValidationError;
 import cat.udl.eps.softarch.linkapp.repository.MeetAttendingRepository;
 import cat.udl.eps.softarch.linkapp.repository.MessageRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
@@ -50,7 +51,7 @@ public class MessageEventHandler {
         }
 
         if (message.equals("")) {
-            throw new Exception("Must not be blank");
+            throw new ValidationError("Must not be blank");
         }
 
         if (!message.getMeet().getStatus()) {
