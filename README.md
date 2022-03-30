@@ -16,16 +16,15 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 
 ## Features per Stakeholder
 
-| USER           | ADMIN            |
-|----------------|------------------|
-| Register       | Create a meeting |
-| Login          |                  |
-| Logout         |                  |
-| Create a group |                  |
-|                |                  |
-|                |                  |
+| USER                     | SUBSCRIBED (+USER)          | AUTHORIZED (+SUBSCRIBED)      | ADMIN GROUP (+AUTHORIZED)         |
+|--------------------------|-----------------------------|-------------------------------|-----------------------------------|
+| Register                 | Attend a meeting            | Create a meeting              | Modify roles of a user in a Group |
+| Login                    | Unsubscribe (leave) a group | Modify the themes of a Group  | Delete anyone's post              |
+| Logout                   | Reply to a post             | Create a new post             |                                   |
+| Create a group           | Delete a post               | Create a new Meet             |                                   |
+| Send a message to a Meet |                             |                               |                                   |
 
 ## Entities Model
 
-![EntityModelsDiagram](http://www.plantuml.com/plantuml/svg/5SqnhW8X40RW_ftYUG2OtcefjZ1Paqqs7W1X528CPFY9rrUhh_oM0Q-OjVoTieGo8qyj_mdeuqoa_csV6MdUvs0DJS026rgbMzpCkX_cQ0yu3OcsB2_Nkt7xXQeVOALLa95vN5laOlilMLZYrmy0?v2)
+![EntityModelsDiagram](http://www.plantuml.com/plantuml/svg/5SqnhW8X40RW_ftYUG2OtcefjZ1Paqqs7W1X528CPFY9rrUhh_oM0Q-OjVoTieGo8qyj_mdeuqoa_csV6MdUvs0DJS026rgbMzpCkX_cQ0yu3OcsB2_Nkt7xXQeVOALLa95vN5laOlilMLZYrmy0?v3)
 

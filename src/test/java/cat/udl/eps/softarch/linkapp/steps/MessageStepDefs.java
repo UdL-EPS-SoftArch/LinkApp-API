@@ -12,10 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,6 +38,9 @@ public class MessageStepDefs {
 
     @Autowired
     private MeetRepository meetRepository;
+
+    @Autowired
+    private MeetAttendingRepository meetAttendingRepository;
 
     @Autowired
     private MeetStepDefs meetStepDefs;
@@ -73,11 +77,16 @@ public class MessageStepDefs {
         Meet meet = featureMeet;
         Group group = featureGroup;
 
-        UserRole userRole = userRoleRepository.
-                findByRoleKeyUserAndRoleKeyGroup(user, group);
-
-        meet.getAttending().add(userRole);
         meetRepository.save(meet);
+
+        MeetAttendingKey meetAttendingKey = new MeetAttendingKey();
+        meetAttendingKey.setUser(user);
+        meetAttendingKey.setMeet(meet);
+        MeetAttending meetAttending = new MeetAttending();
+        meetAttending.setMeetAttendingKey(meetAttendingKey);
+        meetAttending.setAttends(true);
+
+        meetAttendingRepository.save(meetAttending);
     }
 
     @And("The user {string} is not assisting to the meet")
@@ -87,10 +96,9 @@ public class MessageStepDefs {
         Meet meet = featureMeet;
         Group group = featureGroup;
 
-        UserRole userRole = userRoleRepository.
-                findByRoleKeyUserAndRoleKeyGroup(user, group);
-
-        assertFalse(meet.getAttending().contains(userRole));
+        Optional<MeetAttending> meetAttending = meetAttendingRepository
+                .findByMeetAttendingKeyUserAndMeetAttendingKeyMeet(user, meet);
+        assertFalse(meetAttending.isPresent());
     }
 
     @When("I send a message to the meet with message {string}")
@@ -161,7 +169,18 @@ public class MessageStepDefs {
 
     @And("The meet has closed")
     public void theMeetHasClosed() {
-        featureMeet.setStatus(Boolean.FALSE);
+        assert featureMeet.getId() != null;
+        Meet meet = meetRepository.findById(featureMeet.getId()).get();
+        meet.setStatus(Boolean.FALSE);
+        meetRepository.save(meet);
+        featureMeet = meet;
+    }
+
+    @And("The author of the message is correct")
+    public void theAuthorIsCorrent() {
+        User author = userRepository.findById(username).get();
+        System.out.println(messageRepository.findByAuthor(author).size());
+        assertEquals(messageRepository.findByAuthor(author).get(0).getId(), featureMessage.getId());
     }
 }
 

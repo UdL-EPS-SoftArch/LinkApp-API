@@ -7,6 +7,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 
+
+
 @Entity
 @Table(name = "UserRole",
     uniqueConstraints = {
@@ -20,7 +22,8 @@ import java.util.Objects;
 )
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UserRole extends UriEntity<UserRoleKey> {
+public class UserRole extends UriEntity<UserRoleKey>
+{
 
     @EmbeddedId
     private UserRoleKey roleKey;
