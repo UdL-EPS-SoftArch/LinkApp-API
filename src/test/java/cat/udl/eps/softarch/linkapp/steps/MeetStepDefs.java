@@ -71,8 +71,7 @@ public class MeetStepDefs
     }
 
     @And("The user {string} belongs to that group as {string}")
-    public void userBelongsToGroup(String username, String role)
-    {
+    public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -83,6 +82,25 @@ public class MeetStepDefs
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.valueOf(role));
         userRoleRepository.save(userRole);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @When("The user {string} leaves the group")
+    public void leaveGroup(String username) throws Throwable {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        delete(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
     }
 
     @When("I create a meet in that group with title {string}, description {string}, maxUsers {long}, location {string}")
