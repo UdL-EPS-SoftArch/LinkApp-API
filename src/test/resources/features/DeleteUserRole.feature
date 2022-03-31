@@ -11,7 +11,7 @@ Feature: Delete UserRole
     When The user "user" leaves the group
     Then The response code is 204
 
-  Scenario: Leave a group being admin and there are other admins in the group
+  Scenario: Leave a group being the unique admin in the group
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I login as "user" with password "password"
     And A group exists
@@ -19,7 +19,7 @@ Feature: Delete UserRole
     When The user "user" leaves the group
     Then The response code is 403
 
-  Scenario: Leave a group being the unique admin in the group
+  Scenario: Leave a group being admin and there are other admins in the group
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And There is a registered user with username "user2" and password "password" and email "user2@sample.app"
     And I login as "user" with password "password"
