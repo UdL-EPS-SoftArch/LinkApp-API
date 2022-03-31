@@ -163,9 +163,8 @@ public class PostStepDefs {
                 .andExpect(jsonPath("$.text", is("create comment 1")));
     }
 
-    //CREATE STEP DEFS
     @When("I create a post with text {string}")
-    public void iCreateAPostWithText(String description)throws Throwable {
+    public void iCreateAPostWithText(String description) throws Throwable {
 
         List<Group> groups = groupRepository.findByTitleContaining("title");
         Group group = groups.get(groups.size()-1);
