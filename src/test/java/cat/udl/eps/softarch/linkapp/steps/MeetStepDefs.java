@@ -72,8 +72,7 @@ public class MeetStepDefs {
     }
 
     @And("The user {string} belongs to that group as {string}")
-    public void userBelongsToGroup(String username, String role)
-    {
+    public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -84,6 +83,25 @@ public class MeetStepDefs {
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.valueOf(role));
         userRoleRepository.save(userRole);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @When("The user {string} leaves the group")
+    public void leaveGroup(String username) throws Throwable {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        delete(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
     }
 
     @When("I create a meet in that group with title {string}, description {string}, maxUsers {long}, location {string}")
@@ -151,17 +169,27 @@ public class MeetStepDefs {
     {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
-
-        JSONObject object = new JSONObject();
-        object.put("role", UserRoleEnum.SUBSCRIBED);
-
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch(userRole.getUri())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(object.toString())
+                                .content(new JSONObject().put("role", role).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+    }
+
+    @And("The role of the user {string} has been changed to {string}")
+    public void userRoleUpdatedTo(String username, String role) throws Throwable
+    {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.role", is(role)));
     }
 
     @And("The creation time of the meet is recent")
