@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+
 
 
 @Entity
@@ -31,6 +33,11 @@ public class Group extends UriEntity<Long> {
     @Enumerated(EnumType.STRING)
     private GroupVisibilityEnum visibility;
 
+    //@NotNull
+    @ElementCollection(fetch=FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<ThemeEnum> themes;
+
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
@@ -42,6 +49,14 @@ public class Group extends UriEntity<Long> {
         this.title = name;
         this.description = description;
         this.visibility = visibility;
+    }
+
+    public Group(long id, String name, String description, GroupVisibilityEnum visibility, List<ThemeEnum> themes) {
+        this.id = id;
+        this.title = name;
+        this.description = description;
+        this.visibility = visibility;
+        this.themes = themes;
     }
 
     @Override
