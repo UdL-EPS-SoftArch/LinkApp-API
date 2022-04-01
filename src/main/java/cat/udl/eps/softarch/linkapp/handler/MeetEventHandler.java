@@ -43,7 +43,7 @@ public class MeetEventHandler
         Group group = meet.getGroup();
         UserRole userRole = userRoleRepository
                 .findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
-
+        System.out.println(userRole.getRole().toString());
         if (userRole == null || userRole.getRole() == UserRoleEnum.SUBSCRIBED)
         {
             throw new AccessDeniedException("Not enough permissions");
