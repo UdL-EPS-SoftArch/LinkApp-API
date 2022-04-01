@@ -20,7 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class PostStepDefs {
+public class PostStepDefs
+{
     private String newResourceUri;
 
     private String newResourceUriComment;
@@ -37,32 +38,37 @@ public class PostStepDefs {
     //////////GENERAL STEP DEFS//////////
 
     @And("There is no post created")
-    public void thereIsNoPostCreatedWithId()  throws Throwable{
-        Assert.assertEquals(0,postRepository.count());
+    public void thereIsNoPostCreatedWithId() throws Throwable
+    {
+        Assert.assertEquals(0, postRepository.count());
     }
 
     //////////DELETE STEP DEFS//////////
 
     @When("I delete the post")
-    public void iDeleteAPost() throws Throwable{
+    public void iDeleteAPost() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                 delete(newResourceUri).with(AuthenticationStepDefs.authenticate()));
     }
 
     @When("I delete the comment")
-    public void iDeleteAComment() throws Throwable{
+    public void iDeleteAComment() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                 delete(newResourceUriComment).with(AuthenticationStepDefs.authenticate()));
     }
 
     @When("I delete the post with id {string}")
-    public void iDeleteAPostWithId(String id) throws Throwable{
+    public void iDeleteAPostWithId(String id) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
-                delete("/posts/{id}",id).with(AuthenticationStepDefs.authenticate()));
+                delete("/posts/{id}", id).with(AuthenticationStepDefs.authenticate()));
     }
 
     @And("It has been deleted the post")
-    public void itHasBeenDeletedAPost() throws Throwable{
+    public void itHasBeenDeletedAPost() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -71,7 +77,8 @@ public class PostStepDefs {
     }
 
     @And("It has been deleted the comment")
-    public void itHasBeenDeletedAComment() throws Throwable{
+    public void itHasBeenDeletedAComment() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUriComment)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -80,7 +87,8 @@ public class PostStepDefs {
     }
 
     @And("The post has not been deleted")
-    public void thePostHasNotBeenDeleted() throws Throwable{
+    public void thePostHasNotBeenDeleted() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -92,7 +100,8 @@ public class PostStepDefs {
     //////////MODIFY POST STEP DEFS//////////
 
     @When("I modify the post just created with new text {string}")
-    public void iModifyThePostJustCreated(String text) throws Throwable{
+    public void iModifyThePostJustCreated(String text) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch(newResourceUri)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +112,8 @@ public class PostStepDefs {
     }
 
     @When("I modify the comment just created with new text {string}")
-    public void iModifyTheCommentJustCreated(String text) throws Throwable{
+    public void iModifyTheCommentJustCreated(String text) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch(newResourceUriComment)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -115,9 +125,10 @@ public class PostStepDefs {
 
 
     @When("I modify the post with id {string} with new text {string}")
-    public void iModifyAPostWithId(String id, String text) throws Throwable{
+    public void iModifyAPostWithId(String id, String text) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/posts/{id}",id)
+                        patch("/posts/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject().put("text", text).toString())
                                 .accept(MediaType.APPLICATION_JSON)
@@ -126,7 +137,8 @@ public class PostStepDefs {
     }
 
     @And("It has been modified the post just created with the text {string}")
-    public void itHasBeenModifiedAPostWithIdWithTheText(String text) throws Throwable{
+    public void itHasBeenModifiedAPostWithIdWithTheText(String text) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -136,7 +148,8 @@ public class PostStepDefs {
     }
 
     @And("It has been modified the comment just created with the text {string}")
-    public void itHasBeenModifiedThenCommentWithIdWithTheText(String text) throws Throwable{
+    public void itHasBeenModifiedThenCommentWithIdWithTheText(String text) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUriComment)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -144,8 +157,10 @@ public class PostStepDefs {
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is(text)));
     }
+
     @And("The post has not been modified")
-    public void thePostHasNotBeenModified() throws Throwable{
+    public void thePostHasNotBeenModified() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -153,8 +168,10 @@ public class PostStepDefs {
                 .andDo(print())
                 .andExpect(jsonPath("$.text", is("hola")));
     }
+
     @And("The comment has not been modified")
-    public void theCommentHasNotBeenModified() throws Throwable{
+    public void theCommentHasNotBeenModified() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUriComment)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -164,10 +181,11 @@ public class PostStepDefs {
     }
 
     @When("I create a post with text {string}")
-    public void iCreateAPostWithText(String description) throws Throwable {
+    public void iCreateAPostWithText(String description) throws Throwable
+    {
 
         List<Group> groups = groupRepository.findByTitleContaining("title");
-        Group group = groups.get(groups.size()-1);
+        Group group = groups.get(groups.size() - 1);
         Post post = new Post();
         post.setText(description);
         stepDefs.result = stepDefs.mockMvc.perform(
@@ -185,9 +203,10 @@ public class PostStepDefs {
 
 
     @And("There is a post created with text {string}")
-    public void itHasBeenCreatedAPostWithTextAndAuthorUsername(String text) throws Throwable {
+    public void itHasBeenCreatedAPostWithTextAndAuthorUsername(String text) throws Throwable
+    {
         List<Post> posts = postRepository.findByTextContaining(text);
-        Post post = posts.get(posts.size()-1);
+        Post post = posts.get(posts.size() - 1);
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUri)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -199,13 +218,14 @@ public class PostStepDefs {
     }
 
     @When("I create a comment to the previous post with text {string}")
-    public void iCreateACommentToPreviousPostWithAuthorUsername(String comment) throws Throwable {
+    public void iCreateACommentToPreviousPostWithAuthorUsername(String comment) throws Throwable
+    {
 
         List<Group> groups = groupRepository.findByTitleContaining("title");
-        Group group = groups.get(groups.size()-1);
+        Group group = groups.get(groups.size() - 1);
 
         List<Post> posts = postRepository.findByTextContaining("create post 1");
-        Post father = posts.get(posts.size()-1);
+        Post father = posts.get(posts.size() - 1);
 
         Post post = new Post();
         post.setText(comment);
@@ -215,21 +235,22 @@ public class PostStepDefs {
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
                         .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
-                        .put("group", "/groups/" + group.getId())
-                        .toString()
-                )
-                .with(AuthenticationStepDefs.authenticate())
-                .with(AuthenticationStepDefs.authenticate())).andDo(print());
+                                .put("group", "/groups/" + group.getId())
+                                .toString()
+                        )
+                        .with(AuthenticationStepDefs.authenticate())
+                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
 
 
         newResourceUriComment = stepDefs.result.andReturn().getResponse().getHeader("Location");
     }
 
     @And("The post with text {string} is a comment from post with text {string}")
-    public void thePostWithTextIsACommentFromPostWithText(String comment, String post) throws Throwable {
+    public void thePostWithTextIsACommentFromPostWithText(String comment, String post) throws Throwable
+    {
 
         List<Post> posts = postRepository.findByTextContaining(post);
-        Post father = posts.get(posts.size()-1);
+        Post father = posts.get(posts.size() - 1);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(newResourceUriComment)
@@ -239,7 +260,7 @@ public class PostStepDefs {
                 .andExpect(jsonPath("$.text", is(comment)));
 
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get(newResourceUriComment+"/father")
+                        get(newResourceUriComment + "/father")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -247,8 +268,9 @@ public class PostStepDefs {
     }
 
     @And("There are {string} posts created")
-    public void usernameHasCreatedPosts(String n_posts) {
+    public void usernameHasCreatedPosts(String n_posts)
+    {
         Long posts = postRepository.count();
-        Assert.assertEquals(posts,Long.valueOf(n_posts));
+        Assert.assertEquals(posts, Long.valueOf(n_posts));
     }
 }

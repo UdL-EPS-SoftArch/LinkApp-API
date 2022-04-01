@@ -33,11 +33,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CreateGroupSteps {
+public class CreateGroupSteps
+{
 
     @Autowired
     private StepDefs stepDefs;
-    private UserRepository userRepository;
 
     @Autowired
     private GroupRepository groupRepository;
@@ -46,10 +46,14 @@ public class CreateGroupSteps {
 
     private static Group group;
 
-    public static Group getCreatedGroup() { return group; }
+    public static Group getCreatedGroup()
+    {
+        return group;
+    }
 
     @When("^I Create a public Group called \"([^\"]*)\" with description \"([^\"]*)\"")
-    public void iCreateAPublicGroup(String groupName, String description) throws Exception {
+    public void iCreateAPublicGroup(String groupName, String description) throws Exception
+    {
         Group tmpGroup = new Group();
         tmpGroup.setId((long) 1);
         tmpGroup.setTitle(groupName);
@@ -57,17 +61,16 @@ public class CreateGroupSteps {
         tmpGroup.setVisibility(GroupVisibilityEnum.PUBLIC);
 
         stepDefs.result = stepDefs.mockMvc.perform(
-                post("/groups/")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(new JSONObject(
-                                    stepDefs.mapper.writeValueAsString(tmpGroup)
+                        post("/groups/")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(
+                                        stepDefs.mapper.writeValueAsString(tmpGroup)
                                 ).toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
 
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201)
-        {
+        if (response.getStatus() == 201) {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             Matcher m = idPattern.matcher(uri);
@@ -79,7 +82,8 @@ public class CreateGroupSteps {
     }
 
     @When("^I Create a public Group called \"([^\"]*)\" with description \"([^\"]*)\" and theme \"([^\"]*)\"")
-    public void iCreateAPublicGroupWithOneTheme(String groupName, String description, String theme) throws Exception {
+    public void iCreateAPublicGroupWithOneTheme(String groupName, String description, String theme) throws Exception
+    {
         Group tmpGroup = new Group();
         tmpGroup.setId((long) 1);
         tmpGroup.setTitle(groupName);
@@ -99,8 +103,7 @@ public class CreateGroupSteps {
                 .andDo(print());
 
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201)
-        {
+        if (response.getStatus() == 201) {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             Matcher m = idPattern.matcher(uri);
@@ -112,7 +115,8 @@ public class CreateGroupSteps {
     }
 
     @And("It has been created a Group with title {string} and description {string}")
-    public void itHasBeenCreatedAGroup(String title, String description) throws Exception {
+    public void itHasBeenCreatedAGroup(String title, String description) throws Exception
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/groups/{id}", group.getId())
                                 .accept(MediaType.APPLICATION_JSON)
@@ -123,7 +127,8 @@ public class CreateGroupSteps {
     }
 
     @And("It has been created a Group with title {string} and description {string} and theme {string}")
-    public void itHasBeenCreatedAGroup(String title, String description, String theme) throws Exception {
+    public void itHasBeenCreatedAGroup(String title, String description, String theme) throws Exception
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/groups/{id}", group.getId())
                                 .accept(MediaType.APPLICATION_JSON)

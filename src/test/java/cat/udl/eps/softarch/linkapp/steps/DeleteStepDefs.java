@@ -18,29 +18,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class DeleteStepDefs {
+public class DeleteStepDefs
+{
 
-  @Autowired
-  private StepDefs stepDefs;
+    @Autowired
+    private StepDefs stepDefs;
 
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @When("^I delete the user with username \"([^\"]*)\"")
-  public void iDeleteUserWithUsername(String username) throws Throwable {
+    @When("^I delete the user with username \"([^\"]*)\"")
+    public void iDeleteUserWithUsername(String username) throws Throwable
+    {
 
-    stepDefs.result = stepDefs.mockMvc.perform(
-                    delete("/users/{username}", username).with(AuthenticationStepDefs.authenticate()));
-  }
+        stepDefs.result = stepDefs.mockMvc.perform(
+                delete("/users/{username}", username).with(AuthenticationStepDefs.authenticate()));
+    }
 
-  @And("^It has been deleted a user with username \"([^\"]*)\" and email \"([^\"]*)\"")
-  public void itHasBeenCreatedAUserWithUsername(String username, String email) throws Throwable {
-    stepDefs.result = stepDefs.mockMvc.perform(
-                    get("/users/{username}", username)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .with(AuthenticationStepDefs.authenticate()))
-            .andExpect(jsonPath("$.email").doesNotExist())
-            .andExpect(jsonPath("$.password").doesNotExist());
-  }
+    @And("^It has been deleted a user with username \"([^\"]*)\" and email \"([^\"]*)\"")
+    public void itHasBeenCreatedAUserWithUsername(String username, String email) throws Throwable
+    {
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/users/{username}", username)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.password").doesNotExist());
+    }
 
 }

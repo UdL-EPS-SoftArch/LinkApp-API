@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.json.JSONArray;
@@ -19,6 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +30,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class ModifyGroupSteps {
+public class ModifyGroupSteps
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -43,34 +46,32 @@ public class ModifyGroupSteps {
 
 
     @When("A user {string} modifies the group description to {string}")
-    public void userModifiesGroup(String username, String newDescription) throws Exception {
-        //User user = userRepository.findById(username).get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);
+    public void userModifiesGroup(String username, String newDescription) throws Exception
+    {
+        Group tmpGroup = group;
 
-        tmpGroup.setDescription(newDescription);*/
+        tmpGroup.setDescription(newDescription);
         JSONObject newJsonDescription = new JSONObject();
         newJsonDescription.put("description", newDescription);
         stepDefs.result = stepDefs.mockMvc.perform(
-                patch("/groups/{id}", tmpGroup.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(newJsonDescription.toString())
-                        .with(AuthenticationStepDefs.authenticate()))
+                        patch("/groups/{id}", tmpGroup.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(newJsonDescription.toString())
+                                .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
     }
 
     @When("A user {string} deletes the theme {string}")
-    public void userDeletesTheme(String username, String deletedTheme) throws Exception {
-        //User user = userRepository.findById(username).get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+    public void userDeletesTheme(String username, String deletedTheme) throws Exception
+    {
+        Group tmpGroup = group;
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
-        for(int i=0;i<length;i++) {
-            if(!tmpGroup.getThemes().get(i).name().equals(deletedTheme)){
+        for (int i = 0; i < length; i++) {
+            if (!tmpGroup.getThemes().get(i).name().equals(deletedTheme)) {
                 newThemes.put(tmpGroup.getThemes().get(i));
             }
         }
@@ -86,17 +87,16 @@ public class ModifyGroupSteps {
     }
 
     @When("A user {string} deletes the themes {string}, {string}")
-    public void userDeletesThemes(String username, String deletedTheme1, String deletedTheme2) throws Exception {
-        //User user = userRepository.findById(username).get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+    public void userDeletesThemes(String username, String deletedTheme1, String deletedTheme2) throws Exception
+    {
+        Group tmpGroup = group;
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
-        for(int i=0;i<length;i++) {
-            if(!tmpGroup.getThemes().get(i).name().equals(deletedTheme1) && !tmpGroup.getThemes().get(i).name().equals(deletedTheme2)){
+        for (int i = 0; i < length; i++) {
+            if (!tmpGroup.getThemes().get(i).name().equals(deletedTheme1) && !tmpGroup.getThemes().get(i).name().equals(deletedTheme2)) {
                 newThemes.put(tmpGroup.getThemes().get(i));
             }
         }
@@ -113,16 +113,15 @@ public class ModifyGroupSteps {
 
 
     @When("A user {string} adds the theme {string}")
-    public void userAddsTheme(String username, String newTheme) throws Throwable {
-        //User user = userRepository.findById(username).get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+    public void userAddsTheme(String username, String newTheme) throws Throwable
+    {
+        Group tmpGroup = group;
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
-        for(int i=0;i<length;i++) {
+        for (int i = 0; i < length; i++) {
             newThemes.put(tmpGroup.getThemes().get(i));
         }
         newThemes.put(newTheme);
@@ -138,16 +137,15 @@ public class ModifyGroupSteps {
     }
 
     @When("A user {string} adds the themes {string}, {string}, {string}")
-    public void userAddsThemes(String username, String newTheme1, String newTheme2, String newTheme3) throws Throwable {
-        //User user = userRepository.findById(username).get();
-        Group tmpGroup = groupRepository.findById((long) 1).get();
-        /*UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, tmpGroup);*/
+    public void userAddsThemes(String username, String newTheme1, String newTheme2, String newTheme3) throws Throwable
+    {
+        Group tmpGroup = group;
 
         int length = tmpGroup.getThemes().size();
         JSONArray newThemes = new JSONArray();
         JSONObject newThemesObject = new JSONObject();
 
-        for(int i=0;i<length;i++) {
+        for (int i = 0; i < length; i++) {
             newThemes.put(tmpGroup.getThemes().get(i));
         }
         newThemes.put(newTheme1);
@@ -165,53 +163,54 @@ public class ModifyGroupSteps {
     }
 
 
-    @And("A already created group where with name {string}, id {long} and description {string}")
-    public void groupCreated(String name, long id, String description) throws Exception {
-        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC);
-        groupRepository.save(group);
+    @And("A already created group where with name {string} and description {string}")
+    public void groupCreated(String name, String description) throws Exception
+    {
+        Group tmpGroup = new Group(0L, name, description, GroupVisibilityEnum.PUBLIC);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/groups/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
+                                        stepDefs.mapper.writeValueAsString(tmpGroup)
                                 ).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+
     }
 
-    @And("A already created group where with name {string}, id {long} and description {string} and theme {string}")
-    public void groupCreated(String name, long id, String description, String theme) throws Exception {
+    @And("A already created group where with name {string} and description {string} and theme {string}")
+    public void groupCreated(String name, String description, String theme) throws Exception
+    {
         List<ThemeEnum> themes = new ArrayList<ThemeEnum>();
         themes.add(ThemeEnum.valueOf(theme));
-        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC, themes);
-        groupRepository.save(group);
+        Group tmpGroup = new Group(0L, name, description, GroupVisibilityEnum.PUBLIC, themes);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/groups/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
+                                        stepDefs.mapper.writeValueAsString(tmpGroup)
                                 ).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
     }
 
-    @And("A already created group where with name {string}, id {long} and description {string} and theme {string} and {string}")
-    public void groupCreatedMultipleGroups(String name, long id, String description, String theme1, String theme2) throws Exception {
-        List<ThemeEnum> themes = new ArrayList<ThemeEnum>();
+    @And("A already created group where with name {string} and description {string} and theme {string} and {string}")
+    public void groupCreatedMultipleGroups(String name, String description, String theme1, String theme2) throws Exception
+    {
+        List<ThemeEnum> themes = new ArrayList<>();
         themes.add(ThemeEnum.valueOf(theme1));
         themes.add(ThemeEnum.valueOf(theme2));
-        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC, themes);
-        groupRepository.save(group);
+        Group tmpGroup = new Group(0L, name, description, GroupVisibilityEnum.PUBLIC, themes);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/groups/")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(
-                                        stepDefs.mapper.writeValueAsString(group)
+                                        stepDefs.mapper.writeValueAsString(tmpGroup)
                                 ).toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
@@ -220,11 +219,13 @@ public class ModifyGroupSteps {
 
     @And("The user {string} is a User {string} of the group")
     @Transactional
-    public void userAdminOfThatGroup(String username, String role){
+    public void userAdminOfThatGroup(String username, String role)
+    {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
         userRoleKey.setUser(user);
+        System.out.println(group);
         userRoleKey.setGroup(group);
 
         UserRole userRole = new UserRole();
@@ -234,8 +235,9 @@ public class ModifyGroupSteps {
         userRoleRepository.save(userRole);
     }
 
-    @And ("The description of the group is now {string}")
-    public void itHasBeenModifiedAGroup(String description) throws Exception {
+    @And("The description of the group is now {string}")
+    public void itHasBeenModifiedAGroup(String description) throws Exception
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/groups/{id}", group.getId())
                                 .accept(MediaType.APPLICATION_JSON)
@@ -243,9 +245,11 @@ public class ModifyGroupSteps {
                 .andDo(print())
                 .andExpect(jsonPath("$.description", is(description)));
     }
-    @And("The user {string} creates a group with name {string}, id {long} and description {string}")
-    public void createGroup(String username, String name, long id, String description) throws Exception {
-        group = new Group(id, name, description, GroupVisibilityEnum.PUBLIC);
+
+    @And("The user {string} creates a group with name {string} and description {string}")
+    public void createGroup(String username, String name, String description) throws Exception
+    {
+        group = new Group(0L, name, description, GroupVisibilityEnum.PUBLIC);
 
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/groups/")
@@ -259,9 +263,31 @@ public class ModifyGroupSteps {
     }
 
     @And("The number of related themes is {long}")
-    public void numberOfThemes(Long themesSize) {
+    public void numberOfThemes(Long themesSize)
+    {
         assertEquals(themesSize, (group.getThemes() == null) ? 0 : group.getThemes().size());
     }
 
 
+    @And("I create a meet in that group")
+    public void iCreateAMeetInThatGroup() throws Exception
+    {
+        Meet tmpMeet = new Meet();
+        tmpMeet.setTitle("title");
+        tmpMeet.setDescription("description");
+        tmpMeet.setMaxUsers(3L);
+        tmpMeet.setLocation("location");
+        tmpMeet.setInitialMeetDate(ZonedDateTime.now());
+        tmpMeet.setFinalMeetDate(ZonedDateTime.now().plusHours(1));
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        post("/meets/")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
+                                        .put("group", "/groups/" + group.getId())
+                                        .toString()
+                                )
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
+    }
 }
