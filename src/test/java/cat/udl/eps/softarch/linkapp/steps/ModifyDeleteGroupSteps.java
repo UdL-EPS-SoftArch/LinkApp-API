@@ -2,9 +2,10 @@ package cat.udl.eps.softarch.linkapp.steps;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
+import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -12,41 +13,48 @@ import io.cucumber.java.en.When;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class ModifyGroupSteps
+public class ModifyDeleteGroupSteps
 {
 
     @Autowired
     private StepDefs stepDefs;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private GroupRepository groupRepository;
+
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private MeetRepository meetRepository;
+
+
+    private static Meet featureMeet;
     private static Group group;
 
 
-    @When("A user {string} modifies the group description to {string}")
-    public void userModifiesGroup(String username, String newDescription) throws Exception
+    @When("The user modifies the group description to {string}")
+    public void userModifiesGroup(String newDescription) throws Exception
     {
         Group tmpGroup = group;
 
@@ -59,6 +67,7 @@ public class ModifyGroupSteps
                                 .content(newJsonDescription.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+        updateGroupReference(tmpGroup.getId());
     }
 
     @When("A user {string} deletes the theme {string}")
@@ -112,8 +121,8 @@ public class ModifyGroupSteps
     }
 
 
-    @When("A user {string} adds the theme {string}")
-    public void userAddsTheme(String username, String newTheme) throws Throwable
+    @When("A user adds the theme {string}")
+    public void userAddsTheme(String newTheme) throws Throwable
     {
         Group tmpGroup = group;
 
@@ -136,8 +145,8 @@ public class ModifyGroupSteps
         group = groupRepository.findById(group.getId()).get();
     }
 
-    @When("A user {string} adds the themes {string}, {string}, {string}")
-    public void userAddsThemes(String username, String newTheme1, String newTheme2, String newTheme3) throws Throwable
+    @When("A user adds the themes {string}, {string}, {string}")
+    public void userAddsThemes(String newTheme1, String newTheme2, String newTheme3) throws Throwable
     {
         Group tmpGroup = group;
 
@@ -178,6 +187,22 @@ public class ModifyGroupSteps
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
 
+        updateGroupReference();
+    }
+
+    private void updateGroupReference() throws Exception
+    {
+        int status = stepDefs.result.andReturn().getResponse().getStatus();
+        if (status == 200 || status == 201) {
+            String content = stepDefs.result.andReturn().getResponse().getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            updateGroupReference(Long.parseLong(uri.substring(uri.length() - 1)));
+        }
+    }
+
+    private void updateGroupReference(Long id) throws Exception
+    {
+        group = groupRepository.findById(id).get();
     }
 
     @And("A already created group where with name {string} and description {string} and theme {string}")
@@ -196,6 +221,7 @@ public class ModifyGroupSteps
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+        updateGroupReference();
     }
 
     @And("A already created group where with name {string} and description {string} and theme {string} and {string}")
@@ -215,6 +241,7 @@ public class ModifyGroupSteps
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+        updateGroupReference();
     }
 
     @And("The user {string} is a User {string} of the group")
@@ -225,10 +252,14 @@ public class ModifyGroupSteps
 
         UserRoleKey userRoleKey = new UserRoleKey();
         userRoleKey.setUser(user);
-        System.out.println(group);
         userRoleKey.setGroup(group);
 
-        UserRole userRole = new UserRole();
+
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, group);
+        if (userRole == null) {
+            userRole = new UserRole();
+        }
+
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.valueOf(role));
 
@@ -260,6 +291,7 @@ public class ModifyGroupSteps
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
+        updateGroupReference();
     }
 
     @And("The number of related themes is {long}")
@@ -289,5 +321,65 @@ public class ModifyGroupSteps
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
+
+        MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
+        if (response.getStatus() == 201) {
+            String content = response.getContentAsString();
+            String uri = JsonPath.read(content, "uri");
+            Matcher m = Pattern.compile("\\d+$").matcher(uri);
+            if (!m.find())
+                throw new RuntimeException("Unexpected uri");
+
+            featureMeet = meetRepository.findById(Long.parseLong(m.group())).get();
+        }
+    }
+
+    @Then("I check if the meet has been deleted")
+    public void iCheckIfTheMeetHasBeenDeleted() throws Exception
+    {
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(featureMeet.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @When("The user deletes the group")
+    public void userDeletesGroup() throws Exception
+    {
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        delete(group.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                )
+                .andDo(print());
+    }
+
+    @And("A post is created in that group")
+    public void postCreates() throws Exception
+    {
+        Group group = groupRepository.findById((long) 1).get();
+        Post post = new Post();
+        post.setId((long) 1);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                post("/posts/")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
+                                .put("group", "/groups/" + group.getId())
+                                .toString()
+                        )
+                        .with(AuthenticationStepDefs.authenticate())
+                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
+    }
+
+    @Then("I check if the post has been deleted")
+    public void getPost() throws Exception
+    {
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get("/posts/{id}", (long) 1)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 }

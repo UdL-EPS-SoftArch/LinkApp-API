@@ -4,11 +4,12 @@ Feature: ModifyGroup
 
   Background:
     Given I login as "demo" with password "password"
+    And There is a registered user with username "random" and password "random" and email "random@sample.app"
 
   Scenario: Modify group
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022"
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" modifies the group description to "2022 Generation"
+    When The user modifies the group description to "2022 Generation"
     Then The response code is 204
     And The description of the group is now "2022 Generation"
 
@@ -16,7 +17,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022"
     And The number of related themes is 0
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the theme "CULTURE"
+    When A user adds the theme "CULTURE"
     Then The response code is 204
     And The number of related themes is 1
 
@@ -24,7 +25,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022" and theme "ARTS"
     And The number of related themes is 1
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the theme "CULTURE"
+    When A user adds the theme "CULTURE"
     Then The response code is 204
     And The number of related themes is 2
 
@@ -32,7 +33,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
     And The number of related themes is 2
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the theme "CARS"
+    When A user adds the theme "CARS"
     Then The response code is 204
     And The number of related themes is 3
 
@@ -40,7 +41,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
     And The number of related themes is 2
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the theme "ARTS"
+    When A user adds the theme "ARTS"
     Then The response code is 422
     And The number of related themes is 2
 
@@ -48,7 +49,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022" and theme "ARTS" and "CULTURE"
     And The number of related themes is 2
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the theme "ARRRRTS"
+    When A user adds the theme "ARRRRTS"
     Then The response code is 400
     And The number of related themes is 2
 
@@ -56,7 +57,7 @@ Feature: ModifyGroup
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022"
     And The number of related themes is 0
     And The user "demo" is a User "ADMIN" of the group
-    When A user "demo" adds the themes "ARTS", "GASTRONOMY", "FITNESS"
+    When A user adds the themes "ARTS", "GASTRONOMY", "FITNESS"
     Then The response code is 204
     And The number of related themes is 3
 
@@ -93,16 +94,17 @@ Feature: ModifyGroup
   Scenario: Modify group but has not permission
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022"
     And The user "demo" is a User "SUBSCRIBED" of the group
-    When A user "demo" modifies the group description to "2022 Generation"
+    When The user modifies the group description to "2022 Generation"
     Then The response code is 403
 
   Scenario: Modify group but not belongs to group
     Given A already created group where with name "GEIADE" and description "Generacio GEIADE 2017-2022"
-    When A user "random" modifies the group description to "2022 Generation"
+    And I login as "random" with password "random"
+    When The user modifies the group description to "2022 Generation"
     Then The response code is 403
 
   Scenario: Modify group as owner of the group
     Given The user "demo" creates a group with name "GEIADE" and description "Generacio GEIADE 2017-2022"
-    When A user "demo" modifies the group description to "2022 Generation"
+    When The user modifies the group description to "2022 Generation"
     Then The response code is 204
     And The description of the group is now "2022 Generation"

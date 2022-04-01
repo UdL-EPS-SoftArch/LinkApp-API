@@ -2,10 +2,7 @@ package cat.udl.eps.softarch.linkapp.handler;
 
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.exception.ValidationError;
-import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
-import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
-import cat.udl.eps.softarch.linkapp.repository.PostRepository;
-import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
+import cat.udl.eps.softarch.linkapp.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.rest.core.annotation.*;
@@ -28,13 +25,15 @@ GroupEventHandler {
     final UserRoleRepository userRoleRepository;
     final PostRepository postRepository;
     final MeetRepository meetRepository;
+    final MeetAttendingRepository meetAttendingRepository;
 
     public GroupEventHandler(GroupRepository groupRepository, UserRoleRepository userRoleRepository,
-                             PostRepository postRepository, MeetRepository meetRepository) {
+                             PostRepository postRepository, MeetRepository meetRepository, MeetAttendingRepository meetAttendingRepository) {
         this.groupRepository = groupRepository;
         this.userRoleRepository = userRoleRepository;
         this.postRepository = postRepository;
         this.meetRepository = meetRepository;
+        this.meetAttendingRepository = meetAttendingRepository;
     }
 
     @HandleBeforeLinkSave
@@ -92,8 +91,12 @@ GroupEventHandler {
         List<Meet> meets = meetRepository.findByGroup(group);
         for (Meet meet: meets){
             assert meet.getId() != null;
-            postRepository.deleteById(meet.getId());
-
+            List <MeetAttending> attendings = meetAttendingRepository.findByMeetAttendingKeyMeet(meet);
+            for (MeetAttending attending:
+                 attendings) {
+                meetAttendingRepository.deleteById(attending.getId());
+            }
+            meetRepository.deleteById(meet.getId());
         }
 
     }

@@ -375,13 +375,5 @@ public class MeetStepDefs
                 .andDo(print());
     }
 
-    @Then("I check if the meet has been deleted")
-    public void iCheckIfTheMeetHasBeenDeleted() throws Exception
-    {
-        stepDefs.result = stepDefs.mockMvc.perform(
-                        get(featureMeet.getUri())
-                                .accept(MediaType.APPLICATION_JSON)
-                                .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print());
-    }
+
 }
