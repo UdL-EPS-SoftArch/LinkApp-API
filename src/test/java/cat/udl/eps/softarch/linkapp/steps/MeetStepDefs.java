@@ -33,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MeetStepDefs {
+public class MeetStepDefs
+{
 
     private static Group featureGroup;
 
@@ -125,8 +126,7 @@ public class MeetStepDefs {
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 201)
-        {
+        if (response.getStatus() == 201) {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             Matcher m = idPattern.matcher(uri);
@@ -219,7 +219,7 @@ public class MeetStepDefs {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(
                                         new JSONObject(
-                                            stepDefs.mapper.writeValueAsString(tmpMeet)
+                                                stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
                                                 .put("group", featureGroup.getUri())
                                                 .toString()
@@ -227,8 +227,7 @@ public class MeetStepDefs {
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 200)
-        {
+        if (response.getStatus() == 200) {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
@@ -251,7 +250,7 @@ public class MeetStepDefs {
                         patch("/meets/" + featureMeet.getId())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(
-                                            stepDefs.mapper.writeValueAsString(tmpMeet)
+                                                stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
                                                 .put("group", featureGroup.getUri())
                                                 .toString()
@@ -259,8 +258,7 @@ public class MeetStepDefs {
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
-        if (response.getStatus() == 200)
-        {
+        if (response.getStatus() == 200) {
             String content = response.getContentAsString();
             String uri = JsonPath.read(content, "uri");
             Matcher m = idPattern.matcher(uri);
@@ -283,7 +281,8 @@ public class MeetStepDefs {
     }
 
     @And("The user {string} does not belong to the group")
-    public void theUserDoesNotBelongToTheGroup(String username) {
+    public void theUserDoesNotBelongToTheGroup(String username)
+    {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -298,7 +297,8 @@ public class MeetStepDefs {
     }
 
     @Given("I create a meet that ends in the past in that group")
-    public void iCreateAMeetThatEndsInThePast() {
+    public void iCreateAMeetThatEndsInThePast()
+    {
         cronMeet = new Meet();
         cronMeet.setGroup(featureGroup);
         cronMeet.setTitle("title");
@@ -313,19 +313,22 @@ public class MeetStepDefs {
     }
 
     @When("The cron status job is executed")
-    public void theCronStatusJobIsExecuted() {
+    public void theCronStatusJobIsExecuted()
+    {
         ScheduledCronJobsService.updateMeetStatusJob(meetRepository);
     }
 
     @Then("Then the meet status is false")
-    public void thenTheMeetStatusIsFalse() {
+    public void thenTheMeetStatusIsFalse()
+    {
         assert cronMeet.getId() != null;
         Meet meet = meetRepository.findById(cronMeet.getId()).get();
         Assert.assertFalse(meet.getStatus());
     }
 
     @When("I create a meet in that group with initial date in the past")
-    public void iCreateAMeetInThatGroupWithInitialDateInThePast() throws Throwable {
+    public void iCreateAMeetInThatGroupWithInitialDateInThePast() throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setGroup(featureGroup);
         tmpMeet.setTitle("title");
@@ -351,7 +354,8 @@ public class MeetStepDefs {
     }
 
     @When("I create a meet in that group with final date before initial date")
-    public void iCreateAMeetInThatGroupWithFinalDateBeforeInitialDate() throws Throwable{
+    public void iCreateAMeetInThatGroupWithFinalDateBeforeInitialDate() throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setGroup(featureGroup);
         tmpMeet.setTitle("title");
@@ -377,7 +381,8 @@ public class MeetStepDefs {
     }
 
     @When("The user {string} tries to attend the meeting")
-    public void theUserTriesToAttendTheMeeting(String username) throws Throwable {
+    public void theUserTriesToAttendTheMeeting(String username) throws Throwable
+    {
         User user = userRepository.findById(username).get();
         MeetAttendingKey meetAttendingKey = new MeetAttendingKey(featureMeet, user);
         MeetAttending meetAttending = new MeetAttending();
@@ -397,4 +402,6 @@ public class MeetStepDefs {
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
     }
+
+
 }

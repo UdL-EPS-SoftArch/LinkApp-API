@@ -22,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
-public class MessageStepDefs {
+public class MessageStepDefs
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -50,12 +51,14 @@ public class MessageStepDefs {
     private static Meet featureMeet;
     private static Message featureMessage;
 
-    MessageStepDefs(StepDefs stepDefs) {
+    MessageStepDefs(StepDefs stepDefs)
+    {
         this.stepDefs = stepDefs;
     }
 
     @And("A group exists with a meet")
-    public void theMeetWithIdExists() {
+    public void theMeetWithIdExists()
+    {
         featureGroup = meetStepDefs.theGroupExists();
         Meet meet = new Meet();
         meet.setTitle("title");
@@ -71,7 +74,8 @@ public class MessageStepDefs {
     }
 
     @And("The user {string} is assisting to the meet")
-    public void userIsAssistingToMeet(String name) {
+    public void userIsAssistingToMeet(String name)
+    {
         username = name;
         User user = userRepository.findById(username).get();
         Meet meet = featureMeet;
@@ -90,7 +94,8 @@ public class MessageStepDefs {
     }
 
     @And("The user {string} is not assisting to the meet")
-    public void userIsNotAssistingToMeet(String name) {
+    public void userIsNotAssistingToMeet(String name)
+    {
         username = name;
         User user = userRepository.findById(username).get();
         Meet meet = featureMeet;
@@ -102,7 +107,8 @@ public class MessageStepDefs {
     }
 
     @When("I send a message to the meet with message {string}")
-    public void sendMessageToMeet(String message) throws Throwable {
+    public void sendMessageToMeet(String message) throws Throwable
+    {
         Message tmpMessage = new Message();
         tmpMessage.setText(message);
         tmpMessage.setGroup(featureGroup);
@@ -127,7 +133,8 @@ public class MessageStepDefs {
     }
 
     @Then("It has been created a message with message {string}")
-    public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable {
+    public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/messages/{id}", featureMessage.getId())
                                 .accept(MediaType.APPLICATION_JSON)
@@ -137,7 +144,8 @@ public class MessageStepDefs {
     }
 
     @When("I edit the message with message {string}")
-    public void editMessageToMeet(String editedMessage) throws Throwable {
+    public void editMessageToMeet(String editedMessage) throws Throwable
+    {
         featureMessage.setText(editedMessage);
         stepDefs.result = stepDefs.mockMvc
                 .perform(
@@ -148,7 +156,8 @@ public class MessageStepDefs {
     }
 
     @When("I delete the message")
-    public void iDeleteTheMessage() throws Throwable {
+    public void iDeleteTheMessage() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         delete("/messages/" + featureMessage.getId())
@@ -158,7 +167,8 @@ public class MessageStepDefs {
     }
 
     @And("The creation time of the message is recent")
-    public void theCreationTimeOfTheMessageIsRecent() {
+    public void theCreationTimeOfTheMessageIsRecent()
+    {
         ZonedDateTime date = featureMessage.getCreationDate();
 
         assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
@@ -168,7 +178,8 @@ public class MessageStepDefs {
     }
 
     @And("The meet has closed")
-    public void theMeetHasClosed() {
+    public void theMeetHasClosed()
+    {
         assert featureMeet.getId() != null;
         Meet meet = meetRepository.findById(featureMeet.getId()).get();
         meet.setStatus(Boolean.FALSE);
@@ -177,7 +188,8 @@ public class MessageStepDefs {
     }
 
     @And("The author of the message is correct")
-    public void theAuthorIsCorrent() {
+    public void theAuthorIsCorrect()
+    {
         User author = userRepository.findById(username).get();
         System.out.println(messageRepository.findByAuthor(author).size());
         assertEquals(messageRepository.findByAuthor(author).get(0).getId(), featureMessage.getId());

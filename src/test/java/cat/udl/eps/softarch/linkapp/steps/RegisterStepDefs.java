@@ -17,7 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class RegisterStepDefs {
+public class RegisterStepDefs
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -25,28 +26,31 @@ public class RegisterStepDefs {
     @Autowired
     private UserRepository userRepository;
 
-  @Given("^There is no registered user with username \"([^\"]*)\"$")
-  public void thereIsNoRegisteredUserWithUsername(String user) {
-    Assert.assertFalse("User \""
-                    +  user + "\"shouldn't exist",
-                    userRepository.existsById(user));
-  }
+    @Given("^There is no registered user with username \"([^\"]*)\"$")
+    public void thereIsNoRegisteredUserWithUsername(String user)
+    {
+        Assert.assertFalse("User \""
+                        + user + "\"shouldn't exist",
+                userRepository.existsById(user));
+    }
 
-  @Given("^There is a registered user with username \"([^\"]*)\" and password \"([^\"]*)\" and email \"([^\"]*)\"$")
-  public void thereIsARegisteredUserWithUsernameAndPasswordAndEmail(String username, String password, String email) {
-      if (!userRepository.existsById(username)) {
-          User user = new User();
-          user.setEmail(email);
-          user.setUsername(username);
-          user.setName("name");
-          user.setPassword(password);
-          user.encodePassword();
-          userRepository.save(user);
-      }
-  }
+    @Given("^There is a registered user with username \"([^\"]*)\" and password \"([^\"]*)\" and email \"([^\"]*)\"$")
+    public void thereIsARegisteredUserWithUsernameAndPasswordAndEmail(String username, String password, String email)
+    {
+        if (!userRepository.existsById(username)) {
+            User user = new User();
+            user.setEmail(email);
+            user.setUsername(username);
+            user.setName("name");
+            user.setPassword(password);
+            user.encodePassword();
+            userRepository.save(user);
+        }
+    }
 
     @And("^I can login with username \"([^\"]*)\" and password \"([^\"]*)\"$")
-    public void iCanLoginWithUsernameAndPassword(String username, String password) throws Throwable {
+    public void iCanLoginWithUsernameAndPassword(String username, String password) throws Throwable
+    {
         AuthenticationStepDefs.currentUsername = username;
         AuthenticationStepDefs.currentPassword = password;
 
@@ -59,17 +63,19 @@ public class RegisterStepDefs {
     }
 
     @And("^I cannot login with username \"([^\"]*)\" and password \"([^\"]*)\"$")
-    public void iCannotLoginWithUsernameAndPassword(String username, String password) throws Throwable {
+    public void iCannotLoginWithUsernameAndPassword(String username, String password) throws Throwable
+    {
         AuthenticationStepDefs.currentUsername = username;
         AuthenticationStepDefs.currentPassword = password;
     }
 
-  @When("^I register a new user with username \"([^\"]*)\", email \"([^\"]*)\" and password \"([^\"]*)\"$")
-  public void iRegisterANewUserWithUsernameEmailAndPassword(String username, String email, String password) throws Throwable {
-    User user = new User();
-    user.setUsername(username);
-    user.setEmail(email);
-    user.setName("name");
+    @When("^I register a new user with username \"([^\"]*)\", email \"([^\"]*)\" and password \"([^\"]*)\"$")
+    public void iRegisterANewUserWithUsernameEmailAndPassword(String username, String email, String password) throws Throwable
+    {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setName("name");
         stepDefs.result = stepDefs.mockMvc.perform(
                         post("/users")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +88,8 @@ public class RegisterStepDefs {
     }
 
     @And("^It has been created a user with username \"([^\"]*)\" and email \"([^\"]*)\", the password is not returned$")
-    public void itHasBeenCreatedAUserWithUsername(String username, String email) throws Throwable {
+    public void itHasBeenCreatedAUserWithUsername(String username, String email) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/users/{username}", username)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -93,7 +100,8 @@ public class RegisterStepDefs {
     }
 
     @And("^It has not been created a user with username \"([^\"]*)\"$")
-    public void itHasNotBeenCreatedAUserWithUsername(String username) throws Throwable {
+    public void itHasNotBeenCreatedAUserWithUsername(String username) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/users/{username}", username)
                                 .accept(MediaType.APPLICATION_JSON)
