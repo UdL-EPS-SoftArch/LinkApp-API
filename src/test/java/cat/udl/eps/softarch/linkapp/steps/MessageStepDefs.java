@@ -118,7 +118,7 @@ public class MessageStepDefs
                         post("/messages/")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMessage))
-                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .put("group", "/groups/" + featureGroup.getIdentifier())
                                         .put("meet", "/meets/" + featureMeet.getId())
                                         .toString()
                                 )
@@ -136,7 +136,7 @@ public class MessageStepDefs
     public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable
     {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/messages/{id}", featureMessage.getId())
+                        get("/messages/{id}", featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -149,7 +149,7 @@ public class MessageStepDefs
         featureMessage.setText(editedMessage);
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        put("/messages/" + featureMessage.getId())
+                        put("/messages/" + featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
@@ -160,7 +160,7 @@ public class MessageStepDefs
     {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        delete("/messages/" + featureMessage.getId())
+                        delete("/messages/" + featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
@@ -192,7 +192,7 @@ public class MessageStepDefs
     {
         User author = userRepository.findById(username).get();
         System.out.println(messageRepository.findByAuthor(author).size());
-        assertEquals(messageRepository.findByAuthor(author).get(0).getId(), featureMessage.getId());
+        assertEquals(messageRepository.findByAuthor(author).get(0).getIdentifier(), featureMessage.getIdentifier());
     }
 }
 

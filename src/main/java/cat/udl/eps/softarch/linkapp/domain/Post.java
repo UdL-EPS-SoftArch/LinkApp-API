@@ -18,7 +18,7 @@ public class Post extends UriEntity<Long>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Long identifier;
 
 	@NotBlank
 	private String text;
@@ -44,8 +44,7 @@ public class Post extends UriEntity<Long>{
 	@ManyToOne()
 	private Post father;
 
-	@Override
-	public Long getId() { return id; }
+	public Long getId() { return identifier; }
 
 	public ZonedDateTime getCreationDate(){
 		return creationDate;

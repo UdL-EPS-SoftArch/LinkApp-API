@@ -6,19 +6,15 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -31,7 +27,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MeetStepDefs
 {
@@ -63,7 +58,7 @@ public class MeetStepDefs
     public Group theGroupExists()
     {
         Group group = new Group();
-        group.setId(1L);
+        group.setIdentifier(1L);
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(GroupVisibilityEnum.PUBLIC);
@@ -120,7 +115,7 @@ public class MeetStepDefs
                         post("/meets/")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
-                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .put("group", "/groups/" + featureGroup.getIdentifier())
                                         .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
@@ -238,7 +233,7 @@ public class MeetStepDefs
     public void iPatchTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
     {
         Meet tmpMeet = new Meet();
-        tmpMeet.setId(featureMeet.getId());
+        tmpMeet.setIdentifier(featureMeet.getId());
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
@@ -373,7 +368,7 @@ public class MeetStepDefs
                                 .content(new JSONObject(
                                                 stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
-                                                .put("group", "/groups/" + featureGroup.getId())
+                                                .put("group", "/groups/" + featureGroup.getIdentifier())
                                                 .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())

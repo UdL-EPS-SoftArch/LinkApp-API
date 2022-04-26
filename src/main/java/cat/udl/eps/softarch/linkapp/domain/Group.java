@@ -19,7 +19,7 @@ public class Group extends UriEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long identifier;
 
     @NotBlank
     @NotNull
@@ -45,29 +45,28 @@ public class Group extends UriEntity<Long> {
     public Group() {}
 
     public Group(long id, String name, String description, GroupVisibilityEnum visibility) {
-        this.id = id;
+        this.identifier = id;
         this.title = name;
         this.description = description;
         this.visibility = visibility;
     }
 
     public Group(long id, String name, String description, GroupVisibilityEnum visibility, List<ThemeEnum> themes) {
-        this.id = id;
+        this.identifier = id;
         this.title = name;
         this.description = description;
         this.visibility = visibility;
         this.themes = themes;
     }
 
-    @Override
     public Long getId() {
-        return id;
+        return identifier;
     }
 
     @Override
     public boolean equals(Object object){
         Group group = (Group) object;
-        return group.getId().equals(this.getId());
+        return group.getIdentifier().equals(this.getIdentifier());
     }
 
 }
