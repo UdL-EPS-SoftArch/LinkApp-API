@@ -192,7 +192,7 @@ public class PostStepDefs
                 post("/posts/")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
-                                .put("group", "/groups/" + group.getId())
+                                .put("group", "/groups/" + group.getIdentifier())
                                 .toString()
                         )
                         .with(AuthenticationStepDefs.authenticate())
@@ -235,7 +235,7 @@ public class PostStepDefs
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
                         .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
-                                .put("group", "/groups/" + group.getId())
+                                .put("group", "/groups/" + group.getIdentifier())
                                 .toString()
                         )
                         .with(AuthenticationStepDefs.authenticate())

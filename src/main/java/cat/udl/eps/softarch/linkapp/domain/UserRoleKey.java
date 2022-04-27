@@ -32,13 +32,13 @@ public class UserRoleKey implements Serializable
         }
 
         UserRoleKey key = (UserRoleKey) obj;
-        return Objects.equals(this.group.getId(), key.group.getId())
+        return Objects.equals(this.group.getIdentifier(), key.group.getIdentifier())
                 && Objects.equals(this.user.getId(), key.user.getId());
     }
 
     @Override
     public String toString()
     {
-        return "UserRoleKey_user_id_" + user.getId() + "_group_id_" + group.getId();
+        return "UserRoleKey_user_id_" + user.getId() + "_group_id_" + group.getIdentifier();
     }
 }

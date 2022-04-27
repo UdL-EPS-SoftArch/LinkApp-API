@@ -62,12 +62,12 @@ public class ModifyDeleteGroupSteps
         JSONObject newJsonDescription = new JSONObject();
         newJsonDescription.put("description", newDescription);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
+                        patch("/groups/{id}", tmpGroup.getIdentifier())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(newJsonDescription.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        updateGroupReference(tmpGroup.getId());
+        updateGroupReference(tmpGroup.getIdentifier());
     }
 
     @When("A user {string} deletes the theme {string}")
@@ -87,12 +87,12 @@ public class ModifyDeleteGroupSteps
 
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
+                        patch("/groups/{id}", tmpGroup.getIdentifier())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(newThemesObject.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        group = groupRepository.findById(group.getId()).get();
+        group = groupRepository.findById(group.getIdentifier()).get();
     }
 
     @When("A user {string} deletes the themes {string}, {string}")
@@ -112,12 +112,12 @@ public class ModifyDeleteGroupSteps
 
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
+                        patch("/groups/{id}", tmpGroup.getIdentifier())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(newThemesObject.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        group = groupRepository.findById(group.getId()).get();
+        group = groupRepository.findById(group.getIdentifier()).get();
     }
 
 
@@ -137,12 +137,12 @@ public class ModifyDeleteGroupSteps
 
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
+                        patch("/groups/{id}", tmpGroup.getIdentifier())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(newThemesObject.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        group = groupRepository.findById(group.getId()).get();
+        group = groupRepository.findById(group.getIdentifier()).get();
     }
 
     @When("A user adds the themes {string}, {string}, {string}")
@@ -163,12 +163,12 @@ public class ModifyDeleteGroupSteps
 
         newThemesObject.put("themes", newThemes);
         stepDefs.result = stepDefs.mockMvc.perform(
-                        patch("/groups/{id}", tmpGroup.getId())
+                        patch("/groups/{id}", tmpGroup.getIdentifier())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(newThemesObject.toString())
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
-        group = groupRepository.findById(group.getId()).get();
+        group = groupRepository.findById(group.getIdentifier()).get();
     }
 
 
@@ -270,7 +270,7 @@ public class ModifyDeleteGroupSteps
     public void itHasBeenModifiedAGroup(String description) throws Exception
     {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/groups/{id}", group.getId())
+                        get("/groups/{id}", group.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -316,7 +316,7 @@ public class ModifyDeleteGroupSteps
                         post("/meets/")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
-                                        .put("group", "/groups/" + group.getId())
+                                        .put("group", "/groups/" + group.getIdentifier())
                                         .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
@@ -360,12 +360,12 @@ public class ModifyDeleteGroupSteps
     {
         Group group = groupRepository.findById((long) 1).get();
         Post post = new Post();
-        post.setId((long) 1);
+        post.setIdentifier((long) 1);
         stepDefs.result = stepDefs.mockMvc.perform(
                 post("/posts/")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(new JSONObject(stepDefs.mapper.writeValueAsString(post))
-                                .put("group", "/groups/" + group.getId())
+                                .put("group", "/groups/" + group.getIdentifier())
                                 .toString()
                         )
                         .with(AuthenticationStepDefs.authenticate())

@@ -84,8 +84,8 @@ GroupEventHandler {
 
         List<Post> posts = postRepository.findByGroup(group);
         for (Post post: posts) {
-            assert post.getId() != null;
-            postRepository.deleteById(post.getId());
+            assert post.getIdentifier() != null;
+            postRepository.deleteById(post.getIdentifier());
         }
 
         List<Meet> meets = meetRepository.findByGroup(group);

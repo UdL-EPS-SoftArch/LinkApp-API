@@ -18,7 +18,7 @@ public class Message extends UriEntity<Long>  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long identifier;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -42,7 +42,6 @@ public class Message extends UriEntity<Long>  {
     @NotNull
     private Group group;
 
-    @Override
-    public Long getId() { return id; }
+    public Long getId() { return identifier; }
 
 }

@@ -9,8 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Data
@@ -19,7 +17,7 @@ public class Meet extends UriEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long identifier;
 
     @ManyToOne(optional = false)
     @JsonIdentityReference(alwaysAsId = true)
@@ -58,7 +56,7 @@ public class Meet extends UriEntity<Long> {
 
     @Override
     public Long getId() {
-        return id;
+        return identifier;
     }
 
 }
