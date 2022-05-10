@@ -81,10 +81,12 @@ public class BBDDConfig {
             UserRoleKey userRoleKey = new UserRoleKey();
             userRoleKey.setGroup(group1);
             userRoleKey.setUser(user);
+            userRepository.save(user);
 
             UserRole userRole = new UserRole();
             userRole.setRole(UserRoleEnum.ADMIN);
             userRole.setRoleKey(userRoleKey);
+            userRoleRepository.save(userRole);
 
         }
     }
