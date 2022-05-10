@@ -26,7 +26,7 @@ public class BBDDConfig {
     final UserRoleRepository userRoleRepository;
 
 
-    public BBDDInitialization(UserRepository userRepository,
+    public BBDDConfig(UserRepository userRepository,
                               GroupRepository groupRepository,
                               MeetAttendingRepository meetAttendingRepository,
                               MeetRepository meetRepository,
@@ -41,6 +41,7 @@ public class BBDDConfig {
         this.postRepository = postRepository;
         this.userRoleRepository = userRoleRepository;
     }
+
 
     @PostConstruct
     public void initializeDatabase() {
