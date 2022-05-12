@@ -71,17 +71,18 @@ public class MeetStepDefs
     public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
 
-        UserRoleKey userRoleKey = new UserRoleKey();
-        userRoleKey.setUser(user);
-        userRoleKey.setGroup(featureGroup);
+        JSONObject userRoleKey = new JSONObject();
+        userRoleKey.put("user", user.getUri());
+        userRoleKey.put("group", featureGroup.getUri());
 
-        UserRole userRole = new UserRole();
-        userRole.setRoleKey(userRoleKey);
-        userRole.setRole(UserRoleEnum.valueOf(role));
-        userRoleRepository.save(userRole);
+        JSONObject userRole = new JSONObject();
+        userRole.put("roleKey", userRoleKey);
+        userRole.put("role", UserRoleEnum.valueOf(role));
 
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get(userRole.getUri())
+                        post("/userRoles/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(userRole.toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());
