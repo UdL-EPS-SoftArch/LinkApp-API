@@ -29,6 +29,10 @@ public class Post extends UriEntity<Long>{
 
 	@ManyToOne
 	@JsonIdentityReference(alwaysAsId = true)
+	private User user;
+
+	@ManyToOne
+	@JsonIdentityReference(alwaysAsId = true)
 	private Group group;
 
 

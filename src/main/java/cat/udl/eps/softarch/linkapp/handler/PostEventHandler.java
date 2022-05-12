@@ -41,6 +41,7 @@ public class PostEventHandler {
 
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
         post.setAuthor(userRole);
+        post.setUser(userRole.getRoleKey().getUser());
 
         if (userRole == null) {
             throw new AccessDeniedException("Not enough permissions");
