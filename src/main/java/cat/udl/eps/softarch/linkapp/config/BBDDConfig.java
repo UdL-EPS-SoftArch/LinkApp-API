@@ -3,6 +3,8 @@ package cat.udl.eps.softarch.linkapp.config;
 import cat.udl.eps.softarch.linkapp.domain.*;
 import cat.udl.eps.softarch.linkapp.repository.*;
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -44,6 +46,7 @@ public class BBDDConfig {
 
 
     @PostConstruct
+    @Transactional
     public void initializeDatabase() {
         // Sample Admin
 
@@ -52,6 +55,7 @@ public class BBDDConfig {
         if (user.getId() == null) {
             user.setEmail("user@sample.app");
             user.setUsername("user");
+            user.setName("User");
             user.setPassword(defaultPassword);
             user.encodePassword();
             user = userRepository.save(user);
@@ -72,22 +76,51 @@ public class BBDDConfig {
             themesList2.add(ThemeEnum.FAMILY);
             themesList2.add(ThemeEnum.ANIMALS);
             Group group2 = new Group();
-            group2.setTitle("Title group1");
-            group2.setDescription("This is the description of group1. It has no members when created.");
+            group2.setTitle("Title group2");
+            group2.setDescription("This is the description of group2. It has no members when created.");
             group2.setVisibility(GroupVisibilityEnum.PUBLIC);
             group2.setThemes(themesList2);
             groupRepository.save(group2);
 
-            UserRoleKey userRoleKey = new UserRoleKey();
-            userRoleKey.setGroup(group1);
-            userRoleKey.setUser(user);
+            List<ThemeEnum> themesList3 = new ArrayList<>();
+            themesList3.add(ThemeEnum.FASHION);
+            themesList3.add(ThemeEnum.CRAFTS);
+            Group group3 = new Group();
+            group3.setTitle("Title group3");
+            group3.setDescription("This is the description of group3. It has no members when created.");
+            group3.setVisibility(GroupVisibilityEnum.PUBLIC);
+            group3.setThemes(themesList3);
+            groupRepository.save(group3);
+
+            UserRoleKey userRoleKey1 = new UserRoleKey();
+            userRoleKey1.setGroup(group1);
+            userRoleKey1.setUser(user);
             userRepository.save(user);
 
-            UserRole userRole = new UserRole();
-            userRole.setRole(UserRoleEnum.ADMIN);
-            userRole.setRoleKey(userRoleKey);
-            userRoleRepository.save(userRole);
+            UserRoleKey userRoleKey2 = new UserRoleKey();
+            userRoleKey2.setGroup(group2);
+            userRoleKey2.setUser(user);
+            userRepository.save(user);
 
+            UserRoleKey userRoleKey3 = new UserRoleKey();
+            userRoleKey3.setGroup(group3);
+            userRoleKey3.setUser(user);
+            userRepository.save(user);
+
+            UserRole userRole1 = new UserRole();
+            userRole1.setRole(UserRoleEnum.ADMIN);
+            userRole1.setRoleKey(userRoleKey1);
+            userRoleRepository.save(userRole1);
+
+            UserRole userRole2 = new UserRole();
+            userRole2.setRole(UserRoleEnum.ADMIN);
+            userRole2.setRoleKey(userRoleKey2);
+            userRoleRepository.save(userRole2);
+
+            UserRole userRole3 = new UserRole();
+            userRole3.setRole(UserRoleEnum.ADMIN);
+            userRole3.setRoleKey(userRoleKey3);
+            userRoleRepository.save(userRole3);
         }
     }
 }
