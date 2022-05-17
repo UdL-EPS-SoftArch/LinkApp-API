@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.linkapp.repository;
 
+import cat.udl.eps.softarch.linkapp.domain.Meet;
 import cat.udl.eps.softarch.linkapp.domain.Message;
 import cat.udl.eps.softarch.linkapp.domain.User;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,4 +12,7 @@ import java.util.List;
 @RepositoryRestResource
 public interface MessageRepository extends PagingAndSortingRepository<Message, Long> {
   public List<Message> findByAuthor(@Param("author") User author);
+  public List<Message> findByMeet(@Param("meet") Meet meet);
 }
+
+
