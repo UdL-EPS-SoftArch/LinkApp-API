@@ -70,6 +70,19 @@ public class MeetStepDefs
     @And("The user {string} belongs to that group as {string}")
     public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+        String uri = userRole.getUri();
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.role", is(role)));
+    }
+
+    @And("The user {string} joins the group as {string}")
+    public void userJoinsGroup(String username, String role) throws Throwable {
+        User user = userRepository.findById(username).get();
 
         JSONObject userRoleKey = new JSONObject();
         userRoleKey.put("user", user.getUri());

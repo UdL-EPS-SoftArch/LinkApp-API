@@ -5,7 +5,7 @@ Feature: Create Meet
   Background:
     Given I login as "demo" with password "password"
     And A group exists
-    And The user "demo" belongs to that group as "ADMIN"
+    And The user "demo" joins the group as "ADMIN"
 
   Scenario: Create a new Meet in a group I belong to and have sufficient permissions
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
@@ -25,7 +25,7 @@ Feature: Create Meet
 
   Scenario: Create a new Meet in a group where I don't have sufficient permissions
     And A group exists
-    And The user "demo" belongs to that group as "SUBSCRIBED"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 403
 
@@ -53,7 +53,7 @@ Feature: Create Meet
     And I'm not logged in
     When I register a new user with username "demo2", email "demo2@sample.app" and password "password2"
     And I login as "demo2" with password "password2"
-    And The user "demo2" belongs to that group as "SUBSCRIBED"
+    And The user "demo2" joins the group as "SUBSCRIBED"
     When The user "demo2" tries to attend the meeting
     Then The response code is 422
 
@@ -64,6 +64,6 @@ Feature: Create Meet
     And I'm not logged in
     When I register a new user with username "demo2", email "demo2@sample.app" and password "password2"
     And I login as "demo2" with password "password2"
-    And The user "demo2" belongs to that group as "SUBSCRIBED"
+    And The user "demo2" joins the group as "SUBSCRIBED"
     When The user "demo2" tries to attend the meeting
     Then The response code is 201

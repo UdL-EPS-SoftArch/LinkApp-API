@@ -7,5 +7,6 @@ Feature: Register UserRole
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And I login as "user" with password "password"
     And A group exists
-    When The user "user" belongs to that group as "SUBSCRIBED"
+    When The user "user" joins the group as "SUBSCRIBED"
     Then The response code is 201
+    And The user "user" belongs to that group as "SUBSCRIBED"
