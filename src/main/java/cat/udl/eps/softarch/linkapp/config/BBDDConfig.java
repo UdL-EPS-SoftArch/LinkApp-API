@@ -126,9 +126,9 @@ public class BBDDConfig
     @Transactional
     public void initializeDatabase()
     {
-        User user = createUser("user");
-        User user2 = createUser("user2");
-        User user3 = createUser("user3");
+        User user = createUser("default1");
+        User user2 = createUser("default2");
+        User user3 = createUser("default3");
 
 
 

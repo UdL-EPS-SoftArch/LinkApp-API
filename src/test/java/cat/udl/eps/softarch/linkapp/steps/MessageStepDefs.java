@@ -127,8 +127,8 @@ public class MessageStepDefs
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
         if (response.getStatus() == 201) {
             String content = stepDefs.result.andReturn().getResponse().getContentAsString();
-            String uri = JsonPath.read(content, "uri");
-            featureMessage = messageRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            String id = JsonPath.read(content, "id");
+            featureMessage = messageRepository.findById(Long.parseLong(id)).get();
         }
     }
 
