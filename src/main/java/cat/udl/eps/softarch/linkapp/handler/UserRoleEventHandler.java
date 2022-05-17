@@ -39,7 +39,18 @@ public class UserRoleEventHandler {
 
     @HandleBeforeCreate
     public void handleUserRolePreCreate(UserRole userRole) {
-        logger.info("Before creating: {}", userRole.toString());
+        //User who modifies role
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        List<UserRole> userRolePrincipal = userRoleRepository.findByRoleKeyUser(currentUser);
+        for (int i = 0; i < userRolePrincipal.size(); i++){
+            if (userRolePrincipal.get(i).getRoleKey().equals(userRole.getRoleKey())) {
+                throw new AccessDeniedException("Already subscribed to this group");
+            }
+        }
     }
 
     @HandleBeforeSave
