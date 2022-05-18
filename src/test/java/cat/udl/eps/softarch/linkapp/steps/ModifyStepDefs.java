@@ -18,7 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ModifyStepDefs {
+public class ModifyStepDefs
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -27,7 +28,8 @@ public class ModifyStepDefs {
     private UserRepository userRepository;
 
     @When("^I modify the email of the user \"([^\"]*)\" by \"([^\"]*)\"$")
-    public void iModifyEmailOfUserByModifiedEmail(String username, String modifiedEmail) throws Throwable {
+    public void iModifyEmailOfUserByModifiedEmail(String username, String modifiedEmail) throws Throwable
+    {
         // Patch updates one field whereas put overwrites all fields
         stepDefs.result = stepDefs.mockMvc.perform(
                         patch("/users/{username}", username)
@@ -39,7 +41,8 @@ public class ModifyStepDefs {
     }
 
     @When("^I modify the password of the user \"([^\"]*)\" by \"([^\"]*)\"$")
-    public void iModifyPasswordOfUserByModifiedPasword(String username, String modifiedPassword) throws Throwable {
+    public void iModifyPasswordOfUserByModifiedPassword(String username, String modifiedPassword) throws Throwable
+    {
         JSONObject object = new JSONObject();
         object.put("password", modifiedPassword);
         object.put("passwordReset", true);
@@ -55,7 +58,8 @@ public class ModifyStepDefs {
     }
 
     @And("^The email of the user \"([^\"]*)\" has been modified by \"([^\"]*)\"$")
-    public void itHasBeenModifiedEmailOfUserByModifiedEmail(String username, String modifiedEmail) throws Throwable {
+    public void itHasBeenModifiedEmailOfUserByModifiedEmail(String username, String modifiedEmail) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
                         get("/users/{username}", username)
                                 .accept(MediaType.APPLICATION_JSON)

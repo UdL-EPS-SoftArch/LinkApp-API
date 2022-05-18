@@ -39,7 +39,7 @@ Feature: Modify Post
     Then The response code is 403
     And The post has not been modified
 
-  Scenario: Modify an unexisting post
+  Scenario: Modify an nonexistent post
     Given I login as "demo" with password "password"
     And A group exists
     And The user "demo" belongs to that group as "SUBSCRIBED"
