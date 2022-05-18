@@ -6,15 +6,15 @@ import cat.udl.eps.softarch.linkapp.repository.GroupRepository;
 import cat.udl.eps.softarch.linkapp.repository.MeetRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRepository;
 import cat.udl.eps.softarch.linkapp.repository.UserRoleRepository;
+import io.cucumber.java.en.Given;
+import org.junit.Assert;
+import org.springframework.dao.EmptyResultDataAccessException;
 import com.jayway.jsonpath.JsonPath;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -28,7 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class MeetStepDefs {
+public class MeetStepDefs
+{
 
     private static Group featureGroup;
 
@@ -54,9 +55,10 @@ public class MeetStepDefs {
     private final Pattern idPattern = Pattern.compile("\\d+$");
 
     @And("A group exists")
-    public Group theGroupExists() {
+    public Group theGroupExists()
+    {
         Group group = new Group();
-        group.setId((long) 1);
+        group.setIdentifier(1L);
         group.setTitle("title");
         group.setDescription("description");
         group.setVisibility(GroupVisibilityEnum.PUBLIC);
@@ -66,7 +68,7 @@ public class MeetStepDefs {
     }
 
     @And("The user {string} belongs to that group as {string}")
-    public void userBelongsToGroup(String username, String role) {
+    public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -77,10 +79,30 @@ public class MeetStepDefs {
         userRole.setRoleKey(userRoleKey);
         userRole.setRole(UserRoleEnum.valueOf(role));
         userRoleRepository.save(userRole);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @When("The user {string} leaves the group")
+    public void leaveGroup(String username) throws Throwable {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc
+                .perform(
+                        delete(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate())
+                ).andDo(print());
     }
 
     @When("I create a meet in that group with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
+    public void iCreateAMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
@@ -93,7 +115,7 @@ public class MeetStepDefs {
                         post("/meets/")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMeet))
-                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .put("group", "/groups/" + featureGroup.getIdentifier())
                                         .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
@@ -111,7 +133,8 @@ public class MeetStepDefs {
     }
 
     @Then("It has been created a meet with title {string}, description {string}, maxUsers {long}, location {string}, status {string}")
-    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable {
+    public void itHasBeenCreatedAMeetWithIdTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location, String meetStatus) throws Throwable
+    {
         Boolean status = meetStatus.equals("true");
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(featureMeet.getUri())
@@ -126,7 +149,8 @@ public class MeetStepDefs {
     }
 
     @When("I delete the meet")
-    public void iDeleteTheMeet() throws Throwable {
+    public void iDeleteTheMeet() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
                         delete(featureMeet.getUri())
@@ -136,15 +160,36 @@ public class MeetStepDefs {
     }
 
     @And("I update the user {string} role of the group to {string}")
-    public void updateTheUserRoleTo(String username, String role) {
+    public void updateTheUserRoleTo(String username, String role) throws Throwable
+    {
         User user = userRepository.findById(username).get();
         UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
-        userRole.setRole(UserRoleEnum.valueOf(role));
-        userRoleRepository.save(userRole);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        patch(userRole.getUri())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(new JSONObject().put("role", role).toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+    @And("The role of the user {string} has been changed to {string}")
+    public void userRoleUpdatedTo(String username, String role) throws Throwable
+    {
+        User user = userRepository.findById(username).get();
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.role", is(role)));
     }
 
     @And("The creation time of the meet is recent")
-    public void theCreationTimeOfTheMeetIsRecent() {
+    public void theCreationTimeOfTheMeetIsRecent()
+    {
         ZonedDateTime date = featureMeet.getCreationDate();
 
         assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
@@ -154,7 +199,8 @@ public class MeetStepDefs {
     }
 
     @When("I edit the meet with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iEditTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
+    public void iEditTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
@@ -178,15 +224,16 @@ public class MeetStepDefs {
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
         if (response.getStatus() == 200) {
             String content = response.getContentAsString();
-            String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Integer id = JsonPath.read(content, "id");
+            featureMeet = meetRepository.findById(id.longValue()).get();
         }
     }
 
     @When("I patch the meet with title {string}, description {string}, maxUsers {long}, location {string}")
-    public void iPatchTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable {
+    public void iPatchTheMeetWithTitleDescriptionMaxUsersLocation(String title, String description, Long maxUsers, String location) throws Throwable
+    {
         Meet tmpMeet = new Meet();
-        tmpMeet.setId(featureMeet.getId());
+        tmpMeet.setIdentifier(featureMeet.getId());
         tmpMeet.setTitle(title);
         tmpMeet.setDescription(description);
         tmpMeet.setMaxUsers(maxUsers);
@@ -218,7 +265,8 @@ public class MeetStepDefs {
     }
 
     @And("The edition time of the meet is recent")
-    public void theEditionTimeOfTheMeetIsRecent() {
+    public void theEditionTimeOfTheMeetIsRecent()
+    {
         ZonedDateTime date = featureMeet.getLastUpdate();
 
         assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
@@ -228,7 +276,8 @@ public class MeetStepDefs {
     }
 
     @And("The user {string} does not belong to the group")
-    public void theUserDoesNotBelongToTheGroup(String username) {
+    public void theUserDoesNotBelongToTheGroup(String username)
+    {
         User user = userRepository.findById(username).get();
 
         UserRoleKey userRoleKey = new UserRoleKey();
@@ -243,7 +292,8 @@ public class MeetStepDefs {
     }
 
     @Given("I create a meet that ends in the past in that group")
-    public void iCreateAMeetThatEndsInThePast() {
+    public void iCreateAMeetThatEndsInThePast()
+    {
         cronMeet = new Meet();
         cronMeet.setGroup(featureGroup);
         cronMeet.setTitle("title");
@@ -258,19 +308,22 @@ public class MeetStepDefs {
     }
 
     @When("The cron status job is executed")
-    public void theCronStatusJobIsExecuted() {
+    public void theCronStatusJobIsExecuted()
+    {
         ScheduledCronJobsService.updateMeetStatusJob(meetRepository);
     }
 
     @Then("Then the meet status is false")
-    public void thenTheMeetStatusIsFalse() {
+    public void thenTheMeetStatusIsFalse()
+    {
         assert cronMeet.getId() != null;
         Meet meet = meetRepository.findById(cronMeet.getId()).get();
         Assert.assertFalse(meet.getStatus());
     }
 
     @When("I create a meet in that group with initial date in the past")
-    public void iCreateAMeetInThatGroupWithInitialDateInThePast() throws Throwable {
+    public void iCreateAMeetInThatGroupWithInitialDateInThePast() throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setGroup(featureGroup);
         tmpMeet.setTitle("title");
@@ -296,7 +349,8 @@ public class MeetStepDefs {
     }
 
     @When("I create a meet in that group with final date before initial date")
-    public void iCreateAMeetInThatGroupWithFinalDateBeforeInitialDate() throws Throwable{
+    public void iCreateAMeetInThatGroupWithFinalDateBeforeInitialDate() throws Throwable
+    {
         Meet tmpMeet = new Meet();
         tmpMeet.setGroup(featureGroup);
         tmpMeet.setTitle("title");
@@ -314,10 +368,35 @@ public class MeetStepDefs {
                                 .content(new JSONObject(
                                                 stepDefs.mapper.writeValueAsString(tmpMeet)
                                         )
-                                                .put("group", "/groups/" + featureGroup.getId())
+                                                .put("group", "/groups/" + featureGroup.getIdentifier())
                                                 .toString()
                                 )
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
     }
+
+    @When("The user {string} tries to attend the meeting")
+    public void theUserTriesToAttendTheMeeting(String username) throws Throwable
+    {
+        User user = userRepository.findById(username).get();
+        MeetAttendingKey meetAttendingKey = new MeetAttendingKey(featureMeet, user);
+        MeetAttending meetAttending = new MeetAttending();
+        meetAttending.setMeetAttendingKey(meetAttendingKey);
+        meetAttending.setAttends(true);
+
+
+        JSONObject object = new JSONObject(
+                stepDefs.mapper.writeValueAsString(meetAttending)
+        );
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        post("/meetAttendings/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(object.toString())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
+    }
+
+
 }

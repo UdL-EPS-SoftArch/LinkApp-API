@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -21,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
-public class MessageStepDefs {
+public class MessageStepDefs
+{
 
     @Autowired
     private StepDefs stepDefs;
@@ -39,6 +41,9 @@ public class MessageStepDefs {
     private MeetRepository meetRepository;
 
     @Autowired
+    private MeetAttendingRepository meetAttendingRepository;
+
+    @Autowired
     private MeetStepDefs meetStepDefs;
 
     private static String username;
@@ -46,12 +51,14 @@ public class MessageStepDefs {
     private static Meet featureMeet;
     private static Message featureMessage;
 
-    MessageStepDefs(StepDefs stepDefs) {
+    MessageStepDefs(StepDefs stepDefs)
+    {
         this.stepDefs = stepDefs;
     }
 
     @And("A group exists with a meet")
-    public void theMeetWithIdExists() {
+    public void theMeetWithIdExists()
+    {
         featureGroup = meetStepDefs.theGroupExists();
         Meet meet = new Meet();
         meet.setTitle("title");
@@ -67,34 +74,41 @@ public class MessageStepDefs {
     }
 
     @And("The user {string} is assisting to the meet")
-    public void userIsAssistingToMeet(String name) {
+    public void userIsAssistingToMeet(String name)
+    {
         username = name;
         User user = userRepository.findById(username).get();
         Meet meet = featureMeet;
         Group group = featureGroup;
 
-        UserRole userRole = userRoleRepository.
-                findByRoleKeyUserAndRoleKeyGroup(user, group);
-
-        meet.getAttending().add(userRole);
         meetRepository.save(meet);
+
+        MeetAttendingKey meetAttendingKey = new MeetAttendingKey();
+        meetAttendingKey.setUser(user);
+        meetAttendingKey.setMeet(meet);
+        MeetAttending meetAttending = new MeetAttending();
+        meetAttending.setMeetAttendingKey(meetAttendingKey);
+        meetAttending.setAttends(true);
+
+        meetAttendingRepository.save(meetAttending);
     }
 
     @And("The user {string} is not assisting to the meet")
-    public void userIsNotAssistingToMeet(String name) {
+    public void userIsNotAssistingToMeet(String name)
+    {
         username = name;
         User user = userRepository.findById(username).get();
         Meet meet = featureMeet;
         Group group = featureGroup;
 
-        UserRole userRole = userRoleRepository.
-                findByRoleKeyUserAndRoleKeyGroup(user, group);
-
-        assertFalse(meet.getAttending().contains(userRole));
+        Optional<MeetAttending> meetAttending = meetAttendingRepository
+                .findByMeetAttendingKeyUserAndMeetAttendingKeyMeet(user, meet);
+        assertFalse(meetAttending.isPresent());
     }
 
     @When("I send a message to the meet with message {string}")
-    public void sendMessageToMeet(String message) throws Throwable {
+    public void sendMessageToMeet(String message) throws Throwable
+    {
         Message tmpMessage = new Message();
         tmpMessage.setText(message);
         tmpMessage.setGroup(featureGroup);
@@ -104,7 +118,7 @@ public class MessageStepDefs {
                         post("/messages/")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(new JSONObject(stepDefs.mapper.writeValueAsString(tmpMessage))
-                                        .put("group", "/groups/" + featureGroup.getId())
+                                        .put("group", "/groups/" + featureGroup.getIdentifier())
                                         .put("meet", "/meets/" + featureMeet.getId())
                                         .toString()
                                 )
@@ -113,15 +127,16 @@ public class MessageStepDefs {
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
         if (response.getStatus() == 201) {
             String content = stepDefs.result.andReturn().getResponse().getContentAsString();
-            String uri = JsonPath.read(content, "uri");
-            featureMessage = messageRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Integer id = JsonPath.read(content, "id");
+            featureMessage = messageRepository.findById(id.longValue()).get();
         }
     }
 
     @Then("It has been created a message with message {string}")
-    public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable {
+    public void itHasBeenCreatedAMessageWithMessage(String message) throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/messages/{id}", featureMessage.getId())
+                        get("/messages/{id}", featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
@@ -129,28 +144,31 @@ public class MessageStepDefs {
     }
 
     @When("I edit the message with message {string}")
-    public void editMessageToMeet(String editedMessage) throws Throwable {
+    public void editMessageToMeet(String editedMessage) throws Throwable
+    {
         featureMessage.setText(editedMessage);
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        put("/messages/" + featureMessage.getId())
+                        put("/messages/" + featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
     }
 
     @When("I delete the message")
-    public void iDeleteTheMessage() throws Throwable {
+    public void iDeleteTheMessage() throws Throwable
+    {
         stepDefs.result = stepDefs.mockMvc
                 .perform(
-                        delete("/messages/" + featureMessage.getId())
+                        delete("/messages/" + featureMessage.getIdentifier())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate())
                 ).andDo(print());
     }
 
     @And("The creation time of the message is recent")
-    public void theCreationTimeOfTheMessageIsRecent() {
+    public void theCreationTimeOfTheMessageIsRecent()
+    {
         ZonedDateTime date = featureMessage.getCreationDate();
 
         assertThat("Date is in the past", date.isBefore(ZonedDateTime.now()));
@@ -160,15 +178,21 @@ public class MessageStepDefs {
     }
 
     @And("The meet has closed")
-    public void theMeetHasClosed() {
-        featureMeet.setStatus(Boolean.FALSE);
+    public void theMeetHasClosed()
+    {
+        assert featureMeet.getId() != null;
+        Meet meet = meetRepository.findById(featureMeet.getId()).get();
+        meet.setStatus(Boolean.FALSE);
+        meetRepository.save(meet);
+        featureMeet = meet;
     }
 
     @And("The author of the message is correct")
-    public void theAuthorIsCorrent() {
+    public void theAuthorIsCorrect()
+    {
         User author = userRepository.findById(username).get();
         System.out.println(messageRepository.findByAuthor(author).size());
-        assertEquals(messageRepository.findByAuthor(author).get(0).getId(), featureMessage.getId());
+        assertEquals(messageRepository.findByAuthor(author).get(0).getIdentifier(), featureMessage.getIdentifier());
     }
 }
 
