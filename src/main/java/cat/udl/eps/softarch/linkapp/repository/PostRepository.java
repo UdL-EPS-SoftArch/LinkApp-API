@@ -25,5 +25,6 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
   List<Post> findByTextContaining(@Param("text") String text);
   List<Post> findByFather(Post post);
   List<Post> findByGroupAndFather (@Param("group") Group group, @Param("father") Post post);
+  List<Post> findByAuthor_RoleKey_User_Username(@Param("text") String text);
 
 }
