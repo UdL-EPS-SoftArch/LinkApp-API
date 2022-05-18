@@ -21,7 +21,6 @@ Feature: Delete Post
     And It has been deleted the post
 
   Scenario: Delete a nonexistent post as a SUBSCRIBED user
-    Given There is no post created
     When I delete the post with id "100000"
     Then The response code is 404
 

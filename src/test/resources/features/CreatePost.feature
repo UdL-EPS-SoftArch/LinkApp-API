@@ -18,7 +18,6 @@ Feature: Create Post
     And The user "demo" joins the group as "ADMIN"
     When I create a post with text "create post 1"
     Then The response code is 401
-    And There is no post created
 
   Scenario: Create many posts by a user
     Given I login as "demo" with password "password"
@@ -28,7 +27,7 @@ Feature: Create Post
     And I create a post with text "create post 2"
     And I create a post with text "create post 3"
     Then The response code is 201
-    And There are "3" posts created
+    And There are "3" posts created by "demo"
 
   Scenario: Create a comment in a post with log in
     Given I login as "demo" with password "password"

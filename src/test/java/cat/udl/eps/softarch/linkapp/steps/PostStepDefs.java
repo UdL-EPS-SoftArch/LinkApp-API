@@ -267,10 +267,10 @@ public class PostStepDefs
                 .andExpect(jsonPath("$.text", is(father.getText())));
     }
 
-    @And("There are {string} posts created")
-    public void usernameHasCreatedPosts(String n_posts)
+    @And("There are {string} posts created by {string}")
+    public void usernameHasCreatedPosts(String n_posts, String username)
     {
-        Long posts = postRepository.count();
-        Assert.assertEquals(posts, Long.valueOf(n_posts));
+        Integer posts = postRepository.findByAuthor_RoleKey_User_Username(username).size();
+        Assert.assertEquals(posts, Integer.valueOf(n_posts));
     }
 }

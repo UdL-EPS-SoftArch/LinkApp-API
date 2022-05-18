@@ -22,9 +22,10 @@ Feature: Delete UserRole
   Scenario: Leave a group being admin and there are other admins in the group
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And There is a registered user with username "user2" and password "password" and email "user2@sample.app"
-    And I login as "user" with password "password"
     And A group exists
-    And The user "user" joins the group as "ADMIN"
+    And I login as "user2" with password "password"
     And The user "user2" joins the group as "ADMIN"
+    And I login as "user" with password "password"
+    And The user "user" joins the group as "ADMIN"
     When The user "user" leaves the group
     Then The response code is 204

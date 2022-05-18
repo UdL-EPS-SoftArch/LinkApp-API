@@ -238,8 +238,8 @@ public class MeetStepDefs
         MockHttpServletResponse response = stepDefs.result.andReturn().getResponse();
         if (response.getStatus() == 200) {
             String content = response.getContentAsString();
-            String uri = JsonPath.read(content, "uri");
-            featureMeet = meetRepository.findById(Long.parseLong(uri.substring(uri.length() - 1))).get();
+            Integer id = JsonPath.read(content, "id");
+            featureMeet = meetRepository.findById(id.longValue()).get();
         }
     }
 

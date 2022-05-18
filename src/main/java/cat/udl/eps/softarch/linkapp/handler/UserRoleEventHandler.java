@@ -21,6 +21,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeLinkSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+
 import java.util.List;
 
 
@@ -44,12 +45,11 @@ public class UserRoleEventHandler {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
+        Group group = userRole.getRoleKey().getGroup();
+        UserRole userRolePrincipal = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
 
-        List<UserRole> userRolePrincipal = userRoleRepository.findByRoleKeyUser(currentUser);
-        for (int i = 0; i < userRolePrincipal.size(); i++){
-            if (userRolePrincipal.get(i).getRoleKey().equals(userRole.getRoleKey())) {
-                throw new AccessDeniedException("Already subscribed to this group");
-            }
+        if (userRolePrincipal != null) {
+            throw new AccessDeniedException("Already subscribed to this group");
         }
     }
 
