@@ -19,8 +19,12 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long> {
    * https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
    */
 
-  List<Post> findByAuthor_RoleKey_User_Username(@Param("username") String username);
-  List<Post> findByGroup(Group group);
+  List<Post> findByAuthor_RoleKey_User_UsernameContaining(@Param("text") String text);
+  List<Post> findByGroup(@Param("group") Group group);
+  List<Post> findByGroupAndFatherIsNull(@Param("group") Group group);
   List<Post> findByTextContaining(@Param("text") String text);
   List<Post> findByFather(Post post);
+  List<Post> findByGroupAndFather (@Param("group") Group group, @Param("father") Post post);
+  List<Post> findByAuthor_RoleKey_User_Username(@Param("text") String text);
+
 }

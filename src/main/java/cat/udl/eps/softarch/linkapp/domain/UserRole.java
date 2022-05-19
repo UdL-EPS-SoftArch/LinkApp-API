@@ -2,6 +2,8 @@ package cat.udl.eps.softarch.linkapp.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Generated;
+import org.springframework.data.annotation.Persistent;
 
 import javax.persistence.*;
 import java.util.Objects;
