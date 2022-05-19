@@ -6,9 +6,13 @@ Feature: Delete Post
   Background:
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
-    And The user "demo" belongs to that group as "SUBSCRIBED"
+    And There is a registered user with username "admin" and password "administrator" and email "admin@sample.app"
+    And I login as "admin" with password "administrator"
+    And The user "admin" joins the group as "ADMIN"
+    And I login as "user" with password "existing"
+    And The user "user" joins the group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
 
   Scenario: Delete an existing post as a SUBSCRIBED user
     Given I create a post with text "create post 1"
@@ -29,11 +33,12 @@ Feature: Delete Post
     Then The response code is 403
 
   Scenario: Delete a post created by another user as an ADMIN user
-    Given A group exists
     And The user "user" belongs to that group as "SUBSCRIBED"
     And I login as "user" with password "existing"
     And I create a post with text "hola"
     And I'm not logged in
+    And I login as "admin" with password "administrator"
+    And I update the user "demo" role of the group to "ADMIN"
     And I login as "demo" with password "password"
     And The user "demo" belongs to that group as "ADMIN"
     When I delete the post
@@ -57,10 +62,10 @@ Feature: Delete Post
     When I delete the comment
     Then The response code is 403
 
-  Scenario: Delete a comment created by another user as an ADMIN user
-    Given A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
-    And The user "demo" belongs to that group as "ADMIN"
+  Scenario: Delete a comment created by another user as an ADMIN
+    And The user "demo" belongs to that group as "SUBSCRIBED"
+    And I login as "admin" with password "administrator"
+    And I update the user "demo" role of the group to "ADMIN"
     And I login as "user" with password "existing"
     And I create a post with text "create post 1"
     And I create a comment to the previous post with text "create comment 1"

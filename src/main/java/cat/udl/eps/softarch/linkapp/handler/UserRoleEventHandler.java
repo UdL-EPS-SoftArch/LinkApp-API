@@ -21,6 +21,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeLinkSave;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
+
 import java.util.List;
 
 
@@ -39,7 +40,17 @@ public class UserRoleEventHandler {
 
     @HandleBeforeCreate
     public void handleUserRolePreCreate(UserRole userRole) {
-        logger.info("Before creating: {}", userRole.toString());
+        //User who modifies role
+        User currentUser = (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        Group group = userRole.getRoleKey().getGroup();
+        UserRole userRolePrincipal = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(currentUser, group);
+
+        if (userRolePrincipal != null) {
+            throw new AccessDeniedException("Already subscribed to this group");
+        }
     }
 
     @HandleBeforeSave

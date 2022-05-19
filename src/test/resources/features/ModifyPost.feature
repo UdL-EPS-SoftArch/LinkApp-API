@@ -7,7 +7,7 @@ Feature: Modify Post
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And I login as "user" with password "existing"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
+    And The user "user" joins the group as "SUBSCRIBED"
     And I create a post with text "hola"
     When I modify the post just created with new text "new text"
     Then The response code is 200
@@ -16,12 +16,12 @@ Feature: Modify Post
   Scenario: Modify a post created by another user
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
     And I login as "user" with password "existing"
+    And The user "user" joins the group as "SUBSCRIBED"
     And I create a post with text "hola"
     And I'm not logged in
-    And The user "demo" belongs to that group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I modify the post just created with new text "new text"
     Then The response code is 403
     And The post has not been modified
@@ -29,12 +29,12 @@ Feature: Modify Post
   Scenario: Modify a post created by another user as an ADMIN
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "ADMIN"
     And I login as "user" with password "existing"
+    And The user "user" joins the group as "ADMIN"
     And I create a post with text "hola"
     And I'm not logged in
-    And The user "demo" belongs to that group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I modify the post just created with new text "new text"
     Then The response code is 403
     And The post has not been modified
@@ -42,19 +42,19 @@ Feature: Modify Post
   Scenario: Modify an nonexistent post
     Given I login as "demo" with password "password"
     And A group exists
-    And The user "demo" belongs to that group as "SUBSCRIBED"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I modify the post with id "10000" with new text "something"
     Then The response code is 404
 
   Scenario: Modify an existing comment from a post
     Given There is a registered user with username "user" and password "password" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
     And I login as "user" with password "password"
+    And The user "user" joins the group as "SUBSCRIBED"
     And I create a post with text "create post 1"
     And I'm not logged in
-    And The user "demo" belongs to that group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
     And I create a comment to the previous post with text "create comment 1"
     When I modify the comment just created with new text "new text"
     Then The response code is 200
@@ -63,13 +63,13 @@ Feature: Modify Post
   Scenario: Modify a comment created by another user
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
     And I login as "user" with password "existing"
+    And The user "user" joins the group as "SUBSCRIBED"
     And I create a post with text "create post 1"
     And I create a comment to the previous post with text "create comment 1"
     And I'm not logged in
-    And The user "demo" belongs to that group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I modify the post just created with new text "new text"
     Then The response code is 403
     And The comment has not been modified
@@ -77,13 +77,13 @@ Feature: Modify Post
   Scenario: Modify a comment created by another user as an ADMIN
     Given There is a registered user with username "user" and password "existing" and email "user@sample.app"
     And A group exists
-    And The user "user" belongs to that group as "ADMIN"
     And I login as "user" with password "existing"
+    And The user "user" joins the group as "ADMIN"
     And I create a post with text "create post 1"
     And I create a comment to the previous post with text "create comment 1"
     And I'm not logged in
-    And The user "demo" belongs to that group as "SUBSCRIBED"
     And I login as "demo" with password "password"
+    And The user "demo" joins the group as "SUBSCRIBED"
     When I modify the post just created with new text "new text"
     Then The response code is 403
     And The comment has not been modified

@@ -39,7 +39,7 @@ Feature: Delete User
   Scenario: Delete a user that belongs to a group
     Given I login as "user" with password "password"
     And A group exists
-    And The user "user" belongs to that group as "SUBSCRIBED"
+    And The user "user" joins the group as "SUBSCRIBED"
     When I delete the user with username "user"
     Then The response code is 204
     And It has been deleted a user with username "user" and email "user@sample.app"

@@ -70,18 +70,32 @@ public class MeetStepDefs
     @And("The user {string} belongs to that group as {string}")
     public void userBelongsToGroup(String username, String role) throws Throwable {
         User user = userRepository.findById(username).get();
-
-        UserRoleKey userRoleKey = new UserRoleKey();
-        userRoleKey.setUser(user);
-        userRoleKey.setGroup(featureGroup);
-
-        UserRole userRole = new UserRole();
-        userRole.setRoleKey(userRoleKey);
-        userRole.setRole(UserRoleEnum.valueOf(role));
-        userRoleRepository.save(userRole);
-
+        UserRole userRole = userRoleRepository.findByRoleKeyUserAndRoleKeyGroup(user, featureGroup);
+        String uri = userRole.getUri();
         stepDefs.result = stepDefs.mockMvc.perform(
                         get(userRole.getUri())
+                                .accept(MediaType.APPLICATION_JSON)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(jsonPath("$.role", is(role)));
+    }
+
+    @And("The user {string} joins the group as {string}")
+    public void userJoinsGroup(String username, String role) throws Throwable {
+        User user = userRepository.findById(username).get();
+
+        JSONObject userRoleKey = new JSONObject();
+        userRoleKey.put("user", user.getUri());
+        userRoleKey.put("group", featureGroup.getUri());
+
+        JSONObject userRole = new JSONObject();
+        userRole.put("roleKey", userRoleKey);
+        userRole.put("role", UserRoleEnum.valueOf(role));
+
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        post("/userRoles/")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(userRole.toString())
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print());

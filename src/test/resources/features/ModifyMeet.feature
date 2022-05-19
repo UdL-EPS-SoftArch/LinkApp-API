@@ -5,7 +5,7 @@ Feature: Modify Meet
   Scenario: Create a new Meet and edit it
     Given I login as "demo" with password "password"
     And A group exists
-    And The user "demo" belongs to that group as "AUTHORIZED"
+    And The user "demo" joins the group as "AUTHORIZED"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
     When I edit the meet with title "title2", description "description2", maxUsers 5, location "location2"
@@ -16,7 +16,7 @@ Feature: Modify Meet
   Scenario: Create a new Meet and patch it
     Given I login as "demo" with password "password"
     And A group exists
-    And The user "demo" belongs to that group as "AUTHORIZED"
+    And The user "demo" joins the group as "AUTHORIZED"
     When I create a meet in that group with title "title", description "description", maxUsers 10, location "location"
     Then The response code is 201
     When I patch the meet with title "title2", description "description2", maxUsers 5, location "location2"

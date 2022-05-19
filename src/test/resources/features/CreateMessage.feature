@@ -8,7 +8,7 @@ Feature: Create Message
     And I login as "user" with password "password"
 
   Scenario: Send a Message in a meet I am assisting
-    Given The user "user" belongs to that group as "AUTHORIZED"
+    Given The user "user" joins the group as "AUTHORIZED"
     And The user "user" is assisting to the meet
     When I send a message to the meet with message "message"
     Then The response code is 201
@@ -17,14 +17,14 @@ Feature: Create Message
     And The author of the message is correct
 
   Scenario: Send a blank message in a meet I am assisting
-    Given The user "user" belongs to that group as "AUTHORIZED"
+    Given The user "user" joins the group as "AUTHORIZED"
     And The user "user" is assisting to the meet
     When I send a message to the meet with message ""
     Then The response code is 400
     And The error message is "must not be blank"
 
   Scenario: Send a Message in a meet I am not assisting
-    Given The user "user" belongs to that group as "AUTHORIZED"
+    Given The user "user" joins the group as "AUTHORIZED"
     And The user "user" is not assisting to the meet
     When I send a message to the meet with message "message"
     Then The response code is 403
